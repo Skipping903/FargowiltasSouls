@@ -1,17 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
-using System;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces
 {
+    [AutoloadEquip(EquipType.Shield)]
     public class TerraForce : ModItem
     {
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
-        public int timer;
 
         public override void SetStaticDefaults()
         {
@@ -66,12 +63,12 @@ While standing in lava, you gain 20 armor penetration, 15% attack speed, and you
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.rare = 11;
             item.value = 600000;
-            item.shieldSlot = 5;
+            //item.shieldSlot = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //lightning
             modPlayer.CopperEnchant = true;
             //crit effect improved
@@ -85,18 +82,18 @@ While standing in lava, you gain 20 armor penetration, 15% attack speed, and you
             //lava immune (obsidian)
             modPlayer.ObsidianEffect();
             //EoC Shield
-            if (SoulConfig.Instance.GetValue("Shield of Cthulhu"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.CthulhuShield))
             {
                 player.dash = 2;
             }
             
-            if (SoulConfig.Instance.GetValue("Iron Shield"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.IronShield))
             {
                 //shield
                 modPlayer.IronEffect();
             }
             //magnet
-            if (SoulConfig.Instance.GetValue("Iron Magnet"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.IronMagnet, false))
             {
                 modPlayer.IronEnchant = true;
             }

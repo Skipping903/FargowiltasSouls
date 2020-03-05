@@ -1,12 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using ThoriumMod;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using CalamityMod.CalPlayer;
-using System;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
@@ -67,7 +63,7 @@ Summons an Akato and Fox pet");
             {
                 if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color?(new Color(108, 45, 199));
+                    tooltipLine.overrideColor = new Color(176, 112, 70);
                 }
             }
         }
@@ -86,25 +82,19 @@ Summons an Akato and Fox pet");
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Silva Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaEffects))
             {
-                modPlayer.silvaSet = true;
-                //melee
-                modPlayer.silvaMelee = true;
-                //range
-                modPlayer.silvaRanged = true;
-                //magic
-                modPlayer.silvaMage = true;
-                //throw
-                modPlayer.silvaThrowing = true;
+                calamity.Call("SetSetBonus", player, "silva", true);
+                calamity.Call("SetSetBonus", player, "silva_melee", true);
+                calamity.Call("SetSetBonus", player, "silva_ranged", true);
+                calamity.Call("SetSetBonus", player, "silva_magic", true);
+                calamity.Call("SetSetBonus", player, "silva_rogue", true);
             }
 
-            if (SoulConfig.Instance.GetValue("Silva Crystal Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
             {
                 //summon
-                modPlayer.silvaSummon = true;
+                calamity.Call("SetSetBonus", player, "silva_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
                     if (player.FindBuffIndex(calamity.BuffType("SilvaCrystal")) == -1)
@@ -118,77 +108,25 @@ Summons an Akato and Fox pet");
                 }
             }
 
-            //THE AMALGAM
-            modPlayer.aBrain = true;
-            if (SoulConfig.Instance.GetValue("Fungal Clump Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.FungalMinion))
             {
-                modPlayer.fungalClump = true;
-                if (player.whoAmI == Main.myPlayer)
-                {
-                    if (player.FindBuffIndex(calamity.BuffType("FungalClump")) == -1)
-                    {
-                        player.AddBuff(calamity.BuffType("FungalClump"), 3600, true);
-                    }
-                    if (player.ownedProjectileCounts[calamity.ProjectileType("FungalClump")] < 1)
-                    {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("FungalClump"), 250, 1f, Main.myPlayer, 0f, 0f);
-                    }
-                }
+                calamity.GetItem("TheAmalgam").UpdateAccessory(player, hideVisual);
             }
 
-            if (SoulConfig.Instance.GetValue("Godly Soul Artifact"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GodlySoulArtifact))
             {
-                //godly soul artifact
-                modPlayer.gArtifact = true;
+                calamity.GetItem("GodlySoulArtifact").UpdateAccessory(player, hideVisual);
             }
 
-            if (SoulConfig.Instance.GetValue("Yharim's Gift"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.YharimGift))
             {
-                //yharims gift
-                if (player.velocity.X > 0.0 || player.velocity.Y > 0.0 || player.velocity.X < -0.1 || player.velocity.Y < -0.1)
-                {
-                    dragonTimer--;
-                    if (dragonTimer <= 0)
-                    {
-                        if (player.whoAmI == Main.myPlayer)
-                        {
-                            int num = Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, 0f, calamity.ProjectileType("DragonDust"), 350, 5f, player.whoAmI, 0f, 0f);
-                            Main.projectile[num].timeLeft = 60;
-                        }
-                        dragonTimer = 60;
-                    }
-                }
-                else
-                {
-                    dragonTimer = 60;
-                }
-                if (player.immune && Main.rand.Next(8) == 0 && player.whoAmI == Main.myPlayer)
-                {
-                    for (int i = 0; i < 1; i++)
-                    {
-                        float num2 = player.position.X + Main.rand.Next(-400, 400);
-                        float num3 = player.position.Y - Main.rand.Next(500, 800);
-                        Vector2 vector = new Vector2(num2, num3);
-                        float num4 = player.position.X + (player.width / 2) - vector.X;
-                        float num5 = player.position.Y + (player.height / 2) - vector.Y;
-                        num4 += Main.rand.Next(-100, 101);
-                        int num6 = 22;
-                        float num7 = (float)Math.Sqrt((num4 * num4 + num5 * num5));
-                        num7 = num6 / num7;
-                        num4 *= num7;
-                        num5 *= num7;
-                        int num8 = Projectile.NewProjectile(num2, num3, num4, num5, calamity.ProjectileType("SkyFlareFriendly"), 750, 9f, player.whoAmI, 0f, 0f);
-                        Main.projectile[num8].ai[1] = player.position.Y;
-                        Main.projectile[num8].hostile = false;
-                        Main.projectile[num8].friendly = true;
-                    }
-                }
+                calamity.GetItem("YharimsGift").UpdateAccessory(player, hideVisual);
             }
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.SilvaEnchant = true;
-            fargoPlayer.AddPet("Akato Pet", hideVisual, calamity.BuffType("AkatoYharonBuff"), calamity.ProjectileType("Akato"));
-            fargoPlayer.AddPet("Fox Pet", hideVisual, calamity.BuffType("Fox"), calamity.ProjectileType("Fox"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.AkatoPet, hideVisual, calamity.BuffType("AkatoYharonBuff"), calamity.ProjectileType("Akato"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.FoxPet, hideVisual, calamity.BuffType("Fox"), calamity.ProjectileType("Fox"));
         }
 
         public override void AddRecipes()

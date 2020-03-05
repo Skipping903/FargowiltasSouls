@@ -27,13 +27,20 @@ namespace FargowiltasSouls.Projectiles.Masomode
             projectile.ignoreWater = true;
             projectile.hide = true;
             projectile.extraUpdates = 1;
-            cooldownSlot = 1;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.OnFire, Main.rand.Next(60, 600));
-            target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(300, 600));
+            if (NPC.golemBoss != -1 && Main.npc[NPC.golemBoss].active && Main.npc[NPC.golemBoss].type == NPCID.Golem) //during golem fight
+            {
+                target.AddBuff(BuffID.OnFire, 600);
+                target.AddBuff(BuffID.BrokenArmor, 600);
+                target.AddBuff(mod.BuffType("Defenseless"), 600);
+                target.AddBuff(BuffID.WitheredArmor, 600);
+
+                if (Framing.GetTileSafely(Main.npc[NPC.golemBoss].Center).wall != WallID.LihzahrdBrickUnsafe) //outside temple
+                    target.AddBuff(BuffID.Burning, 120);
+            }
         }
 
         public override void Kill(int timeLeft)

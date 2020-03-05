@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -35,6 +33,7 @@ namespace FargowiltasSouls.NPCs
             npc.timeLeft = NPC.activeTime * 30;
             npc.npcSlots = 7f;
             npc.scale = 0.5f;
+            npc.buffImmune[BuffID.Poisoned] = true;
         }
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -66,14 +65,16 @@ namespace FargowiltasSouls.NPCs
                 npc.ai[0] = 0f;
                 npc.netUpdate = true;
             }
+
+            npc.position -= npc.velocity / 3;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.Poisoned, Main.rand.Next(60, 180));
-            target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(300, 600));
-            target.AddBuff(mod.BuffType("Crippled"), Main.rand.Next(300, 600));
-            target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(300, 600));
+            target.AddBuff(mod.BuffType("Infested"), 300);
+            target.AddBuff(BuffID.BrokenArmor, 600);
+            target.AddBuff(mod.BuffType("Swarming"), 300);
         }
 
         public override bool PreNPCLoot()

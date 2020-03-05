@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -21,6 +20,7 @@ namespace FargowiltasSouls.Projectiles.BossWeapons
             projectile.penetrate = 99;
             projectile.timeLeft = 600;
             aiType = ProjectileID.Bullet;
+            projectile.extraUpdates = 1;
         }
 
         public override void AI()
@@ -42,14 +42,10 @@ namespace FargowiltasSouls.Projectiles.BossWeapons
             Player owner = Main.player[projectile.owner];
             float dist = Vector2.Distance(target.Center, owner.Center);
 
-            if (dist > 300 && dist < 400)
+            if (dist > 300 && dist < 500)
             {
                 damage *= 2;
                 crit = true;
-            }
-            else
-            {
-                crit = false;
             }
         }
 

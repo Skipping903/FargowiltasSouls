@@ -31,8 +31,10 @@ namespace FargowiltasSouls.Projectiles.Masomode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(mod.BuffType("Shadowflame"), 300);
-            target.AddBuff(BuffID.Bleeding, 600);
+            //target.AddBuff(mod.BuffType("Shadowflame"), 300);
+            //target.AddBuff(BuffID.Bleeding, 600);
+            target.AddBuff(BuffID.Obstructed, 30);
+            target.AddBuff(mod.BuffType("Berserked"), 150);
         }
     }
 }

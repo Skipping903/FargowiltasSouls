@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Souls
@@ -24,10 +21,15 @@ namespace FargowiltasSouls.Projectiles.Souls
             projectile.ignoreWater = true;
         }
 
+        public override bool CanDamage()
+        {
+            return false;
+        }
+
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if (player.dead)
             {

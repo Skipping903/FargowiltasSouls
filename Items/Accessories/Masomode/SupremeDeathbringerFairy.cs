@@ -5,6 +5,7 @@ using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Masomode
 {
+    [AutoloadEquip(EquipType.Shield)]
     public class SupremeDeathbringerFairy : ModItem
     {
         public override void SetStaticDefaults()
@@ -18,6 +19,7 @@ When you land after a jump, slime will fall from the sky over your cursor
 While dashing or running quickly you will create a trail of blood scythes
 Your attacks inflict Venom
 Bees and weak Hornets become friendly
+You have permanent effects of Honey buff
 May attract baby skeleton heads
 Summons 2 Skeletron arms to whack enemies");
             DisplayName.AddTranslation(GameCulture.Chinese, "至高告死精灵");
@@ -50,7 +52,7 @@ Summons 2 Skeletron arms to whack enemies");
 
             //slimy shield
             player.buffImmune[BuffID.Slimed] = true;
-            if (SoulConfig.Instance.GetValue("Slimy Shield Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SlimyShield))
             {
                 player.maxFallSpeed *= 2f;
                 player.GetModPlayer<FargoPlayer>().SlimyShield = true;
@@ -63,6 +65,7 @@ Summons 2 Skeletron arms to whack enemies");
 
             //queen stinger
             player.buffImmune[mod.BuffType("Infested")] = true;
+            player.honey = true;
             player.armorPenetration += 10;
             player.npcTypeNoAggro[210] = true;
             player.npcTypeNoAggro[211] = true;
@@ -77,7 +80,7 @@ Summons 2 Skeletron arms to whack enemies");
             //necromantic brew
             player.buffImmune[mod.BuffType("Lethargic")] = true;
             fargoPlayer.NecromanticBrew = true;
-            if (SoulConfig.Instance.GetValue("Skeletron Arms Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.NecromanticBrew))
                 player.AddBuff(mod.BuffType("SkeletronArms"), 2);
         }
 

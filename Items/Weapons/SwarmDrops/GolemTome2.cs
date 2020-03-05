@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -21,7 +19,7 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void SetDefaults()
         {
-            item.damage = 230;//
+            item.damage = 210;//
             item.magic = true;
             item.width = 24;
             item.height = 28;
@@ -41,7 +39,7 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void AddRecipes()
         {
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(null, "GolemTome");

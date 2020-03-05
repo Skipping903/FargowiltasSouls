@@ -1,5 +1,3 @@
-using CalamityMod;
-using CalamityMod.Items.CalamityCustomThrowingDamage;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -72,7 +70,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             //throw speed
-            player.GetModPlayer<FargoPlayer>(mod).ThrowSoul = true;
+            player.GetModPlayer<FargoPlayer>().ThrowSoul = true;
             player.thrownDamage += 0.3f;
             player.thrownCrit += 15;
             player.thrownVelocity += 0.15f;
@@ -89,16 +87,17 @@ namespace FargowiltasSouls.Items.Accessories.Souls
             //dead mans patch
             thoriumPlayer.deadEyeBool = true;
             //mermaid canteen
-            thoriumPlayer.canteenEffect += 750;
+            thoriumPlayer.throwerExhaustionMax += 1125;
             thoriumPlayer.canteenCadet = true;
         }
 
         private void Calamity(Player player)
         {
-            player.GetCalamityPlayer().nanotech = true;
-            player.GetCalamityPlayer().throwingDamage += 0.3f;
-            player.GetCalamityPlayer().throwingCrit += 15;
-            player.GetCalamityPlayer().throwingVelocity += 0.15f;
+            calamity.Call("AddRogueDamage", player, 0.3f);
+            calamity.Call("AddRogueCrit", player, 15);
+            calamity.Call("AddRogueVelocity", player, 0.15f);
+
+            player.GetModPlayer<CalamityMod.CalPlayer.CalamityPlayer>().nanotech = true;
         }
 
         public override void AddRecipes()
@@ -132,7 +131,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
 
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("BananarangThrown") : ItemID.Bananarang, 5);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("AmarokThrown") : ItemID.Amarok);
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("ShadowflameKnifeThrown") : ItemID.ShadowFlameKnife);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("ShadowFlameKnifeThrown") : ItemID.ShadowFlameKnife);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("FlyingKnifeThrown") : ItemID.FlyingKnife);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("LightDiscThrown") : ItemID.LightDisc, 5);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("FlowerPowThrown") : ItemID.FlowerPow);
@@ -140,7 +139,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("VampireKnivesThrown") : ItemID.VampireKnives);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("PaladinsHammerThrown") : ItemID.PaladinsHammer);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("PossessedHatchetThrown") : ItemID.PossessedHatchet);
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("TheEyeofCthulhuThrown") : ItemID.TheEyeOfCthulhu);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("TheEyeOfCthulhuThrown") : ItemID.TheEyeOfCthulhu);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("TerrarianThrown") : ItemID.Terrarian);
             }
 

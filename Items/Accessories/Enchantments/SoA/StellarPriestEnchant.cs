@@ -1,11 +1,10 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using ThoriumMod;
 using Terraria.Localization;
 using SacredTools;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.SoA
 {
@@ -41,9 +40,20 @@ Summons a Stellar Guardian behind you that attacks enemies");
             item.value = 350000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(108, 116, 204);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (!Fargowiltas.Instance.SOALoaded) return;
+            if (!Fargowiltas.Instance.SoALoaded) return;
 
             ModdedPlayer modPlayer = player.GetModPlayer<ModdedPlayer>();
 
@@ -73,7 +83,7 @@ Summons a Stellar Guardian behind you that attacks enemies");
 
         public override void AddRecipes()
         {
-            if (!Fargowiltas.Instance.SOALoaded) return;
+            if (!Fargowiltas.Instance.SoALoaded) return;
 
             ModRecipe recipe = new ModRecipe(mod);
 

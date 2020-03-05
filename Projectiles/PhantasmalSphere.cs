@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles
@@ -78,6 +77,12 @@ namespace FargowiltasSouls.Projectiles
                 if (++projectile.frame > 1)
                     projectile.frame = 0;
             }
+        }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (projectile.ai[1] == 1)
+                crit = true;
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

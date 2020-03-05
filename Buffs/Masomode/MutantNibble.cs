@@ -22,14 +22,14 @@ namespace FargowiltasSouls.Buffs.Masomode
         public override void Update(Player player, ref int buffIndex)
         {
             //disables potions, moon bite effect, feral bite effect, disables lifesteal
-            player.GetModPlayer<FargoPlayer>(mod).MutantNibble = true;
+            player.GetModPlayer<FargoPlayer>().MutantNibble = true;
 
             player.potionDelay = player.buffTime[buffIndex];
             player.moonLeech = true;
 
             //feral bite stuff
             player.rabid = true;
-            if (Main.rand.Next(1200) == 0)
+            /*if (Main.rand.Next(1200) == 0)
             {
                 switch (Main.rand.Next(10))
                 {
@@ -45,7 +45,7 @@ namespace FargowiltasSouls.Buffs.Masomode
                     case 9: player.AddBuff(mod.BuffType("Berserked"), Main.rand.Next(180)); break;
                     default: player.AddBuff(BuffID.Rabies, Main.rand.Next(300)); break;
                 }
-            }
+            }*/
 
             player.meleeDamage = player.meleeDamage + 0.2f;
             player.magicDamage = player.magicDamage + 0.2f;

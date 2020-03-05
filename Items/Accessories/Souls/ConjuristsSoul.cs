@@ -82,19 +82,19 @@ Increased minion knockback";
 
         private void Thorium(Player player)
         {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //phylactery
             if (!thoriumPlayer.lichPrevent)
             {
                 player.AddBuff(thorium.BuffType("LichActive"), 60, true);
             }
             //crystal scorpion
-            if (SoulConfig.Instance.GetValue("Crystal Scorpion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.CrystalScorpion))
             {
                 thoriumPlayer.crystalScorpion = true;
             }
             //yumas pendant
-            if (SoulConfig.Instance.GetValue("Yuma's Pendant"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.YumasPendant))
             {
                 thoriumPlayer.yuma = true;
             }
@@ -102,7 +102,7 @@ Increased minion knockback";
 
         private void Calamity(Player player)
         {
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             modPlayer.statisBeltOfCurses = true;
             modPlayer.shadowMinions = true;
             modPlayer.tearMinions = true;
@@ -123,7 +123,7 @@ Increased minion knockback";
                 recipe.AddIngredient(thorium.ItemType("HailBomber"));
                 recipe.AddIngredient(ItemID.PirateStaff);
                 recipe.AddIngredient(ItemID.OpticStaff);
-                recipe.AddIngredient(thorium.ItemType("TrueSilversBlade"));
+                recipe.AddIngredient(thorium.ItemType("TerrariumSummon"));
                 recipe.AddIngredient(ItemID.StaffoftheFrostHydra);
                 recipe.AddIngredient(ItemID.RavenStaff);
                 recipe.AddIngredient(ItemID.XenoStaff);

@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
@@ -25,7 +24,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
 Allows you and nearby allies to breathe underwater
 Grants the ability to swim
 You and nearby allies gain 10% increased damage and movement speed
-Effects of Sea Breeze Pendant, Bubble Magnet, and Deep Dark Subwoofer
+Effects of Sea Breeze Pendant and Bubble Magnet
 Summons a pet Jellyfish");
             DisplayName.AddTranslation(GameCulture.Chinese, "深渊潜游者魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -50,8 +49,8 @@ Summons a pet Jellyfish");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //depth diver set
             for (int i = 0; i < 255; i++)
             {
@@ -63,17 +62,7 @@ Summons a pet Jellyfish");
                     player2.AddBuff(thorium.BuffType("DepthBreath"), 30, false);
                 }
             }
-            //depth woofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerGouge = true;
-                }
-            }
-
+            
             //sea breeze pendant
             player.accFlipper = true;
 
@@ -86,16 +75,16 @@ Summons a pet Jellyfish");
             //bubble magnet
             thoriumPlayer.bubbleMagnet = true;
             modPlayer.DepthEnchant = true;
-            modPlayer.AddPet("Jellyfish Pet", hideVisual, thorium.BuffType("JellyPet"), thorium.ProjectileType("JellyfishPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.JellyfishPet, hideVisual, thorium.BuffType("JellyPet"), thorium.ProjectileType("JellyfishPet"));
         }
         
         private readonly string[] items =
         {
-            "DepthSubwoofer",
-            "FrostPelter",
             "MagicConch",
             "GeyserStaff",
+            "ScubaCurva",
             "AnglerBulb",
+            "QueensGlowstick",
             "JellyFishIdol"
         };
 

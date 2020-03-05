@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,10 +21,21 @@ namespace FargowiltasSouls.Projectiles.Masomode
             projectile.hostile = true;
         }
 
+        public override void AI()
+        {
+            projectile.alpha = 0;
+            projectile.hide = false;
+        }
+
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return Color.White;
+        }
+
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.OnFire, Main.rand.Next(300, 600));
-            target.AddBuff(BuffID.Burning, Main.rand.Next(30, 120));
+            target.AddBuff(BuffID.OnFire, 900);
+            target.AddBuff(BuffID.Burning, 180);
         }
     }
 }

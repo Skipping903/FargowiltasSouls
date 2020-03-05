@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -58,7 +57,7 @@ Pressing the 'Special Ability' key will unleash an echo of Slag Fury's power");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //pyro magic set
             modPlayer.PyroEnchant = true;
             //pyro summon bonus

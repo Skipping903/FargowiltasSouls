@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -14,11 +16,23 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             DisplayName.SetDefault("Mythril Enchantment");
             Tooltip.SetDefault(
 @"'You feel the knowledge of your weapons seep into your mind'
-20% increased weapon use speed");
+20% increased weapon use speed
+Taking damage temporarily removes this weapon use speed increase");
             DisplayName.AddTranslation(GameCulture.Chinese, "秘银魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"你感觉你对武器的知识渗透到脑海中'
 增加25%武器使用速度");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(157, 210, 144);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -33,8 +47,9 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (SoulConfig.Instance.GetValue("Mythril Weapon Speed") && !player.GetModPlayer<FargoPlayer>(mod).TerrariaSoul)
-                player.GetModPlayer<FargoPlayer>(mod).AttackSpeed *= 1.2f;
+            player.GetModPlayer<FargoPlayer>().MythrilEnchant = true;
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.MythrilSpeed))
+                player.GetModPlayer<FargoPlayer>().AttackSpeed += .2f;
         }
 
         public override void AddRecipes()

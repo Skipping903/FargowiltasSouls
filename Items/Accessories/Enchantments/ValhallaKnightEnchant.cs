@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -14,7 +16,8 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             DisplayName.SetDefault("Valhalla Knight Enchantment");
             Tooltip.SetDefault(
 @"'Valhalla calls'
-Swords and spears will slowly remove enemy knockback immunity
+Continually attacking an enemy will eventually drastically reduce its immunity frames for 2 seconds
+There is a 15 second cooldown per enemy
 Greatly enhances Ballista effectiveness
 Effects of Shiny Stone
 Summons a pet Dragon");
@@ -25,6 +28,17 @@ Summons a pet Dragon");
 大大提高弩车能力
 拥有闪耀石的效果
 召唤一只宠物小龙");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(147, 101, 30);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -39,7 +53,7 @@ Summons a pet Dragon");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).ValhallaEffect(hideVisual);
+            player.GetModPlayer<FargoPlayer>().ValhallaEffect(hideVisual);
         }
 
         public override void AddRecipes()
@@ -48,7 +62,7 @@ Summons a pet Dragon");
             recipe.AddIngredient(ItemID.SquireAltHead);
             recipe.AddIngredient(ItemID.SquireAltShirt);
             recipe.AddIngredient(ItemID.SquireAltPants);
-            recipe.AddIngredient(ItemID.SquireShield);
+            recipe.AddIngredient(null, "SquireEnchant");
             recipe.AddIngredient(ItemID.ShinyStone);
             
             if(Fargowiltas.Instance.ThoriumLoaded)

@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces
@@ -26,8 +25,7 @@ You may continue to summon temporary minions after maxing out on your slots
 Infested deals increasing damage over time
 Damage has a chance to spawn damaging orbs
 If you crit, you might also get a healing orb
-Summons several pets
-";
+Summons several pets";
 
             string tooltip_ch =
 @"'从尘世飞升'
@@ -60,7 +58,7 @@ Summons several pets
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //spectre works for all, spirit trapper works for all
             modPlayer.SpiritForce = true;
             //revive, bone zone, pet

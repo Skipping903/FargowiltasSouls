@@ -6,28 +6,20 @@ using Terraria.Localization;
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
     public class EskimoEnchant : ModItem
-    {
-    public override bool Autoload(ref string name)
+    {        
+        private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
+
+        public override bool Autoload(ref string name)
         {
             return false;
         }
-        
-        private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Eskimo Enchantment");
             Tooltip.SetDefault(
-@"''
-goes into frost enchant
-You can walk on water and when you do, it freezes and creates spikes
-");
-            DisplayName.AddTranslation(GameCulture.Chinese, "爱斯基摩魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"''
-变为霜冻魔石
-可以水上行走, 如此做时, 水会结冰并产生尖刺
-");
+@"'It's Burning Cold Outside'
+You have a small area around you that Frostburns enemies and slows projectiles");
         }
 
         public override void SetDefaults()
@@ -42,35 +34,30 @@ You can walk on water and when you do, it freezes and creates spikes
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            /*
-             * if(player.walkingOnWater)
-{
-	Create Ice Rod Projectile right below you
-}
-
-NearbyEffects:
-
-if(modPlayer.EskimoEnchant && tile.type == IceRodBlock)
-{
-	Create spikes
-}
-             */
+            player.GetModPlayer<FargoPlayer>().EskimoEnchant = true;
         }
 
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
 
-            recipe.AddIngredient(ItemID.PinkEskimoHood);
-            recipe.AddIngredient(ItemID.PinkEskimoCoat);
-            recipe.AddIngredient(ItemID.PinkEskimoPants);
+            recipe.AddIngredient(ItemID.EskimoHood);
+            recipe.AddIngredient(ItemID.EskimoCoat);
+            recipe.AddIngredient(ItemID.EskimoPants);
             //recipe.AddIngredient(ItemID.IceRod);
             recipe.AddIngredient(ItemID.FrostMinnow);
             recipe.AddIngredient(ItemID.AtlanticCod);
             recipe.AddIngredient(ItemID.MarshmallowonaStick);
             
+            //goes into frost along with pink eskimo
 
-            recipe.AddTile(TileID.CrystalBall);
+            //hand warmer
+            //ice skates
+            //xmas painting
+            //present drops
+
+
+            recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();
         }

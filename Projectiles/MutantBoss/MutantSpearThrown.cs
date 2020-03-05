@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -67,7 +66,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
             target.GetModPlayer<FargoPlayer>().MaxLifeReduction += 100;
             target.AddBuff(mod.BuffType("OceanicMaul"), 5400);
             target.AddBuff(mod.BuffType("CurseoftheMoon"), 600);
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

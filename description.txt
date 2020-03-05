@@ -1,8 +1,4 @@
-NEW UPDATE - v 1.0.0
-*Added MUTANT BOSS
-*Reworked Soul Toggles into Mod Configurations, also added several new toggles
-*Several Enchantments have been reworked and rebalanced
-*Several changes to Masochist Mode including boss recolors
-*Added Shadows of Abaddon Enchantments
+NEW UPDATE - v 1.2.0.3
+-Several Masochist Mode balance changes, most notably the ranger class being nerfed.
 
-*See the wiki for a complete changelog
+-See the wiki for full details

@@ -1,9 +1,10 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Essences
 {
@@ -22,7 +23,7 @@ namespace FargowiltasSouls.Items.Accessories.Essences
         {
             DisplayName.SetDefault("Crusader's Essence");
             Tooltip.SetDefault(
-@"''This is only the beginning..''
+@"'This is only the beginning..'
 18% increased radiant damage
 5% increased healing and radiant casting speed
 5% increased radiant critical strike chance");
@@ -32,6 +33,17 @@ namespace FargowiltasSouls.Items.Accessories.Essences
 增加18%光辉伤害
 增加5%治疗和光辉施法速度
 增加5%光辉暴击率");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color?(new Color(255, 30, 247));
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -52,7 +64,7 @@ namespace FargowiltasSouls.Items.Accessories.Essences
         
         private void HealEffect(Player player)
         {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             thoriumPlayer.radiantBoost += 0.18f;
             thoriumPlayer.radiantSpeed -= 0.05f;
             thoriumPlayer.healingSpeed += 0.05f;
@@ -63,13 +75,13 @@ namespace FargowiltasSouls.Items.Accessories.Essences
         {
             "ClericEmblem",
             "HeartWand",
+            "ClericsCross",
             "LifeQuartzClaymore",
             "FeatherBarrierRod",
             "TulipStaff",
             "LargePopcorn",
             "BatScythe",
             "DivineLotus",
-            "GraniteEnergyStaff",
             "SentinelWand",
             "LifeDisperser",
             "RedeemerStaff",

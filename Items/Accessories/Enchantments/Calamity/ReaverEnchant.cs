@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -51,30 +50,34 @@ Effects of Fabled Tortoise Shell");
             item.value = 400000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(54, 164, 66);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Reaver Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ReaverEffects))
             {
-                //melee
-                modPlayer.reaverBlast = true;
-                //range
-                modPlayer.reaverDoubleTap = true;
-                //magic
-                modPlayer.reaverBurst = true;
-                //throw
-                modPlayer.reaverSpore = true;
+                calamity.Call("SetSetBonus", player, "reaver_melee", true);
+                calamity.Call("SetSetBonus", player, "reaver_ranged", true);
+                calamity.Call("SetSetBonus", player, "reaver_magic", true);
+                calamity.Call("SetSetBonus", player, "reaver_rogue", true);
             }
             
             if (player.GetModPlayer<FargoPlayer>().Eternity) return;
 
-            if (SoulConfig.Instance.GetValue("Reaver Orb Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ReaverMinion))
             {
-                //summon
-                modPlayer.reaverOrb = true;
+                calamity.Call("SetSetBonus", player, "reaver_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
                     if (player.FindBuffIndex(calamity.BuffType("ReaverOrb")) == -1)
@@ -89,10 +92,12 @@ Effects of Fabled Tortoise Shell");
             }
 
             //fabled tortoise shell
-            modPlayer.fabledTortoise = true;
-            player.moveSpeed -= 0.5f;
-            player.thorns = 0.25f;
-            player.statDefense += 42;
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.FabledTurtleShell))
+            {
+                calamity.GetItem("FabledTortoiseShell").UpdateAccessory(player, hideVisual);
+                player.statDefense += 35;
+            }
+            
         }
 
         public override void AddRecipes()

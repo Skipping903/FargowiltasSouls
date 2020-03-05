@@ -11,7 +11,7 @@ namespace FargowiltasSouls.Items.Accessories.Masomode
         {
             DisplayName.SetDefault("Chalice of the Moon");
             Tooltip.SetDefault(@"'The moon smiles'
-Grants immunity to Venom, Ivy Venom, Burning, Fused, Marked for Death, and Hexed
+Grants immunity to Venom, Ivy Venom, Burning, Fused, Low Ground, and Marked for Death
 Grants immunity to Swarming, Atrophied, Jammed, Reverse Mana Flow, and Antisocial
 Increases life regeneration
 Press down in the air to fastfall
@@ -51,17 +51,17 @@ Summons a friendly Cultist and plant to fight at your side");
             player.buffImmune[mod.BuffType("IvyVenom")] = true;
             player.buffImmune[mod.BuffType("Swarming")] = true;
 
-            if (SoulConfig.Instance.GetValue("Plantera Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.PlanteraMinion))
                 player.AddBuff(mod.BuffType("PlanterasChild"), 2);
 
             //lihzahrd treasure
             player.buffImmune[BuffID.Burning] = true;
             player.buffImmune[mod.BuffType("Fused")] = true;
+            player.buffImmune[mod.BuffType("LowGround")] = true;
             fargoPlayer.LihzahrdTreasureBox = true;
 
             //celestial rune
             player.buffImmune[mod.BuffType("MarkedforDeath")] = true;
-            player.buffImmune[mod.BuffType("Hexed")] = true;
             fargoPlayer.CelestialRune = true;
             fargoPlayer.AdditionalAttacks = true;
 
@@ -72,7 +72,7 @@ Summons a friendly Cultist and plant to fight at your side");
             player.buffImmune[mod.BuffType("Antisocial")] = true;
             fargoPlayer.MoonChalice = true;
 
-            if (SoulConfig.Instance.GetValue("Cultist Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.CultistMinion))
                 player.AddBuff(mod.BuffType("LunarCultist"), 2);
         }
 

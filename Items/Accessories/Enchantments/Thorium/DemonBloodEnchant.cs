@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -26,7 +24,6 @@ Dealing damage will grant you a 'Blood Charge'
 At maximum charges, your next attack will deal 2x damage and heal you for 20% of the damage dealt
 Consecutive attacks against enemies might drop flesh, which grants bonus life and damage
 Effects of Vampire Gland, Demon Blood Badge, and Vile Flail-Core
-Effects of Blood Demon's Subwoofer and Yellow Music Player
 Summons a pet Flying Blister");
             DisplayName.AddTranslation(GameCulture.Chinese, "魔血魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -53,33 +50,20 @@ Summons a pet Flying Blister");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //demon blood effect
             modPlayer.DemonBloodEnchant = true;
             //demon blood badge
             thoriumPlayer.CrimsonBadge = true;
             //vile core
             thoriumPlayer.vileCore = true;
-            //subwoofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerIchor = true;
-                }
-            }
-            //music player
-            thoriumPlayer.musicPlayer = true;
-            thoriumPlayer.MP3CriticalStrike = 2;
             //flesh set bonus
             thoriumPlayer.Symbiotic = true;
             //vampire gland
             thoriumPlayer.vampireGland = true;
             //blister pet
-            modPlayer.AddPet("Blister Pet", hideVisual, thorium.BuffType("BlisterBuff"), thorium.ProjectileType("BlisterPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.BlisterPet, hideVisual, thorium.BuffType("BlisterBuff"), thorium.ProjectileType("BlisterPet"));
             modPlayer.FleshEnchant = true;
         }
         
@@ -87,8 +71,8 @@ Summons a pet Flying Blister");
         {
             "DemonRageBadge",
             "VileCore",
-            "CrimsonSubwoofer",
-            "TunePlayerCritChance",
+            "DemonBloodSword",
+            "DemonBloodRipper",
             "DarkContagionBook"
         };
 

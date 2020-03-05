@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Minions
@@ -38,8 +37,8 @@ namespace FargowiltasSouls.Projectiles.Minions
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadFloat();
-            projectile.localAI[1] = reader.ReadFloat();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -110,7 +109,7 @@ namespace FargowiltasSouls.Projectiles.Minions
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            target.immune[projectile.owner] = 3;
+            target.immune[projectile.owner] = 6;
             target.AddBuff(mod.BuffType("LightningRod"), Main.rand.Next(300, 1200));
         }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.GameContent.Events;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -19,6 +20,7 @@ namespace FargowiltasSouls
 
         public static bool MasochistMode;
         public static bool downedFishronEX;
+        public static bool downedAbom;
         public static bool downedMutant;
         public static bool AngryMutant;
         public static int EyeCount;
@@ -37,7 +39,11 @@ namespace FargowiltasSouls
         public static int CultistCount;
         public static int MoonlordCount;
 
-        public static bool downedMM = false;
+        public static bool downedMM;
+        public static bool forceMeteor;
+        public static int skipMutantP1;
+
+        public static bool NoMasoBossScaling;
 
         public override void Initialize()
         {
@@ -49,6 +55,7 @@ namespace FargowiltasSouls
             //masomode
             MasochistMode = false;
             downedFishronEX = false;
+            downedAbom = false;
             downedMutant = false;
             AngryMutant = false;
             EyeCount = 0;
@@ -66,6 +73,11 @@ namespace FargowiltasSouls
             FishronCount = 0;
             CultistCount = 0;
             MoonlordCount = 0;
+
+            forceMeteor = true;
+            skipMutantP1 = 0;
+
+            NoMasoBossScaling = false;
         }
 
         public override TagCompound Save()
@@ -94,14 +106,16 @@ namespace FargowiltasSouls
             if (_downedBoss) downed.Add("boss");
             if (MasochistMode) downed.Add("masochist");
             if (downedFishronEX) downed.Add("downedFishronEX");
+            if (downedAbom) downed.Add("downedAbom");
             if (downedMutant) downed.Add("downedMutant");
             if (AngryMutant) downed.Add("AngryMutant");
             if (downedMM) downed.Add("downedMadhouse");
-            
+            if (forceMeteor) downed.Add("forceMeteor");
+            if (NoMasoBossScaling) downed.Add("NoMasoBossScaling");
 
             return new TagCompound
             {
-                {"downed", downed}, {"count", count}
+                {"downed", downed}, {"count", count}, {"mutantP1", skipMutantP1}
             };
         }
 
@@ -132,9 +146,15 @@ namespace FargowiltasSouls
             _downedBoss = downed.Contains("boss");
             MasochistMode = downed.Contains("masochist");
             downedFishronEX = downed.Contains("downedFishronEX");
+            downedAbom = downed.Contains("downedAbom");
             downedMutant = downed.Contains("downedMutant");
             AngryMutant = downed.Contains("AngryMutant");
             downedMM = downed.Contains("downedMadhouse");
+            forceMeteor = downed.Contains("forceMeteor");
+            NoMasoBossScaling = downed.Contains("NoMasoBossScaling");
+
+            if (tag.ContainsKey("mutantP1"))
+                skipMutantP1 = tag.GetAsInt("mutantP1");
         }
 
         public override void NetReceive(BinaryReader reader)
@@ -154,15 +174,19 @@ namespace FargowiltasSouls
             FishronCount = reader.ReadInt32();
             CultistCount = reader.ReadInt32();
             MoonlordCount = reader.ReadInt32();
+            skipMutantP1 = reader.ReadInt32();
 
             BitsByte flags = reader.ReadByte();
             downedBetsy = flags[0];
             _downedBoss = flags[1];
             MasochistMode = flags[2];
             downedFishronEX = flags[3];
-            downedMutant = flags[4];
-            AngryMutant = flags[5];
-            downedMM = flags[6];
+            downedAbom = flags[4];
+            downedMutant = flags[5];
+            AngryMutant = flags[6];
+            downedMM = flags[7];
+            forceMeteor = flags[8];
+            NoMasoBossScaling = flags[9];
         }
 
         public override void NetSend(BinaryWriter writer)
@@ -182,6 +206,7 @@ namespace FargowiltasSouls
             writer.Write(FishronCount);
             writer.Write(CultistCount);
             writer.Write(MoonlordCount);
+            writer.Write(skipMutantP1);
 
             BitsByte flags = new BitsByte
             {
@@ -189,9 +214,12 @@ namespace FargowiltasSouls
                 [1] = _downedBoss,
                 [2] = MasochistMode,
                 [3] = downedFishronEX,
-                [4] = downedMutant,
-                [5] = AngryMutant,
-                [6] = downedMM
+                [4] = downedAbom,
+                [5] = downedMutant,
+                [6] = AngryMutant,
+                [7] = downedMM,
+                [8] = forceMeteor,
+                [9] = NoMasoBossScaling
             };
 
             writer.Write(flags);
@@ -200,9 +228,6 @@ namespace FargowiltasSouls
         public override void PostUpdate()
         {
             //Main.NewText(BuilderMode);
-
-            if (MasochistMode && DD2Event.Ongoing && DD2Event.TimeLeftBetweenWaves > 30)
-                DD2Event.TimeLeftBetweenWaves = 30;
 
             #region commented
 
@@ -319,6 +344,71 @@ namespace FargowiltasSouls
             // }
 
             #endregion
+        }
+
+        public override void PostWorldGen()
+        {
+            /*WorldGen.PlaceTile(Main.spawnTileX - 1, Main.spawnTileY, TileID.GrayBrick, false, true);
+            WorldGen.PlaceTile(Main.spawnTileX, Main.spawnTileY, TileID.GrayBrick, false, true);
+            WorldGen.PlaceTile(Main.spawnTileX + 1, Main.spawnTileY, TileID.GrayBrick, false, true);
+            Main.tile[Main.spawnTileX - 1, Main.spawnTileY].slope(0);
+            Main.tile[Main.spawnTileX, Main.spawnTileY].slope(0);
+            Main.tile[Main.spawnTileX + 1, Main.spawnTileY].slope(0);
+            WorldGen.PlaceTile(Main.spawnTileX, Main.spawnTileY - 1, ModLoader.GetMod("Fargowiltas").TileType("RegalStatueSheet"), false, true);*/
+
+            int positionX = Main.spawnTileX - 1; //offset by dimensions of statue
+            int positionY = Main.spawnTileY - 4;
+            bool placed = false;
+            List<int> legalBlocks = new List<int> { TileID.Stone, TileID.Grass, TileID.Dirt, TileID.SnowBlock, TileID.IceBlock, TileID.ClayBlock };
+            for (int offsetX = -50; offsetX <= 50; offsetX++)
+            {
+                for (int offsetY = -30; offsetY <= 10; offsetY++)
+                {
+                    int baseCheckX = positionX + offsetX;
+                    int baseCheckY = positionY + offsetY;
+
+                    bool canPlaceStatueHere = true;
+                    for (int i = 0; i < 3; i++) //check no obstructing blocks
+                        for (int j = 0; j < 4; j++)
+                        {
+                            Tile tile = Framing.GetTileSafely(baseCheckX + i, baseCheckY + j);
+                            if (WorldGen.SolidOrSlopedTile(tile))
+                            {
+                                canPlaceStatueHere = false;
+                                break;
+                            }
+                        }
+                    for (int i = 0; i < 3; i++) //check for solid foundation
+                    {
+                        Tile tile = Framing.GetTileSafely(baseCheckX + i, baseCheckY + 4);
+                        if (!WorldGen.SolidTile(tile) || !legalBlocks.Contains(tile.type))
+                        {
+                            canPlaceStatueHere = false;
+                            break;
+                        }
+                    }
+
+                    if (canPlaceStatueHere)
+                    {
+                        for (int i = 0; i < 3; i++) //MAKE SURE nothing in the way
+                            for (int j = 0; j < 4; j++)
+                                WorldGen.KillTile(baseCheckX + i, baseCheckY + j);
+
+                        WorldGen.PlaceTile(baseCheckX, baseCheckY + 4, TileID.GrayBrick, false, true);
+                        WorldGen.PlaceTile(baseCheckX + 1, baseCheckY + 4, TileID.GrayBrick, false, true);
+                        WorldGen.PlaceTile(baseCheckX + 2, baseCheckY + 4, TileID.GrayBrick, false, true);
+                        Main.tile[baseCheckX, baseCheckY + 4].slope(0);
+                        Main.tile[baseCheckX + 1, baseCheckY + 4].slope(0);
+                        Main.tile[baseCheckX + 2, baseCheckY + 4].slope(0);
+                        WorldGen.PlaceTile(baseCheckX + 1, baseCheckY + 3, mod.TileType("MutantStatueGift"), false, true);
+
+                        placed = true;
+                        break;
+                    }
+                }
+                if (placed)
+                    break;
+            }
         }
     }
 }

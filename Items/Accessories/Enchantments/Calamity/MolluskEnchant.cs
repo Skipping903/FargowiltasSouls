@@ -1,9 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod.CalPlayer;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -41,16 +41,25 @@ Summons a Danny Devito pet");
             item.value = 150000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(74, 97, 96);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Shellfish Minions"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ShellfishMinion))
             {
                 //set bonus clams
-                modPlayer.molluskSet = true;
+                calamity.Call("SetSetBonus", player, "mollusk", true);
                 player.maxMinions += 4;
                 if (player.whoAmI == Main.myPlayer)
                 {
@@ -65,20 +74,19 @@ Summons a Danny Devito pet");
                 }
             }
 
-            if (SoulConfig.Instance.GetValue("Giant Pearl"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.GiantPearl))
             {
-                modPlayer.giantPearl = true;
-                Lighting.AddLight((int)(player.position.X + (float)(player.width / 2)) / 16, (int)(player.position.Y + (float)(player.height / 2)) / 16, 0.45f, 0.8f, 0.8f);
+                calamity.GetItem("GiantPearl").UpdateAccessory(player, hideVisual);
             }
 
-            if (SoulConfig.Instance.GetValue("Amidias' Pendant"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AmidiasPendant))
             {
                 calamity.GetItem("AmidiasPendant").UpdateAccessory(player, hideVisual);
             }
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.MolluskEnchant = true;
-            fargoPlayer.AddPet("Danny Pet", hideVisual, calamity.BuffType("DannyDevito"), calamity.ProjectileType("DannyDevito"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.DannyPet, hideVisual, calamity.BuffType("DannyDevito"), calamity.ProjectileType("DannyDevitoPet"));
         }
 
         public override void AddRecipes()

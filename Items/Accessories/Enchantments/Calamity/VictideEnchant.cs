@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -45,20 +44,30 @@ Effects of Deep Diver, The Transformer, and Luxor's Gift");
             item.value = 80000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(67, 92, 191);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
             //all
-            modPlayer.victideSet = true;
+            calamity.Call("SetSetBonus", player, "victide", true);
 
             if (player.GetModPlayer<FargoPlayer>().Eternity) return;
 
-            if (SoulConfig.Instance.GetValue("Victide Sea Urchin"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.UrchinMinion))
             {
                 //summon
-                modPlayer.urchin = true;
+                calamity.Call("SetSetBonus", player, "victide_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
                     if (player.FindBuffIndex(calamity.BuffType("Urchin")) == -1)
@@ -74,7 +83,7 @@ Effects of Deep Diver, The Transformer, and Luxor's Gift");
 
             calamity.GetItem("DeepDiver").UpdateAccessory(player, hideVisual);
             calamity.GetItem("TheTransformer").UpdateAccessory(player, hideVisual);
-            if (SoulConfig.Instance.GetValue("Luxor's Gift"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.LuxorGift))
                 calamity.GetItem("LuxorsGift").UpdateAccessory(player, hideVisual);
         }
 

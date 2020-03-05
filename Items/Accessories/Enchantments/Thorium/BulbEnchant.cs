@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -10,7 +9,6 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
     public class BulbEnchant : ModItem
     {
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
-        public int timer;
 
         public override bool Autoload(ref string name)
         {
@@ -23,7 +21,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             Tooltip.SetDefault(
 @"'Has a surprisingly sweet aroma'
 Your damage has a chance to poison hit enemies with a spore cloud
-Effects of Night Shade Petal and Petal Shield");
+Effects of Bee Booties and Petal Shield");
             DisplayName.AddTranslation(GameCulture.Chinese, "花瓣魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'香气逼人'
@@ -46,14 +44,19 @@ Effects of Night Shade Petal and Petal Shield");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //bulb set bonus
             modPlayer.BulbEnchant = true;
             //petal shield
             thorium.GetItem("PetalShield").UpdateAccessory(player, hideVisual);
             player.statDefense -= 2;
-            //night shade petal
-            thoriumPlayer.nightshadeBoost = true;
+            //bee booties
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.BeeBooties))
+            {
+                thorium.GetItem("BeeBoots").UpdateAccessory(player, hideVisual);
+                player.moveSpeed -= 0.15f;
+                player.maxRunSpeed -= 1f;
+            }
         }
         
         private readonly string[] items =
@@ -62,8 +65,11 @@ Effects of Night Shade Petal and Petal Shield");
             "BulbChestplate",
             "BulbLeggings",
             "PetalShield",
-            "NightShadePetal",
+            "KickPetal",
+            "BeeBoots",
+            "FragrantCorsage",
             "BloomingBlade",
+            "BloomerBell",
             "CreepingVineStaff"
         };
 
@@ -74,10 +80,6 @@ Effects of Night Shade Petal and Petal Shield");
             ModRecipe recipe = new ModRecipe(mod);
             
             foreach (string i in items) recipe.AddIngredient(thorium.ItemType(i));
-
-            recipe.AddIngredient(ItemID.Sunflower);
-            recipe.AddIngredient(ItemID.SkyBlueFlower);
-            recipe.AddIngredient(ItemID.YellowMarigold);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

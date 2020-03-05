@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -20,7 +19,6 @@ namespace FargowiltasSouls.Projectiles.Minions
             projectile.aiStyle = -1;
             projectile.tileCollide = true;
             projectile.ignoreWater = true;
-            projectile.sentry = true;
             projectile.penetrate = -1;
             projectile.timeLeft = 7200;
         }
@@ -67,7 +65,10 @@ namespace FargowiltasSouls.Projectiles.Minions
                     {
                         Vector2 velocity = Vector2.Normalize(target.Center - projectile.Center) * 10;
 
-                        Projectile.NewProjectile(projectile.Center, velocity, ProjectileID.SeedlerNut, projectile.damage, 2, projectile.owner);
+                        int p = Projectile.NewProjectile(projectile.Center, velocity, ProjectileID.SeedlerNut, projectile.damage, 2, projectile.owner);
+                        Main.projectile[p].minion = true;
+                        Main.projectile[p].melee = false;
+
                     }
                 }
                 projectile.ai[1] = 0f;

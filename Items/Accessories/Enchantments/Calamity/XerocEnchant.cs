@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -51,20 +50,28 @@ Effects of The Community");
             item.value = 1000000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(171, 19, 33);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Xeroc Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.XerocEffects))
             {
-               
-                modPlayer.xerocSet = true;
+                calamity.Call("SetSetBonus", player, "xeroc", true);
             }
 
             //the community
-            modPlayer.community = true;
+            calamity.GetItem("TheCommunity").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()

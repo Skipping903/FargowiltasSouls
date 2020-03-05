@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
-using Terraria.GameInput;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -25,6 +25,17 @@ Summons a pet Tiki Spirit");
 召唤提基之灵");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(86, 165, 43);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -37,7 +48,7 @@ Summons a pet Tiki Spirit");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).TikiEffect(hideVisual);
+            player.GetModPlayer<FargoPlayer>().TikiEffect(hideVisual);
         }
 
         public override void AddRecipes()

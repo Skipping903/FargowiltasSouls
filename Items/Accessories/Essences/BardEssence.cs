@@ -1,9 +1,10 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Essences
 {
@@ -20,7 +21,7 @@ namespace FargowiltasSouls.Items.Accessories.Essences
         {
             DisplayName.SetDefault("Musician's Essence");
             Tooltip.SetDefault(
-@"''This is only the beginning..''
+@"'This is only the beginning..'
 18% increased symphonic damage
 5% increased symphonic playing speed
 5% increased symphonic critical strike chance");
@@ -30,6 +31,17 @@ namespace FargowiltasSouls.Items.Accessories.Essences
 增加18%音波伤害
 增加5%音波演奏速度
 增加5%音波暴击率");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color?(new Color(230, 248, 34));
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -50,7 +62,7 @@ namespace FargowiltasSouls.Items.Accessories.Essences
         
         private void BardEffect(Player player)
         {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             thoriumPlayer.symphonicDamage += 0.18f;
             thoriumPlayer.symphonicSpeed += .05f;
             thoriumPlayer.symphonicCrit += 5;
@@ -67,7 +79,7 @@ namespace FargowiltasSouls.Items.Accessories.Essences
             "ForestOcarina",
             "AquamarineWineGlass",
             "SonarCannon",
-            "MusicSheet2",
+            "Calaveras",
             "GraniteBoomBox",
             "TuningFork",
             "HotHorn",

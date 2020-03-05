@@ -1,12 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -61,7 +58,7 @@ Debuff状态下, 增加10%盗贼伤害
             {
                 if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color?(new Color(0, 255, 200));
+                    tooltipLine.overrideColor = new Color(169, 106, 52);
                 }
             }
         }
@@ -80,31 +77,24 @@ Debuff状态下, 增加10%盗贼伤害
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Tarragon Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.TarragonEffects))
             {
-                modPlayer.tarraSet = true;
-                //melee
-                modPlayer.tarraMelee = true;
-                //range
-                modPlayer.tarraRanged = true;
-                //magic
-                modPlayer.tarraMage = true;
-                //summon
-                modPlayer.tarraSummon = true;
-                //throw
-                modPlayer.tarraThrowing = true;
+                calamity.Call("SetSetBonus", player, "tarragon", true);
+                calamity.Call("SetSetBonus", player, "tarragon_melee", true);
+                calamity.Call("SetSetBonus", player, "tarragon_ranged", true);
+                calamity.Call("SetSetBonus", player, "tarragon_magic", true);
+                calamity.Call("SetSetBonus", player, "tarragon_summon", true);
+                calamity.Call("SetSetBonus", player, "tarragon_rogue", true);
             }
             
-            if (SoulConfig.Instance.GetValue("Profaned Soul Artifact"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ProfanedSoulArtifact))
             {
                 //profaned soul artifact
-                modPlayer.pArtifact = true;
+                calamity.GetItem("ProfanedSoulArtifact").UpdateAccessory(player, hideVisual);
             }
 
             //dark sun ring
-            modPlayer.darkSunRing = true;
+            calamity.GetItem("DarkSunRing").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()

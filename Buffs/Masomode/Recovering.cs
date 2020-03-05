@@ -1,6 +1,5 @@
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.Localization;
 
 namespace FargowiltasSouls.Buffs.Masomode
 {
@@ -13,12 +12,6 @@ namespace FargowiltasSouls.Buffs.Masomode
             Main.debuff[Type] = true;
             Main.buffNoSave[Type] = true;
             canBeCleared = false;
-        }
-
-        public override bool Autoload(ref string name, ref string texture)
-        {
-            texture = "FargowiltasSouls/Buffs/PlaceholderDebuff";
-            return true;
         }
     }
 }

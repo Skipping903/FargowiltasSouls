@@ -2,10 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using FargowiltasSouls.NPCs;
 
 namespace FargowiltasSouls.Projectiles.MutantBoss
 {
@@ -39,7 +37,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0) //spawn surrounding crystals
+            /*if (projectile.localAI[0] == 0) //spawn surrounding crystals
             {
                 projectile.localAI[0] = 1;
                 if (Main.netMode != 1)
@@ -54,7 +52,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
                         //int n = NPC.NewNPC((int)spawnPos.X, (int)spawnPos.Y, mod.NPCType("CrystalLeaf"), 0, npc.whoAmI, distance, 300, rotation * i);
                     }
                 }
-            }
+            }*/
 
             if (--projectile.ai[0] == 0)
             {
@@ -75,7 +73,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
             target.AddBuff(BuffID.Poisoned, Main.rand.Next(60, 300));
             target.AddBuff(mod.BuffType("Infested"), Main.rand.Next(60, 300));
             target.AddBuff(mod.BuffType("IvyVenom"), Main.rand.Next(60, 300));
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

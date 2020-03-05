@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,11 +36,6 @@ namespace FargowiltasSouls.Projectiles.Minions
                 if (projectile.frame > 1)
                     projectile.frame = 0;
             }
-        }
-
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
-        {
-            target.AddBuff(BuffID.Poisoned, 180);
         }
     }
 }

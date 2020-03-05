@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -66,11 +65,11 @@ Attacks have a 20% chance to unleash aquatic homing daggers all around you");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //mini crits and daggers
             modPlayer.TideTurnerEnchant = true;
 
-            if (SoulConfig.Instance.GetValue("Tide Turner Globules"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.TideGlobules))
             {
                 //floating globs and defense
                 thoriumPlayer.tideHelmet = true;

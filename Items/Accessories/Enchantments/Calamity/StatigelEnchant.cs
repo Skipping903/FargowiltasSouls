@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -24,7 +23,6 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 @"'Statis’ mystical power surrounds you…'
 When you take over 100 damage in one hit you become immune to damage for an extended period of time
 Grants an extra jump and increased jump height
-Summons a mini slime god to fight for you, the type depends on what world evil you have
 Effects of Counter Scarf and Fungal Symbiote");
             DisplayName.AddTranslation(GameCulture.Chinese, "斯塔提斯魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -45,51 +43,61 @@ Effects of Counter Scarf and Fungal Symbiote");
             item.value = 200000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(181, 0, 156);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            CalamityPlayer calamityPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-            calamityPlayer.statigelSet = true;
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            calamity.Call("SetSetBonus", player, "statigel", true);
             player.doubleJumpSail = true;
             player.jumpBoost = true;
 
-            if (SoulConfig.Instance.GetValue("Slime God Minion"))
+            //idk even
+            /*if (SoulConfig.Instance.GetValue("Slime God Minion"))
             {
                 //summon
-                calamityPlayer.slimeGod = true;
+                calamity.Call("SetSetBonus", player, "statigel_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
-                    if (player.FindBuffIndex(calamity.BuffType("SlimeGod")) == -1)
+                    if (player.FindBuffIndex(ModContent.BuffType<StatigelSummonSetBuff>()) == -1)
                     {
-                        player.AddBuff(calamity.BuffType("SlimeGod"), 3600, true);
+                        player.AddBuff(ModContent.BuffType<StatigelSummonSetBuff>(), 3600, true);
                     }
-                    if (WorldGen.crimson && player.ownedProjectileCounts[calamity.ProjectileType("SlimeGodAlt")] < 1)
+                    if (WorldGen.crimson && player.ownedProjectileCounts[ModContent.ProjectileType<CrimsonSlimeGodMinion>()] < 1)
                     {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("SlimeGodAlt"), 33, 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<CrimsonSlimeGodMinion>(), (int)(33f * player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
                         return;
                     }
-                    if (!WorldGen.crimson && player.ownedProjectileCounts[calamity.ProjectileType("SlimeGod")] < 1)
+                    if (!WorldGen.crimson && player.ownedProjectileCounts[ModContent.ProjectileType<CorruptionSlimeGodMinion>()] < 1)
                     {
-                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("SlimeGod"), 33, 0f, Main.myPlayer, 0f, 0f);
+                        Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, ModContent.ProjectileType<CorruptionSlimeGodMinion>(), (int)(33f * player.minionDamage), 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
-            }
+            }*/
 
             calamity.GetItem("FungalSymbiote").UpdateAccessory(player, hideVisual);
 
             //counter scarf
-            calamityPlayer.dodgeScarf = true;
-            calamityPlayer.dashMod = 1;
+            calamity.GetItem("CounterScarf").UpdateAccessory(player, hideVisual);
 
-           /* modPlayer.StatigelEnchant = true;
-            //modPlayer.AddPet("Perforator Pet", hideVisual, calamity.BuffType("BloodBound"), calamity.ProjectileType("PerforaMini"));
+            /* modPlayer.StatigelEnchant = true;
+             //modPlayer.AddPet("Perforator Pet", hideVisual, calamity.BuffType("BloodBound"), calamity.ProjectileType("PerforaMini"));
 
-            if (player.FindBuffIndex(calamity.BuffType("BloodBound")) == -1 && player.ownedProjectileCounts[calamity.ProjectileType("PerforaMini")] < 1)
-            {
-                Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("PerforaMini"), 0, 0f, player.whoAmI);
-            }*/
+             if (player.FindBuffIndex(calamity.BuffType("BloodBound")) == -1 && player.ownedProjectileCounts[calamity.ProjectileType("PerforaMini")] < 1)
+             {
+                 Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, -1f, calamity.ProjectileType("PerforaMini"), 0, 0f, player.whoAmI);
+             }*/
         }
 
         public override void AddRecipes()

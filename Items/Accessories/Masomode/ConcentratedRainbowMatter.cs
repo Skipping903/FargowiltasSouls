@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -32,7 +30,7 @@ Summons a baby rainbow slime");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.buffImmune[mod.BuffType("FlamesoftheUniverse")] = true;
-            if (SoulConfig.Instance.GetValue("Rainbow Slime Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.RainbowSlime))
                 player.AddBuff(mod.BuffType("RainbowSlime"), 2);
         }
     }

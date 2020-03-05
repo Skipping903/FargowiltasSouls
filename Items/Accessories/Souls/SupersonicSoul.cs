@@ -78,7 +78,7 @@ Effects of Flying Carpet";
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             //frost spark plus super speed
-            if (SoulConfig.Instance.GetValue("Supersonic Speed Boosts") && !player.GetModPlayer<FargoPlayer>().noSupersonic)
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SupersonicSpeed) && !player.GetModPlayer<FargoPlayer>().noSupersonic)
             {
                 player.maxRunSpeed += 10f;
                 player.runAcceleration += .25f;
@@ -123,7 +123,7 @@ Effects of Flying Carpet";
 
         private void Thorium(Player player)
         {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //terrarium particle sprinters dust
             if (Collision.SolidCollision(player.position, player.width, player.height + 4) && Math.Abs(player.velocity.X) >= 2)
             {
@@ -185,7 +185,7 @@ Effects of Flying Carpet";
                 }
             }
             //air walkers
-            if (SoulConfig.Instance.GetValue("Air Walkers"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.AirWalkers))
             {
                 if (player.controlDown)
                 {
@@ -225,11 +225,13 @@ Effects of Flying Carpet";
             //survivalist boots
             if (Math.Abs(player.velocity.X) > 2f)
             {
+                thoriumPlayer.lifeRegenPenaltyReduction += 0.1f;
                 player.lifeRegen += 2;
                 player.lifeRegenTime++;
+                thoriumPlayer.manaRegenPenaltyReduction += 0.1f;
                 player.manaRegenBonus += 2;
                 player.manaRegenDelayBonus++;
-                thoriumPlayer.bardResourceRecharge += 2;
+                thoriumPlayer.inspirationRegenBonus += 0.03f;
             }
             //weighted winglets
             if (player.controlDown && !player.controlUp)

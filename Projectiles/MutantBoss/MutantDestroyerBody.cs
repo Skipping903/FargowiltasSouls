@@ -40,8 +40,8 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadFloat();
-            projectile.localAI[1] = reader.ReadFloat();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -132,7 +132,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(mod.BuffType("LightningRod"), Main.rand.Next(300, 1200));
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
         }
     }
 }

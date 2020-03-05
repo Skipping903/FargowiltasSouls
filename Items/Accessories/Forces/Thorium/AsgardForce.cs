@@ -1,10 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
@@ -60,7 +57,7 @@ Summons a pet Maid");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
 
             //tide turner
             mod.GetItem("TideTurnerEnchant").UpdateAccessory(player, hideVisual);
@@ -73,16 +70,16 @@ Summons a pet Maid");
             thoriumPlayer.dreamHoodSet = true;
             thoriumPlayer.dreamSet = true;
             //maid pet
-            modPlayer.AddPet("Maid Pet", hideVisual, thorium.BuffType("MaidBuff"), thorium.ProjectileType("Maid1"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.MaidPet, hideVisual, thorium.BuffType("MaidBuff"), thorium.ProjectileType("Maid1"));
             modPlayer.DreamEnchant = true;
 
             if (modPlayer.ThoriumSoul) return;
 
             //rhapsodist
             //hotkey buff allies 
-            thoriumPlayer.rallySet = true;
+            thoriumPlayer.setInspirator = true;
             //hotkey buff self
-            thoriumPlayer.soloistSet = true;
+            thoriumPlayer.setSoloist = true;
         }
 
         public override void AddRecipes()

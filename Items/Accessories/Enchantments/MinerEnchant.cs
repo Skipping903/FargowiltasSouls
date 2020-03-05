@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -27,6 +29,17 @@ Summons a pet Magic Lantern");
 召唤一个魔法灯笼");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(95, 117, 151);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -39,7 +52,7 @@ Summons a pet Magic Lantern");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).MinerEffect(hideVisual, .5f);
+            player.GetModPlayer<FargoPlayer>().MinerEffect(hideVisual, .5f);
         }
 
         public override void AddRecipes()
@@ -60,8 +73,8 @@ Summons a pet Magic Lantern");
             }
             else
             {
+                recipe.AddIngredient(ItemID.CnadyCanePickaxe);
                 recipe.AddIngredient(ItemID.GoldPickaxe);
-                recipe.AddIngredient(ItemID.BonePickaxe);
                 recipe.AddIngredient(ItemID.MoltenPickaxe);
             }
             

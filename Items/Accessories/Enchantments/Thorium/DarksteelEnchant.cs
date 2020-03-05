@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -23,7 +21,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             DisplayName.SetDefault("Darksteel Enchantment");
             Tooltip.SetDefault(
 @"'Light yet durable'
-50% damage reduction at Full HP
+10% damage reduction at Full HP
 Nothing will stop your movement 
 Double tap to dash
 Grants immunity to shambler chain-balls
@@ -31,7 +29,7 @@ Effects of Spiked Bracer");
             DisplayName.AddTranslation(GameCulture.Chinese, "暗金魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'轻巧而耐用'
-满血时增加50%伤害减免
+满血时增加10%伤害减免
 没有什么能阻止你的移动
 获得冲刺能力
 免疫蹒跚者的链球效果
@@ -46,7 +44,6 @@ Effects of Spiked Bracer");
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.rare = 3;
             item.value = 80000;
-            item.shieldSlot = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -54,7 +51,7 @@ Effects of Spiked Bracer");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //darksteel bonuses
             player.noKnockback = true;
             player.iceSkate = true;
@@ -62,7 +59,7 @@ Effects of Spiked Bracer");
             //steel effect
             if (player.statLife == player.statLifeMax2)
             {
-                player.endurance += .5f;
+                player.endurance += .1f;
             }
             //spiked bracers
             player.thorns += 0.35f;
@@ -74,7 +71,7 @@ Effects of Spiked Bracer");
         {
             "BallnChain",
             "eeDarksteelMace",
-            "eeSoulSiphon",
+            "gDarkSteelCrossBow",
             "ManHacker",
             "DarksteelHelmetStand",
             "GrayDPaintingItem",

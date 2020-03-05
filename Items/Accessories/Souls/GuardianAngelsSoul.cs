@@ -1,9 +1,7 @@
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using ThoriumMod;
-using Terraria.ID;
 using System.Collections.Generic;
 using Terraria.Localization;
 
@@ -76,7 +74,7 @@ Nearby allies that die drop a wisp of spirit energy");
         private void Thorium(Player player)
         {
             //general
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             thoriumPlayer.radiantBoost += 0.3f;
             thoriumPlayer.radiantSpeed -= 0.2f;
             thoriumPlayer.healingSpeed += 0.2f;
@@ -104,7 +102,7 @@ Nearby allies that die drop a wisp of spirit energy");
             //medical bag
             thoriumPlayer.medicalAcc = true;
             //head mirror arrow 
-            if (SoulConfig.Instance.GetValue("Head Mirror"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.HeadMirror))
             {
                 float num = 0f;
                 int num2 = player.whoAmI;

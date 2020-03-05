@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -23,6 +25,17 @@ While standing in lava, you gain 20 armor penetration, 15% attack speed, and you
 在岩浆中时,获得20点护甲穿透,15%攻击速度,攻击会点燃敌人");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(69, 62, 115);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -35,7 +48,7 @@ While standing in lava, you gain 20 armor penetration, 15% attack speed, and you
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).ObsidianEffect();
+            player.GetModPlayer<FargoPlayer>().ObsidianEffect();
         }
 
         public override void AddRecipes()

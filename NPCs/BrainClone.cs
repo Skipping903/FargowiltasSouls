@@ -72,6 +72,19 @@ namespace FargowiltasSouls.NPCs
             npc.lifeMax = brain.lifeMax;
             npc.knockBackResist = brain.knockBackResist;
 
+            if (npc.alpha == 0)
+            {
+                npc.damage = npc.defDamage;
+            }
+            else
+            {
+                npc.damage = 0;
+                if (npc.ai[0] != -2 && npc.HasPlayerTarget && npc.Distance(Main.player[npc.target].Center) < 300) //stay at a minimum distance
+                {
+                    npc.Center = Main.player[npc.target].Center + Main.player[npc.target].DirectionTo(npc.Center) * 300;
+                }
+            }
+
             Vector2 vector2 = new Vector2(npc.Center.X, npc.Center.Y);
             float num1 = Main.player[npc.target].Center.X - vector2.X;
             float num2 = Main.player[npc.target].Center.Y - vector2.Y;
@@ -165,10 +178,12 @@ namespace FargowiltasSouls.NPCs
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(300));
-            target.AddBuff(mod.BuffType("Infested"), Main.rand.Next(300));
-            target.AddBuff(mod.BuffType("Flipped"), Main.rand.Next(90));
-            target.AddBuff(BuffID.Rabies, Main.rand.Next(900, 1800));
+            target.AddBuff(BuffID.Poisoned, 120);
+            target.AddBuff(BuffID.Darkness, 120);
+            target.AddBuff(BuffID.Bleeding, 120);
+            target.AddBuff(BuffID.Slow, 120);
+            target.AddBuff(BuffID.Weak, 120);
+            target.AddBuff(BuffID.BrokenArmor, 120);
         }
 
         public override void HitEffect(int hitDirection, double damage)

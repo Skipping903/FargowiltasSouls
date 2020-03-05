@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -23,7 +21,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             DisplayName.SetDefault("Steel Enchantment");
             Tooltip.SetDefault(
 @"'Expertly forged by the Blacksmith'
-33% damage reduction at Full HP
+10% damage reduction at Full HP
 Effects of Spiked Bracers");
             DisplayName.AddTranslation(GameCulture.Chinese, "钢魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -40,18 +38,17 @@ Effects of Spiked Bracers");
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.rare = 1;
             item.value = 40000;
-            item.shieldSlot = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //steel effect
             if (player.statLife == player.statLifeMax2)
             {
-                player.endurance += .33f;
+                player.endurance += .1f;
             }
             
             //spiked bracers

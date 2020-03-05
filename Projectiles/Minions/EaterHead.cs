@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Minions
@@ -26,6 +27,10 @@ namespace FargowiltasSouls.Projectiles.Minions
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.netImportant = true;
+            ProjectileID.Sets.MinionTargettingFeature[base.projectile.type] = true;
+
+            projectile.usesIDStaticNPCImmunity = true;
+            projectile.idStaticNPCHitCooldown = 20;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -36,8 +41,8 @@ namespace FargowiltasSouls.Projectiles.Minions
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadFloat();
-            projectile.localAI[1] = reader.ReadFloat();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -59,7 +64,7 @@ namespace FargowiltasSouls.Projectiles.Minions
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if ((int) Main.time % 120 == 0) projectile.netUpdate = true;
             if (!player.active)
@@ -74,8 +79,8 @@ namespace FargowiltasSouls.Projectiles.Minions
             num1038 = 30;
 
             Vector2 center = player.Center;
-            float num1040 = 700f;
-            float num1041 = 1000f;
+            float num1040 = 300f;
+            float num1041 = 400f;
             int num1042 = -1;
             if (projectile.Distance(center) > 2000f)
             {
@@ -176,6 +181,8 @@ namespace FargowiltasSouls.Projectiles.Minions
                     projectile.alpha = 0;
                 }
             }
+
+            projectile.position -= projectile.velocity / 2;
         }
     }
 }

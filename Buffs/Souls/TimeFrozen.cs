@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using FargowiltasSouls.NPCs;
+﻿using FargowiltasSouls.NPCs;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -45,7 +44,7 @@ namespace FargowiltasSouls.Buffs.Souls
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.GetGlobalNPC<FargoSoulsGlobalNPC>(mod).TimeFrozen = true;
+            npc.GetGlobalNPC<FargoSoulsGlobalNPC>().TimeFrozen = true;
         }
     }
 }

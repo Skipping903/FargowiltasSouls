@@ -23,7 +23,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
             projectile.tileCollide = false;
             projectile.timeLeft = 300;
             projectile.alpha = 255;
-            if (Fargowiltas.Instance.MasomodeEX)
+            if (Fargowiltas.Instance.MasomodeEXLoaded)
                 projectile.extraUpdates = 1;
         }
 
@@ -114,12 +114,11 @@ namespace FargowiltasSouls.Projectiles.Masomode
             }
 
             //while fishron is first spawning, has made the noise, and every 6 ticks
-            //increase hp by 400% over the course of 1 second
             if (fishron.ai[0] < 4f && projectile.timeLeft <= 240 && projectile.timeLeft > 180 && projectile.timeLeft % 6 == 0)
             {
-                int heal = 24 * (int)(projectile.ai[0] * Main.rand.NextFloat(0.1f, 0.12f));
+                int heal = 9 * (int)(projectile.ai[0] * Main.rand.NextFloat(0.1f, 0.12f));
                 fishron.lifeMax += heal;
-                int max = (int)projectile.ai[0] * 25;
+                int max = (int)projectile.ai[0] * 10;
                 if (fishron.lifeMax > max)
                     fishron.lifeMax = max;
                 fishron.life = fishron.lifeMax;

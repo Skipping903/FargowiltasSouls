@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -24,6 +26,17 @@ Any secondary projectiles may also split");
 
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(221, 85, 125);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -36,7 +49,7 @@ Any secondary projectiles may also split");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).AdamantiteEnchant = true;
+            player.GetModPlayer<FargoPlayer>().AdamantiteEnchant = true;
         }
 
         public override void AddRecipes()

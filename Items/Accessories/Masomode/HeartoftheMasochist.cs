@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -20,7 +18,9 @@ Increases damage, critical strike chance, and damage reduction by 10%,
 Increases flight time by 100%
 You may periodically fire additional attacks depending on weapon type
 Your critical strikes inflict Rotting and Betsy's Curse
+Press the Fireball Dash key to perform a short invincible dash
 Grants effects of Wet debuff while riding Cute Fishron and gravity control
+You catch fish almost instantly
 Summons a friendly super Flocko, Mini Saucer, and true eyes of Cthulhu");
             DisplayName.AddTranslation(GameCulture.Chinese, "受虐者之心");
             Tooltip.AddTranslation(GameCulture.Chinese, @"'大多数情况下已经不用受苦了'
@@ -50,6 +50,7 @@ Summons a friendly super Flocko, Mini Saucer, and true eyes of Cthulhu");
             FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.AllDamageUp(.1f);
             fargoPlayer.AllCritUp(10);
+            fargoPlayer.MasochistHeart = true;
             player.endurance += 0.1f;
 
             //pumpking's cape
@@ -59,12 +60,12 @@ Summons a friendly super Flocko, Mini Saucer, and true eyes of Cthulhu");
 
             //ice queen's crown
             player.buffImmune[BuffID.Frozen] = true;
-            if (SoulConfig.Instance.GetValue("Flocko Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.FlockoMinion))
                 player.AddBuff(mod.BuffType("SuperFlocko"), 2);
 
             //saucer control console
             player.buffImmune[BuffID.Electrified] = true;
-            if (SoulConfig.Instance.GetValue("Saucer Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.UFOMinion))
                 player.AddBuff(mod.BuffType("SaucerMinion"), 2);
 
             //betsy's heart
@@ -88,9 +89,9 @@ Summons a friendly super Flocko, Mini Saucer, and true eyes of Cthulhu");
             //player.buffImmune[mod.BuffType("CurseoftheMoon")] = true;
             player.buffImmune[BuffID.VortexDebuff] = true;
             player.buffImmune[BuffID.ChaosState] = true;
-            if (SoulConfig.Instance.GetValue("Gravity Control"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.GravityControl))
                 player.gravControl = true;
-            if (SoulConfig.Instance.GetValue("True Eyes Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.TrueEyes))
                 player.AddBuff(mod.BuffType("TrueEyes"), 2);
             fargoPlayer.GravityGlobeEX = true;
             fargoPlayer.wingTimeModifier += 1f;

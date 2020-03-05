@@ -1,8 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using ThoriumMod;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using CalamityMod.CalPlayer;
@@ -26,11 +24,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
             Tooltip.SetDefault(
 @"'Your strength rivals that of the Jungle Tyrant...'
 All effects from Tarragon, Bloodflare, Godslayer and Silva armor
-Not moving boosts all damage and critical strike chance
-Attacks have a 2% chance to do no damage to you
-You will freeze enemies near you when you are struck
 All attacks spawn healing auric orbs
-You have a magic carpet
 Effects of Heart of the Elements and The Sponge");
             DisplayName.AddTranslation(GameCulture.Chinese, "古圣金源魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -60,7 +54,7 @@ Effects of Heart of the Elements and The Sponge");
             {
                 if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color?(new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB));
+                    tooltipLine.overrideColor = new Color(217, 142, 67);
                 }
             }
         }
@@ -69,58 +63,48 @@ Effects of Heart of the Elements and The Sponge");
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Auric Tesla Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AuricEffects))
             {
-                //legs
-                player.carpet = true;
-                //body
-                modPlayer.fBarrier = true;
-                modPlayer.godSlayerReflect = true;
-                //all heads
-                modPlayer.tarraSet = true;
-                modPlayer.bloodflareSet = true;
-                modPlayer.godSlayer = true;
-                modPlayer.silvaSet = true;
-                modPlayer.auricSet = true;
-                modPlayer.auricBoost = true;
-                player.lavaImmune = true;
-                player.ignoreWater = true;
-                //melee head
-                modPlayer.tarraMelee = true;
-                modPlayer.bloodflareMelee = true;
-                modPlayer.godSlayerDamage = true;
-                modPlayer.silvaMelee = true;
-                //range head
-                modPlayer.tarraRanged = true;
-                modPlayer.bloodflareRanged = true;
-                modPlayer.godSlayerRanged = true;
-                modPlayer.silvaRanged = true;
-                //magic head
-                modPlayer.tarraMage = true;
-                modPlayer.bloodflareMage = true;
-                modPlayer.godSlayerMage = true;
-                modPlayer.silvaMage = true;
-                //throw head
-                modPlayer.tarraThrowing = true;
-                modPlayer.bloodflareThrowing = true;
-                modPlayer.godSlayerThrowing = true;
-                modPlayer.silvaThrowing = true;
+                calamity.Call("SetSetBonus", player, "auric", true);
+
+                //tarragaon
+                calamity.Call("SetSetBonus", player, "tarragon", true);
+                calamity.Call("SetSetBonus", player, "tarragon_melee", true);
+                calamity.Call("SetSetBonus", player, "tarragon_ranged", true);
+                calamity.Call("SetSetBonus", player, "tarragon_magic", true);
+                calamity.Call("SetSetBonus", player, "tarragon_summon", true);
+                calamity.Call("SetSetBonus", player, "tarragon_rogue", true);
+                //bloodflare
+                calamity.Call("SetSetBonus", player, "bloodflare", true);
+                calamity.Call("SetSetBonus", player, "bloodflare_melee", true);
+                calamity.Call("SetSetBonus", player, "bloodflare_ranged", true);
+                calamity.Call("SetSetBonus", player, "bloodflare_magic", true);
+                calamity.Call("SetSetBonus", player, "bloodflare_rogue", true);
+                //godslayer
+                calamity.Call("SetSetBonus", player, "godslayer", true);
+                calamity.Call("SetSetBonus", player, "godslayer_melee", true);
+                calamity.Call("SetSetBonus", player, "godslayer_ranged", true);
+                calamity.Call("SetSetBonus", player, "godslayer_magic", true);
+                calamity.Call("SetSetBonus", player, "godslayer_rogue", true);
+                //silva
+                calamity.Call("SetSetBonus", player, "silva", true);
+                calamity.Call("SetSetBonus", player, "silva_melee", true);
+                calamity.Call("SetSetBonus", player, "silva_ranged", true);
+                calamity.Call("SetSetBonus", player, "silva_magic", true);
+                calamity.Call("SetSetBonus", player, "silva_rogue", true);
             }
 
             //summon head
-            modPlayer.tarraSummon = true;
-            if (SoulConfig.Instance.GetValue("Polterghast Mines"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PolterMines))
             {
-                modPlayer.bloodflareSummon = true;
+                calamity.Call("SetSetBonus", player, "bloodflare_summon", true);
             }
 
             if (player.whoAmI == Main.myPlayer)
             {
-                if (SoulConfig.Instance.GetValue("Silva Crystal Minion"))
+                if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.SilvaMinion))
                 {
-                    modPlayer.silvaSummon = true;
+                    calamity.Call("SetSetBonus", player, "silva_summon", true);
                     if (player.FindBuffIndex(calamity.BuffType("SilvaCrystal")) == -1)
                     {
                         player.AddBuff(calamity.BuffType("SilvaCrystal"), 3600, true);
@@ -131,9 +115,9 @@ Effects of Heart of the Elements and The Sponge");
                     }
                 }
 
-                if (SoulConfig.Instance.GetValue("Mechworm Minion"))
+                if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.MechwormMinion))
                 {
-                    modPlayer.godSlayerSummon = true;
+                    calamity.Call("SetSetBonus", player, "godslayer_summon", true);
                     if (player.FindBuffIndex(calamity.BuffType("Mechworm")) == -1)
                     {
                         player.AddBuff(calamity.BuffType("Mechworm"), 3600, true);
@@ -248,18 +232,13 @@ Effects of Heart of the Elements and The Sponge");
                 }      
             }
 
-            if (SoulConfig.Instance.GetValue("Elemental Waifus"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.WaifuMinions))
             {
                 calamity.GetItem("HeartoftheElements").UpdateAccessory(player, hideVisual);
             }
 
             //the sponge
-            modPlayer.beeResist = true;
-            modPlayer.aSpark = true;
-            modPlayer.gShell = true;
-            modPlayer.fCarapace = true;
-            modPlayer.absorber = true;
-            modPlayer.aAmpoule = true;
+            calamity.GetItem("Sponge").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()

@@ -1,9 +1,9 @@
-using CalamityMod;
-using CalamityMod.Items.CalamityCustomThrowingDamage;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Essences
 {
@@ -39,6 +39,17 @@ namespace FargowiltasSouls.Items.Accessories.Essences
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color?(new Color(85, 5, 230));
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -59,9 +70,9 @@ namespace FargowiltasSouls.Items.Accessories.Essences
 
         private void Calamity(Player player)
         {
-            player.GetCalamityPlayer().throwingDamage += 0.18f;
-            player.GetCalamityPlayer().throwingCrit += 5;
-            player.GetCalamityPlayer().throwingVelocity += 0.05f;
+            calamity.Call("AddRogueDamage", player, 0.18f);
+            calamity.Call("AddRogueCrit", player, 5);
+            calamity.Call("AddRogueVelocity", player, 0.05f);
         }
 
 
@@ -72,13 +83,13 @@ namespace FargowiltasSouls.Items.Accessories.Essences
             if (Fargowiltas.Instance.ThoriumLoaded)
             {
                 recipe.AddIngredient(thorium.ItemType("NinjaEmblem"));
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("WoodenYoyoThrown") : ItemID.WoodYoyo);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("WoodYoyoThrown") : ItemID.WoodYoyo);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("BloodyMacheteThrown") : ItemID.BloodyMachete);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("IceBoomerangThrown") : ItemID.IceBoomerang);
                 recipe.AddIngredient(ItemID.AleThrowingGlove);
                 recipe.AddIngredient(thorium.ItemType("EnchantedKnife"));
                 recipe.AddIngredient(thorium.ItemType("StarfishSlicer"), 300);
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("AmazonThrown") : ItemID.JungleYoyo);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("JungleYoyoThrown") : ItemID.JungleYoyo);
                 recipe.AddIngredient(ItemID.Beenade, 300);
                 recipe.AddIngredient(ItemID.BoneGlove);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("BlueMoonThrown") : ItemID.BlueMoon);
@@ -89,13 +100,13 @@ namespace FargowiltasSouls.Items.Accessories.Essences
             else
             {
                 //no others
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("WoodenYoyoThrown") : ItemID.WoodYoyo);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("WoodYoyoThrown") : ItemID.WoodYoyo);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("BloodyMacheteThrown") : ItemID.BloodyMachete);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("IceBoomerangThrown") : ItemID.IceBoomerang);
                 recipe.AddIngredient(ItemID.AleThrowingGlove);
                 recipe.AddIngredient(ItemID.PartyGirlGrenade, 300);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("TheMeatballThrown") : ItemID.TheMeatball);
-                recipe.AddIngredient(fargos != null ? fargos.ItemType("AmazonThrown") : ItemID.JungleYoyo);
+                recipe.AddIngredient(fargos != null ? fargos.ItemType("JungleYoyoThrown") : ItemID.JungleYoyo);
                 recipe.AddIngredient(ItemID.Beenade, 300);
                 recipe.AddIngredient(ItemID.BoneGlove);
                 recipe.AddIngredient(fargos != null ? fargos.ItemType("BlueMoonThrown") : ItemID.BlueMoon);

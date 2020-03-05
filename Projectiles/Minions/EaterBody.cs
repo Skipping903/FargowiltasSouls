@@ -28,6 +28,9 @@ namespace FargowiltasSouls.Projectiles.Minions
             projectile.netImportant = true;
             projectile.minionSlots = .25f;
             projectile.hide = true;
+
+            projectile.usesIDStaticNPCImmunity = true;
+            projectile.idStaticNPCHitCooldown = 20;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -38,8 +41,8 @@ namespace FargowiltasSouls.Projectiles.Minions
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadFloat();
-            projectile.localAI[1] = reader.ReadFloat();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -67,7 +70,7 @@ namespace FargowiltasSouls.Projectiles.Minions
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if ((int) Main.time % 120 == 0) projectile.netUpdate = true;
             if (!player.active)

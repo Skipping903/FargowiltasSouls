@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -24,8 +22,8 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
 @"'What killed the dinosaurs? The ice age!'
 Damage will duplicate itself for 33% of the damage and apply the Frozen debuff to hit enemies
 An icy aura surrounds you, which freezes nearby enemies after a short delay
-Effects of Frostburn Pouch, Ice Bound Strider Hide, and Blue Music Player
-Summons a pet Penguin and Owl");
+Effects of Frostburn Pouch and Ice Bound Strider Hide
+Summons a pet Owl");
             DisplayName.AddTranslation(GameCulture.Chinese, "冰法魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'是什么灭绝了恐龙? 冰河时代!'
@@ -49,19 +47,14 @@ Summons a pet Penguin and Owl");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //cryo set bonus, dmg duplicate
             modPlayer.CryoEnchant = true;
             //strider hide
             thoriumPlayer.frostBonusDamage = true;
-            //music player
-            thoriumPlayer.musicPlayer = true;
-            thoriumPlayer.MP3ManaRegen = 2;
             //pets
-            modPlayer.IcyEnchant = true;
-            modPlayer.AddPet("Penguin Pet", hideVisual, BuffID.BabyPenguin, ProjectileID.Penguin);
-            modPlayer.AddPet("Owl Pet", hideVisual, thorium.BuffType("SnowyOwlBuff"), thorium.ProjectileType("SnowyOwlPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.OwlPet, hideVisual, thorium.BuffType("SnowyOwlBuff"), thorium.ProjectileType("SnowyOwlPet"));
             //icy set bonus
             thoriumPlayer.icySet = true;
             if (player.ownedProjectileCounts[thorium.ProjectileType("IcyAura")] < 1)
@@ -83,9 +76,9 @@ Summons a pet Penguin and Owl");
             recipe.AddIngredient(thorium.ItemType("CryoMagusLeggings"));
             recipe.AddIngredient(null, "IcyEnchant");
             recipe.AddIngredient(thorium.ItemType("IceBoundStriderHide"));
-            recipe.AddIngredient(thorium.ItemType("TunePlayerManaRegen"));
             recipe.AddIngredient(thorium.ItemType("IceFairyStaff"));
             recipe.AddIngredient(ItemID.FrostStaff);
+            recipe.AddIngredient(ItemID.IceRod);
             recipe.AddIngredient(thorium.ItemType("Cryotherapy"));
             recipe.AddIngredient(thorium.ItemType("LostMail"));
 

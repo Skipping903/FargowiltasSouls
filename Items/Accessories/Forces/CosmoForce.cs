@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces
@@ -63,7 +62,7 @@ Summons a pet Companion Cube";
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //meme speed, solar flare, white dwarf flames, tide turner daggers, pyro bursts, assassin insta kill
             modPlayer.CosmoForce = true;
 
@@ -79,7 +78,7 @@ Summons a pet Companion Cube";
             modPlayer.NebulaEffect();
             //guardian and time freeze
             modPlayer.StardustEffect();
-            modPlayer.AddPet("Suspicious Eye Pet", hideVisual, BuffID.SuspiciousTentacle, ProjectileID.SuspiciousTentacle);
+            modPlayer.AddPet(SoulConfig.Instance.SuspiciousEyePet, hideVisual, BuffID.SuspiciousTentacle, ProjectileID.SuspiciousTentacle);
         }
 
         public override void AddRecipes()

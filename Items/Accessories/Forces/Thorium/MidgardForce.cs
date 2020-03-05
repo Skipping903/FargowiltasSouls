@@ -1,10 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
@@ -25,7 +22,7 @@ namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
             DisplayName.SetDefault("Force of Midgard");
             Tooltip.SetDefault(
 @"'Behold the power of Mankind...'
-All armor bonuses from Lodestone, Valadium, and Illumite
+All armor bonuses from Lodestone, Valadium, Illumite, and Shade Master
 All armor bonuses from Jester, Thorium, and Terrarium
 Effects of Astro-Beetle Husk and Eye of the Beholder
 Effects of Crietz and Terrarium Surround Sound
@@ -61,22 +58,25 @@ Summons a pet Pink Slime");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
 
             //lodestone
             mod.GetItem("LodestoneEnchant").UpdateAccessory(player, hideVisual);
 
-            if (SoulConfig.Instance.GetValue("Eye of the Beholder"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.BeholderEye))
             {
                 //eye of beholder
                 thorium.GetItem("EyeofBeholder").UpdateAccessory(player, hideVisual);
             }
 
             //illumite
-            modPlayer.AddPet("Pink Slime Pet", hideVisual, thorium.BuffType("PinkSlimeBuff"), thorium.ProjectileType("PinkSlime"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.SlimePet, hideVisual, thorium.BuffType("PinkSlimeBuff"), thorium.ProjectileType("PinkSlime"));
             modPlayer.IllumiteEnchant = true;
 
-            if (SoulConfig.Instance.GetValue("Terrarium Spirits"))
+            //shade
+            thoriumPlayer.shadeSet = true;
+
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.TerrariumSpirits))
             {
                 //terrarium set bonus
                 timer++;
@@ -96,7 +96,7 @@ Summons a pet Pink Slime");
             modPlayer.ThoriumEnchant = true;
             //jester
             modPlayer.JesterEnchant = true;
-            if (SoulConfig.Instance.GetValue("Crietz"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.Crietz))
             {
                 //crietz
                 thoriumPlayer.crietzAcc = true;
@@ -105,22 +105,18 @@ Summons a pet Pink Slime");
             if (modPlayer.ThoriumSoul) return;
 
             //valadium
-            player.gravControl = true;
-            if (player.gravDir == -1f)
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.GravityControl))
             {
-                modPlayer.AllDamageUp(.12f);
+                player.gravControl = true;
+                if (player.gravDir == -1f)
+                {
+                    modPlayer.AllDamageUp(.12f);
+                }
             }
 
             //terrarium woofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerTerrarium = true;
-                }
-            }
+            thoriumPlayer.accSubwooferTerrarium = true;
+
         }
 
         public override void AddRecipes()
@@ -132,6 +128,7 @@ Summons a pet Pink Slime");
             recipe.AddIngredient(null, "LodestoneEnchant");
             recipe.AddIngredient(null, "ValadiumEnchant");
             recipe.AddIngredient(null, "IllumiteEnchant");
+            recipe.AddIngredient(null, "ShadeMasterEnchant");
             recipe.AddIngredient(null, "TerrariumEnchant");
 
             recipe.AddTile(TileID.LunarCraftingStation);

@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -63,14 +62,14 @@ Summons a pet Maid");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //all allies invuln hot key
             thoriumPlayer.dreamHoodSet = true;
             //enemies slowed and take more dmg hot key
             thoriumPlayer.dreamSet = true;
             //maid pet
-            modPlayer.AddPet("Maid Pet", hideVisual, thorium.BuffType("MaidBuff"), thorium.ProjectileType("Maid1"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.MaidPet, hideVisual, thorium.BuffType("MaidBuff"), thorium.ProjectileType("Maid1"));
             modPlayer.DreamEnchant = true;
         }
         

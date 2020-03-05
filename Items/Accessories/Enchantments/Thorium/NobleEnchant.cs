@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -22,8 +20,8 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             DisplayName.SetDefault("Noble Enchantment");
             Tooltip.SetDefault(
 @"'Rich with culture'
-Your symphonic empowerments will last an additional 5 seconds
-Effects of Ring of Unity, Mix Tape and Devil's Subwoofer");
+Inspiration notes that drop are twice as potent and increase your symphonic damage briefly
+Effects of Ring of Unity and Mix Tape");
             DisplayName.AddTranslation(GameCulture.Chinese, "贵族魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'富有, 并且有教养'
@@ -46,12 +44,12 @@ Effects of Ring of Unity, Mix Tape and Devil's Subwoofer");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             
             //ring of unity
             thorium.GetItem("RingofUnity").UpdateAccessory(player, hideVisual);
 
-            if (SoulConfig.Instance.GetValue("Mix Tape"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.MixTape))
             {
                 //mix tape
                 modPlayer.MixTape = true;
@@ -60,17 +58,7 @@ Effects of Ring of Unity, Mix Tape and Devil's Subwoofer");
             if (modPlayer.ThoriumSoul) return;
 
             //noble set bonus
-            thoriumPlayer.bardBuffDuration += 300;
-            //molten woofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerFire = true;
-                }
-            }
+            thoriumPlayer.setNoble = true;
         }
         
         private readonly string[] items =
@@ -78,13 +66,13 @@ Effects of Ring of Unity, Mix Tape and Devil's Subwoofer");
             "NoblesHat",
             "NoblesJerkin",
             "NoblesLeggings",
-            "MixTape",
             "RingofUnity",
-            "MoltenSubwoofer",
-            "GoldenBugleHorn",
+            "BrassCap",
+            "WaxyRosin",
+            "JarOMayo",
             "Microphone",
             "Bongos",
-            "MusicSheet3"
+            "Nocturne"
         };
 
         public override void AddRecipes()

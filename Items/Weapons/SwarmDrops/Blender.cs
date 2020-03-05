@@ -12,9 +12,9 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("The Blender");
-			Tooltip.SetDefault("'The reward for slaughtering many..'");
+			Tooltip.SetDefault("'The reward for slaughtering many...'");
             DisplayName.AddTranslation(GameCulture.Chinese, "绞肉机");
-            Tooltip.AddTranslation(GameCulture.Chinese, "'屠戮众多的奖励..'");
+            Tooltip.AddTranslation(GameCulture.Chinese, "'屠戮众多的奖励...'");
 			
 			ItemID.Sets.Yoyo[item.type] = true;
 		}
@@ -34,14 +34,14 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 			item.useTime = 25;
 			item.shootSpeed = 16f;
 			item.knockBack = 2.5f;
-			item.damage = 165;
+			item.damage = 260;
             item.value = Item.sellPrice(0, 25);
             item.rare = 11;
 		}
 
 		public override void AddRecipes()
 		{
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(null, "Dicer");

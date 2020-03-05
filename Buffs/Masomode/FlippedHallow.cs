@@ -12,7 +12,7 @@ namespace FargowiltasSouls.Buffs.Masomode
             Description.SetDefault("Your gravity is reversed");
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
-            canBeCleared = false;
+            canBeCleared = true;
             Main.debuff[Type] = true;
             DisplayName.AddTranslation(GameCulture.Chinese, "翻转");
             Description.AddTranslation(GameCulture.Chinese, "你的重力颠倒了");
@@ -20,11 +20,7 @@ namespace FargowiltasSouls.Buffs.Masomode
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.gravControl = true;
-            player.controlUp = false;
-            player.gravDir = -1f;
-            //player.fallStart = (int)(player.position.Y / 16f);
-            //player.jump = 0;
+            player.GetModPlayer<FargoPlayer>().Flipped = true;
         }
     }
 }

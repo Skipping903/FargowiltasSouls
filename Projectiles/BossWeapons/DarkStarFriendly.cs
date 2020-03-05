@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,7 +26,8 @@ namespace FargowiltasSouls.Projectiles.Masomode
             projectile.ignoreWater = true;
             projectile.timeLeft = 900;
             projectile.friendly = true;
-            cooldownSlot = 1;
+            projectile.ranged = true;
+            projectile.penetrate = 2;
         }
 
         public override void AI()
@@ -37,6 +37,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            projectile.timeLeft = 0;
             if (projectile.ai[0] == 0)
             {
                 for (int i = 0; i < 2; i++)
@@ -46,7 +47,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
                     pos.Y += Main.rand.Next(-150, 150);
                     Vector2 velocity = Vector2.Normalize(target.Center - pos) * 15;
 
-                    int p = Projectile.NewProjectile(pos, velocity, mod.ProjectileType("DarkStarFriendly"), projectile.damage / 2, projectile.knockBack, projectile.owner);
+                    int p = Projectile.NewProjectile(pos, velocity, mod.ProjectileType("DarkStarFriendly"), projectile.damage, projectile.knockBack, projectile.owner);
 
                     
                     Main.projectile[p].ai[0] = 1;

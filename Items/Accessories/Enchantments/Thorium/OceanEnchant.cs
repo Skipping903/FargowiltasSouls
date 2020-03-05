@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -46,7 +45,7 @@ Effects of Sea Breeze Pendant and Bubble Magnet");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //set bonus, breath underwater
             if (player.breath <= player.breathMax + 2)
             {
@@ -73,6 +72,7 @@ Effects of Sea Breeze Pendant and Bubble Magnet");
             "SeaBreezePendant",
             "BubbleMagnet",
             "OceanSlasher",
+            "OceanPolearm",
             "StarfishWand"
         };
 
@@ -84,7 +84,6 @@ Effects of Sea Breeze Pendant and Bubble Magnet");
             
             foreach (string i in items) recipe.AddIngredient(thorium.ItemType(i));
 
-            recipe.AddIngredient(ItemID.BreathingReed);
             recipe.AddIngredient(ItemID.Swordfish);
             recipe.AddIngredient(ItemID.Tuna);
 

@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
@@ -47,8 +46,8 @@ Effects of Astro-Beetle Husk");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
-            if (SoulConfig.Instance.GetValue("Lodestone Resistance"))
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.LodestoneResist))
             {
                 //set bonus
                 thoriumPlayer.orbital = true;

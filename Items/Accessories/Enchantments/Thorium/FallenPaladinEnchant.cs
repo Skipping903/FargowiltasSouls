@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -46,7 +45,7 @@ Effects of Wynebgwrthucher and Rebirth Statuette");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded || player.GetModPlayer<FargoPlayer>().ThoriumSoul) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //paladin set bonus
             thoriumPlayer.fallenPaladinSet = true;
             //wyne

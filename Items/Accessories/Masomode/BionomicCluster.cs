@@ -1,6 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -9,20 +7,19 @@ namespace FargowiltasSouls.Items.Accessories.Masomode
 {
     public class BionomicCluster : ModItem
     {
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bionomic Cluster");
             Tooltip.SetDefault(@"'The amalgamate born of a thousand common enemies'
 Grants immunity to Frostburn, Shadowflame, Squeaky Toy, Guilty, Mighty Wind, and Suffocation
 Grants immunity to Flames of the Universe, Clipped Wings, Crippled, Webbed, and Purified
-Grants immunity to Lovestruck, Stinky, Midas, and enemies that steal items
+Grants immunity to Lovestruck, Stinky, Midas, Hexed, cactus damage, and enemies that steal items
 Your attacks can inflict Clipped Wings, spawn Frostfireballs, and produce hearts
 You have autofire, improved night vision, and faster respawn when no boss is alive
 Automatically use mana potions when needed and gives modifier protection
 Attacks have a chance to squeak and deal 1 damage to you
 You erupt into Shadowflame tentacles when injured
+Certain enemies will drop potions when defeated
 Summons a friendly rainbow slime");
             DisplayName.AddTranslation(GameCulture.Chinese, "生态集群");
             Tooltip.AddTranslation(GameCulture.Chinese, @"'由上千普通敌人融合而成'
@@ -48,24 +45,34 @@ Summons a friendly rainbow slime");
             item.defense = 6;
         }
 
+        public override void UpdateInventory(Player player)
+        {
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
+            player.buffImmune[BuffID.WindPushed] = true;
+            fargoPlayer.SandsofTime = true;
+            player.buffImmune[BuffID.Suffocation] = true;
+            player.manaFlower = true;
+            fargoPlayer.SecurityWallet = true;
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
 
             //concentrated rainbow matter
             player.buffImmune[mod.BuffType("FlamesoftheUniverse")] = true;
-            if (SoulConfig.Instance.GetValue("Rainbow Slime Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.RainbowSlime))
                 player.AddBuff(mod.BuffType("RainbowSlime"), 2);
 
             //dragon fang
             player.buffImmune[mod.BuffType("ClippedWings")] = true;
             player.buffImmune[mod.BuffType("Crippled")] = true;
-            if (SoulConfig.Instance.GetValue("Inflict Clipped Wings"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.DragonFang))
                 fargoPlayer.DragonFang = true;
 
             //frigid gemstone
             player.buffImmune[BuffID.Frostburn] = true;
-            if (SoulConfig.Instance.GetValue("Frostfireballs"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.FrigidGemstone))
             {
                 fargoPlayer.FrigidGemstone = true;
                 if (fargoPlayer.FrigidGemstoneCD > 0)
@@ -105,13 +112,18 @@ Summons a friendly rainbow slime");
             //nymph's perfume
             player.buffImmune[BuffID.Lovestruck] = true;
             player.buffImmune[mod.BuffType("Lovestruck")] = true;
+            player.buffImmune[mod.BuffType("Hexed")] = true;
             player.buffImmune[BuffID.Stinky] = true;
-            if (SoulConfig.Instance.GetValue("Attacks Spawn Hearts"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.NymphPerfume))
             {
                 fargoPlayer.NymphsPerfume = true;
                 if (fargoPlayer.NymphsPerfumeCD > 0)
                     fargoPlayer.NymphsPerfumeCD--;
             }
+
+            //tim's concoction
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.TimsConcoction))
+                player.GetModPlayer<FargoPlayer>().TimsConcoction = true;
         }
 
         public override void AddRecipes()
@@ -129,6 +141,7 @@ Summons a friendly rainbow slime");
             recipe.AddIngredient(mod.ItemType("OrdinaryCarrot"));
             recipe.AddIngredient(mod.ItemType("WretchedPouch"));
             recipe.AddIngredient(mod.ItemType("NymphsPerfume"));
+            recipe.AddIngredient(mod.ItemType("TimsConcoction"));
             recipe.AddIngredient(ItemID.SoulofLight, 20);
             recipe.AddIngredient(ItemID.SoulofNight, 20);
 

@@ -1,8 +1,4 @@
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -14,8 +10,7 @@ namespace FargowiltasSouls.Items.Misc
 
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Mutant Scale");
-            DisplayName.AddTranslation(GameCulture.Chinese, "突变鳞片");
+			DisplayName.SetDefault("Abominable Scale");
         }
 
 		public override void SetDefaults()

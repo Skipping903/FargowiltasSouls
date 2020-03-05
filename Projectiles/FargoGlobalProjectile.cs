@@ -35,6 +35,10 @@ namespace FargowiltasSouls.Projectiles
         private bool tungstenProjectile = false;
         private bool tikiMinion = false;
         private int tikiTimer = 300;
+        public bool rainbowTrail = false;
+        private int rainbowCounter = 0;
+        public bool Rainbow = false;
+        public int GrazeCD;
 
         public bool Rotate = false;
         public int RotateDist = 32;
@@ -44,8 +48,9 @@ namespace FargowiltasSouls.Projectiles
         private bool squeakyToy = false;
         public int TimeFrozen = 0;
         public bool TimeFreezeImmune;
+        public bool TimeFreezeCheck;
 
-        public bool Rainbow = false;
+        
 
         public bool masobool;
 
@@ -57,6 +62,10 @@ namespace FargowiltasSouls.Projectiles
             {
                 switch (projectile.type)
                 {
+                    case ProjectileID.StardustCellMinionShot:
+                        projectile.minion = true; //allows it to hurt maso ML
+                        break;
+
                     case ProjectileID.StardustGuardian:
                     case ProjectileID.StardustGuardianExplosion:
                         TimeFreezeImmune = true;
@@ -66,13 +75,18 @@ namespace FargowiltasSouls.Projectiles
                         projectile.tileCollide = false;
                         break;
 
-                    case ProjectileID.FallingStar:
-                        projectile.hostile = true;
-                        break;
-
                     case ProjectileID.CultistBossFireBallClone:
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.cultBoss, NPCID.CultistBoss))
                             projectile.timeLeft = 1;
+                        break;
+
+                    case ProjectileID.CursedFlameHostile:
+                        if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.wallBoss, NPCID.WallofFlesh))
+                        {
+                            projectile.tileCollide = false;
+                            projectile.timeLeft = 120;
+                            projectile.extraUpdates = 1;
+                        }
                         break;
 
                     case ProjectileID.SharknadoBolt:
@@ -147,8 +161,6 @@ namespace FargowiltasSouls.Projectiles
             {
                 if (firstTick)
                 {
-                    firstTick = false;
-
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         NPC npc = Main.npc[i];
@@ -174,7 +186,7 @@ namespace FargowiltasSouls.Projectiles
                         player.ClearBuff(mod.BuffType("FirstStrike"));
                     }
 
-                    if (!townNPCProj && modPlayer.TungstenEnchant && projectile.friendly && SoulConfig.Instance.GetValue("Tungsten Effect"))
+                    if (modPlayer.TungstenEnchant && !townNPCProj && projectile.damage != 0 && !projectile.trap && projectile.aiStyle != 99 && projectile.type != ProjectileID.Arkhalis && projectile.friendly && SoulConfig.Instance.GetValue(SoulConfig.Instance.TungstenSize, false))
                     {
                         projectile.position = projectile.Center;
                         projectile.scale *= 2f;
@@ -209,7 +221,7 @@ namespace FargowiltasSouls.Projectiles
 
                     if (!townNPCProj && (modPlayer.AdamantiteEnchant || modPlayer.TerrariaSoul) && CanSplit && projectile.friendly && !projectile.hostile
                         && !Rotate && projectile.damage > 0 && !projectile.minion && projectile.aiStyle != 19 && projectile.aiStyle != 99
-                        && SoulConfig.Instance.GetValue("Adamantite Projectile Splitting") && Array.IndexOf(noSplit, projectile.type) <= -1)
+                        && SoulConfig.Instance.GetValue(SoulConfig.Instance.AdamantiteSplit) && Array.IndexOf(noSplit, projectile.type) <= -1)
                     {
                         if (adamantiteCD != 0)
                         {
@@ -240,7 +252,7 @@ namespace FargowiltasSouls.Projectiles
                         projectile.timeLeft = 600;
                     }
 
-                    if (modPlayer.BeeEnchant && (projectile.type == ProjectileID.GiantBee || projectile.type == ProjectileID.Bee) && Main.rand.Next(2) == 0)
+                    if (modPlayer.BeeEnchant && (projectile.type == ProjectileID.GiantBee || projectile.type == ProjectileID.Bee || projectile.type == ProjectileID.Wasp) && Main.rand.Next(2) == 0)
                     {
                         projectile.usesLocalNPCImmunity = true;
                         projectile.localNPCHitCooldown = 5;
@@ -251,7 +263,7 @@ namespace FargowiltasSouls.Projectiles
                     }
                 }
 
-                if (tungstenProjectile && (!modPlayer.TungstenEnchant || !SoulConfig.Instance.GetValue("Tungsten Effect")))
+                if (tungstenProjectile && (!modPlayer.TungstenEnchant || !SoulConfig.Instance.GetValue(SoulConfig.Instance.TungstenSize, false)))
                 {
                     projectile.position = projectile.Center;
                     projectile.scale /= 2f;
@@ -302,6 +314,29 @@ namespace FargowiltasSouls.Projectiles
                 if (modPlayer.StardustEnchant && projectile.type == ProjectileID.StardustGuardian)
                 {
                     projectile.localAI[0] = 0f;
+                }
+
+                if (rainbowTrail)
+                {
+                    rainbowCounter++;
+
+                    if (rainbowCounter >= 5)
+                    {
+                        //rainbowCounter = 0;
+                        if (player.whoAmI == Main.myPlayer)
+                        {
+                            int direction = projectile.velocity.X > 0 ? 1 : -1;
+                            int p = Projectile.NewProjectile(projectile.Center, projectile.velocity, ProjectileID.RainbowBack, 30, 0, Main.myPlayer);
+                            Projectile proj = Main.projectile[p];
+                            proj.GetGlobalProjectile<FargoGlobalProjectile>().Rainbow = true;
+                            proj.GetGlobalProjectile<FargoGlobalProjectile>().CanSplit = false;
+
+                            p = Projectile.NewProjectile(projectile.Center + (projectile.velocity / 2), projectile.velocity, ProjectileID.RainbowBack, 30, 0, Main.myPlayer);
+                            proj = Main.projectile[p];
+                            proj.GetGlobalProjectile<FargoGlobalProjectile>().Rainbow = true;
+                            proj.GetGlobalProjectile<FargoGlobalProjectile>().CanSplit = false;
+                        }
+                    }
                 }
 
 
@@ -359,7 +394,7 @@ namespace FargowiltasSouls.Projectiles
                         projectile.Kill();
                     }
 
-                    if (modPlayer.SpookyEnchant && SoulConfig.Instance.GetValue("Spooky Scythes") && projectile.owner == Main.myPlayer
+                    if (modPlayer.SpookyEnchant && SoulConfig.Instance.GetValue(SoulConfig.Instance.SpookyScythes) && projectile.owner == Main.myPlayer
                         && projectile.minion && projectile.minionSlots > 0
                         && counter % 60 == 0 && Main.rand.Next(8 + Main.player[projectile.owner].maxMinions) == 0)
                     {
@@ -377,7 +412,7 @@ namespace FargowiltasSouls.Projectiles
 
                 //hook AI
                 if (modPlayer.MahoganyEnchant && projectile.aiStyle == 7 && (player.ZoneJungle || modPlayer.WoodForce) && counter >= 60
-                    && SoulConfig.Instance.GetValue("Mahogany Hook Speed"))
+                    && SoulConfig.Instance.GetValue(SoulConfig.Instance.MahoganyHook))
                 {
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
@@ -420,15 +455,10 @@ namespace FargowiltasSouls.Projectiles
                     projectile.ai[1] -= projectile.ai[0];
                 }
 
-                if (modPlayer.OriEnchant && (projectile.type == ProjectileID.BallofFire || projectile.type == ProjectileID.CursedFlameFriendly || projectile.type == ProjectileID.BallofFrost) && SoulConfig.Instance.GetValue("Orichalcum Fireballs"))
-                {
-                    projectile.timeLeft = 2;
-                }
-
                 retVal = false;
             }
 
-            if (TimeFrozen > 0)
+            if (TimeFrozen > 0 && !firstTick && !TimeFreezeImmune)
             {
                 projectile.position = projectile.oldPosition;
                 projectile.frameCounter--;
@@ -448,22 +478,28 @@ namespace FargowiltasSouls.Projectiles
                 if (counter >= 5)
                     projectile.velocity = Vector2.Zero;
 
-                int deathTimer = 30;
+                int deathTimer = 15;
 
                 if (projectile.hostile)
                     deathTimer = 60;
-                else if(p.ZoneHoly || p.GetModPlayer<FargoPlayer>().WoodForce)
-                    deathTimer = 90;
 
                 if (counter >= deathTimer)
                     projectile.Kill();
             }
+
+            if (firstTick)
+                firstTick = false;
 
             return retVal;
         }
 
         public static void SplitProj(Projectile projectile, int number)
         {
+            if (Fargowiltas.Instance.FargowiltasLoaded && projectile.type == ModLoader.GetMod("Fargowiltas").ProjectileType("SpawnProj"))
+            {
+                return;
+            }
+
             //if its odd, we just keep the original 
             if (number % 2 != 0)
             {
@@ -485,16 +521,16 @@ namespace FargowiltasSouls.Projectiles
                     {
                         split.friendly = true;
                         split.GetGlobalProjectile<FargoGlobalProjectile>().numSplits = projectile.GetGlobalProjectile<FargoGlobalProjectile>().numSplits;
-                        split.GetGlobalProjectile<FargoGlobalProjectile>().firstTick = projectile.GetGlobalProjectile<FargoGlobalProjectile>().firstTick;
+                        split.GetGlobalProjectile<FargoGlobalProjectile>().firstTick = false;
                         split.GetGlobalProjectile<FargoGlobalProjectile>().tungstenProjectile = projectile.GetGlobalProjectile<FargoGlobalProjectile>().tungstenProjectile;
                     }
                 }
             }
         }
 
-        private void KillPet(Projectile projectile, Player player, int buff, bool enchant, string toggle, bool minion = false)
+        private void KillPet(Projectile projectile, Player player, int buff, bool enchant, bool toggle, bool minion = false)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if (player.FindBuffIndex(buff) == -1)
             {
@@ -506,138 +542,138 @@ namespace FargowiltasSouls.Projectiles
         public override void AI(Projectile projectile)
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             switch (projectile.type)
             {
                 #region pets
 
                 case ProjectileID.BabyHornet:
-                    KillPet(projectile, player, BuffID.BabyHornet, modPlayer.BeeEnchant, "Hornet Pet");
+                    KillPet(projectile, player, BuffID.BabyHornet, modPlayer.BeeEnchant, SoulConfig.Instance.HornetPet);
                     break;
 
                 case ProjectileID.Sapling:
-                    KillPet(projectile, player, BuffID.PetSapling, modPlayer.ChloroEnchant, "Seedling Pet");
+                    KillPet(projectile, player, BuffID.PetSapling, modPlayer.ChloroEnchant, SoulConfig.Instance.SeedlingPet);
                     break;
 
                 case ProjectileID.BabyFaceMonster:
-                    KillPet(projectile, player, BuffID.BabyFaceMonster, modPlayer.CrimsonEnchant, "Face Monster Pet");
+                    KillPet(projectile, player, BuffID.BabyFaceMonster, modPlayer.CrimsonEnchant, SoulConfig.Instance.FaceMonsterPet);
                     break;
 
                 case ProjectileID.CrimsonHeart:
-                    KillPet(projectile, player, BuffID.CrimsonHeart, modPlayer.CrimsonEnchant, "Crimson Heart Pet");
+                    KillPet(projectile, player, BuffID.CrimsonHeart, modPlayer.CrimsonEnchant, SoulConfig.Instance.CrimsonHeartPet);
                     break;
 
                 case ProjectileID.MagicLantern:
-                    KillPet(projectile, player, BuffID.MagicLantern, modPlayer.MinerEnchant, "Magic Lantern Pet");
+                    KillPet(projectile, player, BuffID.MagicLantern, modPlayer.MinerEnchant, SoulConfig.Instance.MagicLanternPet);
                     break;
 
                 case ProjectileID.MiniMinotaur:
-                    KillPet(projectile, player, BuffID.MiniMinotaur, modPlayer.GladEnchant, "Mini Minotaur Pet");
+                    KillPet(projectile, player, BuffID.MiniMinotaur, modPlayer.GladEnchant, SoulConfig.Instance.MinotaurPet);
                     break;
 
                 case ProjectileID.BlackCat:
-                    KillPet(projectile, player, BuffID.BlackCat, modPlayer.NinjaEnchant, "Black Cat Pet");
+                    KillPet(projectile, player, BuffID.BlackCat, modPlayer.NinjaEnchant, SoulConfig.Instance.BlackCatPet);
                     break;
 
                 case ProjectileID.Wisp:
-                    KillPet(projectile, player, BuffID.Wisp, modPlayer.SpectreEnchant, "Wisp Pet");
+                    KillPet(projectile, player, BuffID.Wisp, modPlayer.SpectreEnchant, SoulConfig.Instance.WispPet);
                     break;
 
                 case ProjectileID.CursedSapling:
-                    KillPet(projectile, player, BuffID.CursedSapling, modPlayer.SpookyEnchant, "Cursed Sapling Pet");
+                    KillPet(projectile, player, BuffID.CursedSapling, modPlayer.SpookyEnchant, SoulConfig.Instance.CursedSaplingPet);
                     break;
 
                 case ProjectileID.EyeSpring:
-                    KillPet(projectile, player, BuffID.EyeballSpring, modPlayer.SpookyEnchant, "Eye Spring Pet");
+                    KillPet(projectile, player, BuffID.EyeballSpring, modPlayer.SpookyEnchant, SoulConfig.Instance.EyeSpringPet);
                     break;
 
                 case ProjectileID.Turtle:
-                    KillPet(projectile, player, BuffID.PetTurtle, modPlayer.TurtleEnchant, "Turtle Pet");
+                    KillPet(projectile, player, BuffID.PetTurtle, modPlayer.TurtleEnchant, SoulConfig.Instance.TurtlePet);
                     break;
 
                 case ProjectileID.PetLizard:
-                    KillPet(projectile, player, BuffID.PetLizard, modPlayer.TurtleEnchant, "Lizard Pet");
+                    KillPet(projectile, player, BuffID.PetLizard, modPlayer.TurtleEnchant, SoulConfig.Instance.LizardPet);
                     break;
 
                 case ProjectileID.Truffle:
-                    KillPet(projectile, player, BuffID.BabyTruffle, modPlayer.ShroomEnchant, "Truffle Pet");
+                    KillPet(projectile, player, BuffID.BabyTruffle, modPlayer.ShroomEnchant, SoulConfig.Instance.TrufflePet);
                     break;
 
                 case ProjectileID.Spider:
-                    KillPet(projectile, player, BuffID.PetSpider, modPlayer.SpiderEnchant, "Spider Pet");
+                    KillPet(projectile, player, BuffID.PetSpider, modPlayer.SpiderEnchant, SoulConfig.Instance.SpiderPet);
                     break;
 
                 case ProjectileID.Squashling:
-                    KillPet(projectile, player, BuffID.Squashling, modPlayer.PumpkinEnchant, "Squashling Pet");
+                    KillPet(projectile, player, BuffID.Squashling, modPlayer.PumpkinEnchant, SoulConfig.Instance.SquashlingPet);
                     break;
 
                 case ProjectileID.BlueFairy:
-                    KillPet(projectile, player, BuffID.FairyBlue, modPlayer.HallowEnchant, "Fairy Pet");
+                    KillPet(projectile, player, BuffID.FairyBlue, modPlayer.HallowEnchant, SoulConfig.Instance.FairyPet);
                     break;
 
                 case ProjectileID.StardustGuardian:
-                    KillPet(projectile, player, BuffID.StardustGuardianMinion, modPlayer.StardustEnchant, "Stardust Guardian", true);
+                    KillPet(projectile, player, BuffID.StardustGuardianMinion, modPlayer.StardustEnchant, SoulConfig.Instance.StardustGuardian, true);
                     break;
 
                 case ProjectileID.TikiSpirit:
-                    KillPet(projectile, player, BuffID.TikiSpirit, modPlayer.TikiEnchant, "Tiki Pet");
+                    KillPet(projectile, player, BuffID.TikiSpirit, modPlayer.TikiEnchant, SoulConfig.Instance.TikiPet);
                     break;
 
                 case ProjectileID.Penguin:
-                    KillPet(projectile, player, BuffID.BabyPenguin, modPlayer.FrostEnchant || modPlayer.IcyEnchant, "Penguin Pet");
+                    KillPet(projectile, player, BuffID.BabyPenguin, modPlayer.FrostEnchant, SoulConfig.Instance.PenguinPet);
                     break;
 
                 case ProjectileID.BabySnowman:
-                    KillPet(projectile, player, BuffID.BabySnowman, modPlayer.FrostEnchant, "Snowman Pet");
+                    KillPet(projectile, player, BuffID.BabySnowman, modPlayer.FrostEnchant, SoulConfig.Instance.SnowmanPet);
                     break;
 
                 case ProjectileID.DD2PetGato:
-                    KillPet(projectile, player, BuffID.PetDD2Gato, modPlayer.ShinobiEnchant, "Gato Pet");
+                    KillPet(projectile, player, BuffID.PetDD2Gato, modPlayer.ShinobiEnchant, SoulConfig.Instance.GatoPet);
                     break;
 
                 case ProjectileID.Parrot:
-                    KillPet(projectile, player, BuffID.PetParrot, modPlayer.GoldEnchant, "Parrot Pet");
+                    KillPet(projectile, player, BuffID.PetParrot, modPlayer.GoldEnchant, SoulConfig.Instance.ParrotPet);
                     break;
 
                 case ProjectileID.Puppy:
-                    KillPet(projectile, player, BuffID.Puppy, modPlayer.RedEnchant, "Puppy Pet");
+                    KillPet(projectile, player, BuffID.Puppy, modPlayer.RedEnchant, SoulConfig.Instance.PuppyPet);
                     break;
 
                 case ProjectileID.CompanionCube:
-                    KillPet(projectile, player, BuffID.CompanionCube, modPlayer.VortexEnchant, "Companion Cube Pet");
+                    KillPet(projectile, player, BuffID.CompanionCube, modPlayer.VortexEnchant, SoulConfig.Instance.CompanionCubePet);
                     break;
 
                 case ProjectileID.DD2PetDragon:
-                    KillPet(projectile, player, BuffID.PetDD2Dragon, modPlayer.ValhallaEnchant, "Dragon Pet");
+                    KillPet(projectile, player, BuffID.PetDD2Dragon, modPlayer.ValhallaEnchant, SoulConfig.Instance.DragonPet);
                     break;
 
                 case ProjectileID.BabySkeletronHead:
-                    KillPet(projectile, player, BuffID.BabySkeletronHead, modPlayer.NecroEnchant, "Skeletron Pet");
+                    KillPet(projectile, player, BuffID.BabySkeletronHead, modPlayer.NecroEnchant, SoulConfig.Instance.DGPet);
                     break;
 
                 case ProjectileID.BabyDino:
-                    KillPet(projectile, player, BuffID.BabyDinosaur, modPlayer.FossilEnchant, "Dino Pet");
+                    KillPet(projectile, player, BuffID.BabyDinosaur, modPlayer.FossilEnchant, SoulConfig.Instance.DinoPet);
                     break;
 
                 case ProjectileID.BabyEater:
-                    KillPet(projectile, player, BuffID.BabyEater, modPlayer.ShadowEnchant, "Eater Pet");
+                    KillPet(projectile, player, BuffID.BabyEater, modPlayer.ShadowEnchant, SoulConfig.Instance.EaterPet);
                     break;
 
                 case ProjectileID.ShadowOrb:
-                    KillPet(projectile, player, BuffID.ShadowOrb, modPlayer.ShadowEnchant, "Shadow Orb Pet");
+                    KillPet(projectile, player, BuffID.ShadowOrb, modPlayer.ShadowEnchant, SoulConfig.Instance.ShadowOrbPet);
                     break;
 
                 case ProjectileID.SuspiciousTentacle:
-                    KillPet(projectile, player, BuffID.SuspiciousTentacle, modPlayer.CosmoForce, "Suspicious Eye Pet");
+                    KillPet(projectile, player, BuffID.SuspiciousTentacle, modPlayer.CosmoForce, SoulConfig.Instance.SuspiciousEyePet);
                     break;
 
                 case ProjectileID.DD2PetGhost:
-                    KillPet(projectile, player, BuffID.PetDD2Ghost, modPlayer.DarkEnchant, "Flickerwick Pet");
+                    KillPet(projectile, player, BuffID.PetDD2Ghost, modPlayer.DarkEnchant, SoulConfig.Instance.FlickerwickPet);
                     break;
 
                 case ProjectileID.ZephyrFish:
-                    KillPet(projectile, player, BuffID.ZephyrFish, modPlayer.FishSoul2, "Zephyr Fish Pet");
+                    KillPet(projectile, player, BuffID.ZephyrFish, modPlayer.FishSoul2, SoulConfig.Instance.ZephyrFishPet);
                     break;
 
                 /*case ProjectileID.BabyGrinch:
@@ -707,9 +743,10 @@ namespace FargowiltasSouls.Projectiles
                         if (projectile.ai[0] > 120f && projectile.ai[0] < 299f) //instant ritual
                         {
                             projectile.ai[0] = 299f;
-                            float ai0 = Main.rand.Next(4);
                             if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.cultBoss, NPCID.CultistBoss))
                             {
+                                float ai0 = Main.rand.Next(4);
+
                                 NPC cultist = Main.npc[FargoSoulsGlobalNPC.cultBoss];
                                 FargoSoulsGlobalNPC fargoCultist = cultist.GetGlobalNPC<FargoSoulsGlobalNPC>();
                                 int[] weight = new int[4];
@@ -727,10 +764,11 @@ namespace FargowiltasSouls.Projectiles
                                         max = i;
                                 if (weight[max] > 0)
                                     ai0 = max;
+
+                                if ((cultist.life < cultist.lifeMax / 2 || Fargowiltas.Instance.MasomodeEXLoaded) && Main.netMode != 1)
+                                    Projectile.NewProjectile(projectile.Center, Vector2.UnitY * -10f, mod.ProjectileType("CelestialPillar"),
+                                        (int)(75 * (1 + FargoSoulsWorld.CultistCount * .0125)), 0f, Main.myPlayer, ai0);
                             }
-                            if (Main.netMode != 1)
-                                Projectile.NewProjectile(projectile.Center, Vector2.UnitY * -10f, mod.ProjectileType("CelestialPillar"),
-                                    (int)(75 * (1 + FargoSoulsWorld.CultistCount * .0125)), 0f, Main.myPlayer, ai0);
                         }
                     }
                     break;
@@ -760,13 +798,13 @@ namespace FargowiltasSouls.Projectiles
                     break;
 
                 case ProjectileID.GoldenShowerHostile:
-                    if (FargoSoulsWorld.MasochistMode && Main.netMode != 1 && Main.rand.Next(6) == 0
+                    /*if (FargoSoulsWorld.MasochistMode && Main.netMode != 1 && Main.rand.Next(6) == 0
                         && !(projectile.position.Y / 16 > Main.maxTilesY - 200 && FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.wallBoss, NPCID.WallofFlesh)))
                     {
                         int p = Projectile.NewProjectile(projectile.Center, projectile.velocity, ProjectileID.CrimsonSpray, 0, 0f, Main.myPlayer, 8f);
                         if (p != 1000)
                             Main.projectile[p].timeLeft = 6;
-                    }
+                    }*/
                     break;
 
                 case ProjectileID.RuneBlast:
@@ -919,13 +957,14 @@ namespace FargowiltasSouls.Projectiles
                         projectile.damage = (int)(projectile.damage * (1 + FargoSoulsWorld.MoonlordCount * .0125));
                     }
                     break;
-                case ProjectileID.PhantasmalEye: //also spawned w/ scaling by cultist
+                case ProjectileID.PhantasmalEye:
                     if (FargoSoulsWorld.MasochistMode && !masobool)
                     {
                         masobool = true;
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.moonBoss, NPCID.MoonLordCore))
                             projectile.damage = (int)(projectile.damage * (1 + FargoSoulsWorld.MoonlordCount * .0125));
                     }
+                    projectile.position.X -= projectile.velocity.X / 2;
                     break;
 
                 #endregion
@@ -941,121 +980,121 @@ namespace FargowiltasSouls.Projectiles
 
                 #region thorium pets
                 case 1:
-                    KillPet(projectile, player, thorium.BuffType("Identified"), modPlayer.ConduitEnchant, "I.F.O. Pet");
+                    KillPet(projectile, player, thorium.BuffType("Identified"), modPlayer.ConduitEnchant, SoulConfig.Instance.thoriumToggles.IFOPet);
                     break;
 
                 case 2:
-                    KillPet(projectile, player, thorium.BuffType("BioFeederBuff"), modPlayer.MeteorEnchant, "Bio-Feeder Pet");
+                    KillPet(projectile, player, thorium.BuffType("BioFeederBuff"), modPlayer.MeteorEnchant, SoulConfig.Instance.thoriumToggles.BioFeederPet);
                     break;
 
                 case 3:
-                    KillPet(projectile, player, thorium.BuffType("BlisterBuff"), modPlayer.FleshEnchant, "Blister Pet");
+                    KillPet(projectile, player, thorium.BuffType("BlisterBuff"), modPlayer.FleshEnchant, SoulConfig.Instance.thoriumToggles.BlisterPet);
                     break;
 
                 case 4:
-                    KillPet(projectile, player, thorium.BuffType("WyvernPetBuff"), modPlayer.DragonEnchant, "Wyvern Pet");
+                    KillPet(projectile, player, thorium.BuffType("WyvernPetBuff"), modPlayer.DragonEnchant, SoulConfig.Instance.thoriumToggles.WyvernPet);
                     break;
 
                 case 5:
-                    KillPet(projectile, player, thorium.BuffType("SupportLanternBuff"), modPlayer.MinerEnchant, "Inspiring Lantern Pet");
+                    KillPet(projectile, player, thorium.BuffType("SupportLanternBuff"), modPlayer.MinerEnchant, SoulConfig.Instance.thoriumToggles.LanternPet);
                     break;
 
                 case 6:
-                    KillPet(projectile, player, thorium.BuffType("LockBoxBuff"), modPlayer.MinerEnchant, "Lock Box Pet");
+                    KillPet(projectile, player, thorium.BuffType("LockBoxBuff"), modPlayer.MinerEnchant, SoulConfig.Instance.thoriumToggles.BoxPet);
                     break;
 
                 case 7:
-                    KillPet(projectile, player, thorium.BuffType("DevilBuff"), modPlayer.WarlockEnchant, "Li'l Devil Minion", true);
+                    KillPet(projectile, player, thorium.BuffType("DevilBuff"), modPlayer.WarlockEnchant, SoulConfig.Instance.thoriumToggles.DevilMinion, true);
                     break;
 
                 case 8:
-                    KillPet(projectile, player, thorium.BuffType("AngelBuff"), modPlayer.SacredEnchant, "Li'l Cherub Minion", true);
+                    KillPet(projectile, player, thorium.BuffType("AngelBuff"), modPlayer.SacredEnchant, SoulConfig.Instance.thoriumToggles.CherubMinion, true);
                     break;
 
                 case 9:
-                    KillPet(projectile, player, thorium.BuffType("LifeSpiritBuff"), modPlayer.SacredEnchant, "Life Spirit Pet");
+                    KillPet(projectile, player, thorium.BuffType("LifeSpiritBuff"), modPlayer.SacredEnchant, SoulConfig.Instance.thoriumToggles.SpiritPet);
                     break;
 
                 case 10:
-                    KillPet(projectile, player, thorium.BuffType("HolyGostBuff"), modPlayer.BinderEnchant, "Holy Goat Pet");
+                    KillPet(projectile, player, thorium.BuffType("HolyGostBuff"), modPlayer.BinderEnchant, SoulConfig.Instance.thoriumToggles.GoatPet);
                     break;
 
                 case 11:
-                    KillPet(projectile, player, thorium.BuffType("SaplingBuff"), modPlayer.LivingWoodEnchant, "Sapling Minion", true);
+                    KillPet(projectile, player, thorium.BuffType("SaplingBuff"), modPlayer.LivingWoodEnchant, SoulConfig.Instance.thoriumToggles.SaplingMinion, true);
                     break;
 
                 case 12:
-                    KillPet(projectile, player, thorium.BuffType("SnowyOwlBuff"), modPlayer.IcyEnchant, "Owl Pet");
+                    KillPet(projectile, player, thorium.BuffType("SnowyOwlBuff"), modPlayer.CryoEnchant, SoulConfig.Instance.thoriumToggles.OwlPet);
                     break;
 
                 case 13:
-                    KillPet(projectile, player, thorium.BuffType("JellyPet"), modPlayer.DepthEnchant, "Jellyfish Pet");
+                    KillPet(projectile, player, thorium.BuffType("JellyPet"), modPlayer.DepthEnchant, SoulConfig.Instance.thoriumToggles.JellyfishPet);
                     break;
 
                 case 14:
-                    KillPet(projectile, player, thorium.BuffType("LilMogBuff"), modPlayer.KnightEnchant, "Moogle Pet");
+                    KillPet(projectile, player, thorium.BuffType("LilMogBuff"), modPlayer.KnightEnchant, SoulConfig.Instance.thoriumToggles.MooglePet);
                     break;
 
                 case 15:
-                    KillPet(projectile, player, thorium.BuffType("MaidBuff"), modPlayer.DreamEnchant, "Maid Pet");
+                    KillPet(projectile, player, thorium.BuffType("MaidBuff"), modPlayer.DreamEnchant, SoulConfig.Instance.thoriumToggles.MaidPet);
                     break;
 
                 case 16:
-                    KillPet(projectile, player, thorium.BuffType("PinkSlimeBuff"), modPlayer.IllumiteEnchant, "Pink Slime Pet");
+                    KillPet(projectile, player, thorium.BuffType("PinkSlimeBuff"), modPlayer.IllumiteEnchant, SoulConfig.Instance.thoriumToggles.SlimePet);
                     break;
 
                 case 17:
-                    KillPet(projectile, player, thorium.BuffType("ShineDust"), modPlayer.PlatinumEnchant, "Glitter Pet");
+                    KillPet(projectile, player, thorium.BuffType("ShineDust"), modPlayer.PlatinumEnchant, SoulConfig.Instance.thoriumToggles.GlitterPet);
                     break;
 
                 case 18:
-                    KillPet(projectile, player, thorium.BuffType("DrachmaBuff"), modPlayer.GoldEnchant, "Coin Bag Pet");
+                    KillPet(projectile, player, thorium.BuffType("DrachmaBuff"), modPlayer.GoldEnchant, SoulConfig.Instance.thoriumToggles.CoinPet);
                     break;
 
                     //calamity
                 case 101:
-                    KillPet(projectile, player, calamity.BuffType("Kendra"), modPlayer.AerospecEnchant, "Kendra Pet");
+                    KillPet(projectile, player, calamity.BuffType("Kendra"), modPlayer.AerospecEnchant, SoulConfig.Instance.calamityToggles.KendraPet);
                     break;
 
                 case 102:
-                    KillPet(projectile, player, calamity.BuffType("BloodBound"), modPlayer.StatigelEnchant, "Perforator Pet");
+                    KillPet(projectile, player, calamity.BuffType("BloodBound"), modPlayer.StatigelEnchant, SoulConfig.Instance.calamityToggles.PerforatorPet);
                     break;
 
                 case 103:
-                    KillPet(projectile, player, calamity.BuffType("ThirdSageBuff"), modPlayer.DaedalusEnchant, "Third Sage Pet");
+                    KillPet(projectile, player, calamity.BuffType("ThirdSageBuff"), modPlayer.DaedalusEnchant, SoulConfig.Instance.calamityToggles.ThirdSagePet);
                     break;
 
                 case 104:
-                    KillPet(projectile, player, calamity.BuffType("BearBuff"), modPlayer.DaedalusEnchant, "Bear Pet");
+                    KillPet(projectile, player, calamity.BuffType("BearBuff"), modPlayer.DaedalusEnchant, SoulConfig.Instance.calamityToggles.BearPet);
                     break;
 
                 case 105:
-                    KillPet(projectile, player, calamity.BuffType("BrimlingBuff"), modPlayer.AtaxiaEnchant, "Brimling Pet");
+                    KillPet(projectile, player, calamity.BuffType("BrimlingBuff"), modPlayer.AtaxiaEnchant, SoulConfig.Instance.calamityToggles.BrimlingPet);
                     break;
 
                 case 106:
-                    KillPet(projectile, player, calamity.BuffType("DannyDevito"), modPlayer.MolluskEnchant, "Danny Pet");
+                    KillPet(projectile, player, calamity.BuffType("DannyDevito"), modPlayer.MolluskEnchant, SoulConfig.Instance.calamityToggles.DannyPet);
                     break;
 
                 case 107:
-                    KillPet(projectile, player, calamity.BuffType("StrangeOrb"), modPlayer.OmegaBlueEnchant, "Siren Pet");
+                    KillPet(projectile, player, calamity.BuffType("StrangeOrb"), modPlayer.OmegaBlueEnchant, SoulConfig.Instance.calamityToggles.SirenPet);
                     break;
 
                 case 108:
                 case 109:
-                    KillPet(projectile, player, calamity.BuffType("ChibiiBuff"), modPlayer.GodSlayerEnchant, "Chibii Pet");
+                    KillPet(projectile, player, calamity.BuffType("ChibiiBuff"), modPlayer.GodSlayerEnchant, SoulConfig.Instance.calamityToggles.ChibiiPet);
                     break;
 
                 case 110:
-                    KillPet(projectile, player, calamity.BuffType("AkatoYharonBuff"), modPlayer.SilvaEnchant, "Akato Pet");
+                    KillPet(projectile, player, calamity.BuffType("AkatoYharonBuff"), modPlayer.SilvaEnchant, SoulConfig.Instance.calamityToggles.AkatoPet);
                     break;
 
                 case 111:
-                    KillPet(projectile, player, calamity.BuffType("Fox"), modPlayer.SilvaEnchant, "Fox Pet");
+                    KillPet(projectile, player, calamity.BuffType("Fox"), modPlayer.SilvaEnchant, SoulConfig.Instance.calamityToggles.FoxPet);
                     break;
 
                 case 112:
-                    KillPet(projectile, player, calamity.BuffType("Levi"), modPlayer.DemonShadeEnchant, "Levi Pet");
+                    KillPet(projectile, player, calamity.BuffType("Levi"), modPlayer.DemonShadeEnchant, SoulConfig.Instance.calamityToggles.LeviPet);
                     break;
 
                     #endregion
@@ -1066,10 +1105,66 @@ namespace FargowiltasSouls.Projectiles
                 int dustId = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.GoldFlame, projectile.velocity.X, projectile.velocity.Y, 100, default(Color), 1.5f);
                 Main.dust[dustId].noGravity = true;
             }
+
+            if (projectile.bobber && modPlayer.MutantAntibodies)
+            {
+                if (projectile.wet && projectile.ai[0] == 0 && projectile.localAI[1] < 655) //ai0 = in water, localai1 = counter up to catching an item
+                    projectile.localAI[1] = 655; //quick catch. not 660 and up (that breaks fishron summoning)
+            }
+        }
+
+        public override void PostAI(Projectile projectile)
+        {
+            if (!TimeFreezeCheck)
+            {
+                TimeFreezeCheck = true;
+                if (projectile.whoAmI == Main.player[projectile.owner].heldProj)
+                    TimeFreezeImmune = true;
+            }
+
+            if (projectile.hostile && projectile.damage > 0 && Main.LocalPlayer.active && !Main.LocalPlayer.dead) //graze
+            {
+                FargoPlayer fargoPlayer = Main.LocalPlayer.GetModPlayer<FargoPlayer>();
+                if (fargoPlayer.Graze && --GrazeCD < 0 && !Main.LocalPlayer.immune && Main.LocalPlayer.hurtCooldowns[0] <= 0 && Main.LocalPlayer.hurtCooldowns[1] <= 0)
+                {
+                    if (projectile.Distance(Main.LocalPlayer.Center) < Math.Min(projectile.width, projectile.height) / 2 + Player.defaultHeight + (fargoPlayer.MasochistSoul ? 100 : 75) && Collision.CanHit(projectile.Center, 0, 0, Main.LocalPlayer.Center, 0, 0))
+                    {
+                        GrazeCD = 60;
+                        fargoPlayer.GrazeBonus += 0.02;
+                        if (fargoPlayer.GrazeBonus > 0.3)
+                            fargoPlayer.GrazeBonus = 0.3;
+                        fargoPlayer.GrazeCounter = -1; //reset counter whenever successful graze
+
+                        if (!Main.dedServ) //is this check needed...?
+                            Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Graze").WithVolume(1f), Main.LocalPlayer.Center);
+
+                        const int max = 30; //make some indicator dusts
+                        for (int i = 0; i < max; i++)
+                        {
+                            Vector2 vector6 = Vector2.UnitY * 5f;
+                            vector6 = vector6.RotatedBy((i - (max / 2 - 1)) * 6.28318548f / max) + Main.LocalPlayer.Center;
+                            Vector2 vector7 = vector6 - Main.LocalPlayer.Center;
+                            //changes color when bonus is maxed
+                            int d = Dust.NewDust(vector6 + vector7, 0, 0, fargoPlayer.GrazeBonus >= .3 ? 86 : 228, 0f, 0f, 0, default(Color), 2f);
+                            Main.dust[d].noGravity = true;
+                            Main.dust[d].velocity = vector7;
+                        }
+                    }
+                    else
+                    {
+                        GrazeCD = 6; //don't check per tick ech
+                    }
+                }
+            }
         }
 
         public override bool TileCollideStyle(Projectile projectile, ref int width, ref int height, ref bool fallThrough)
         {
+            if (projectile.type == ProjectileID.SmokeBomb)
+            {
+                fallThrough = false;
+            }
+
             if (tungstenProjectile)
             {
                 width /= 2;
@@ -1111,21 +1206,15 @@ namespace FargowiltasSouls.Projectiles
 
         public override void OnHitNPC(Projectile projectile, NPC target, int damage, float knockback, bool crit)
         {
-            /*Player player = Main.player[Main.myPlayer];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-
-            if (modPlayer.SqueakyToy)
-                return;*/
-
             if (Fargowiltas.Instance.ThoriumLoaded) ThoriumOnHit(projectile, crit);
         }
 
         private void ThoriumOnHit(Projectile projectile, bool crit)
         {
             Player player = Main.player[Main.myPlayer];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
-            if (SoulConfig.Instance.GetValue("Jester Bell"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.JesterBell))
             {
                 //jester effect
                 if (modPlayer.JesterEnchant && crit)
@@ -1148,7 +1237,7 @@ namespace FargowiltasSouls.Projectiles
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
             Player player = Main.player[Main.myPlayer];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if (modPlayer.NinjaEnchant && projectile.type == ProjectileID.SmokeBomb && !ninjaTele)
             {
@@ -1198,24 +1287,48 @@ namespace FargowiltasSouls.Projectiles
                 }
             }
 
+            /*if (modPlayer.PearlEnchant && SoulConfig.Instance.GetValue("Pearlwood Rain") && projectile.type != ProjectileID.HallowStar)
+            {
+                //holy stars
+                Main.PlaySound(SoundID.Item10, projectile.position);
+                for (int num479 = 0; num479 < 10; num479++)
+                {
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, 58, projectile.velocity.X * 0.1f, projectile.velocity.Y * 0.1f, 150, default(Color), 1.2f);
+                }
+                for (int num480 = 0; num480 < 3; num480++)
+                {
+                    Gore.NewGore(projectile.position, new Vector2(projectile.velocity.X * 0.05f, projectile.velocity.Y * 0.05f), Main.rand.Next(16, 18), 1f);
+                }
+                float x = projectile.position.X + (float)Main.rand.Next(-400, 400);
+                float y = projectile.position.Y - (float)Main.rand.Next(600, 900);
+                Vector2 vector12 = new Vector2(x, y);
+                float num483 = projectile.position.X + (float)(projectile.width / 2) - vector12.X;
+                float num484 = projectile.position.Y + (float)(projectile.height / 2) - vector12.Y;
+                int num485 = 22;
+                float num486 = (float)Math.Sqrt((double)(num483 * num483 + num484 * num484));
+                num486 = (float)num485 / num486;
+                num483 *= num486;
+                num484 *= num486;
+                int num487 = projectile.damage;
+                int num488 = Projectile.NewProjectile(x, y, num483, num484, 92, num487, projectile.knockBack, projectile.owner, 0f, 0f);
+                if (num488 != 1000)
+                    Main.projectile[num488].ai[1] = projectile.position.Y;
+                //Main.projectile[num488].ai[0] = 1f;
+
+                //Main.projectile[num488].localNPCHitCooldown = 2;
+                //Main.projectile[num488].usesLocalNPCImmunity = true;
+
+                if (player.ZoneHoly || modPlayer.WoodForce)
+                {
+                    Main.projectile[num488].GetGlobalProjectile<FargoGlobalProjectile>().rainbowTrail = true;
+                }
+            }*/
+
             return true;
         }
 
         public override void ModifyHitPlayer(Projectile projectile, Player target, ref int damage, ref bool crit)
         {
-            //FargoPlayer modPlayer = target.GetModPlayer<FargoPlayer>(mod);
-
-            /*if (FargoSoulsWorld.MasochistMode)
-            {
-                switch(projectile.type)
-                {
-                    
-
-                    default:
-                        break;
-                }
-            }*/
-
             if(squeakyToy)
             {
                 damage = 1;
@@ -1230,40 +1343,35 @@ namespace FargowiltasSouls.Projectiles
                 switch(projectile.type)
                 {
                     case ProjectileID.JavelinHostile:
-                        target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(60, 600));
-                        target.AddBuff(mod.BuffType("Stunned"), Main.rand.Next(60, 90));
+                        target.AddBuff(mod.BuffType("Defenseless"), 600);
+                        if (!target.HasBuff(mod.BuffType("Stunned")))
+                            target.AddBuff(mod.BuffType("Stunned"), 60);
                         break;
 
                     case ProjectileID.DemonSickle:
-                        target.AddBuff(BuffID.Darkness, Main.rand.Next(900, 1800));
-                        target.AddBuff(mod.BuffType("Shadowflame"), Main.rand.Next(300, 600));
+                        target.AddBuff(BuffID.Darkness, 600);
+                        target.AddBuff(mod.BuffType("Shadowflame"), 300);
                         break;
 
                     case ProjectileID.HarpyFeather:
-                        if (Main.rand.Next(2) == 0)
-                            target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(60, 480));
+                        target.AddBuff(mod.BuffType("ClippedWings"), 300);
                         break;
-
-                    //so only antlion sand and not falling sand 
+                        
                     case ProjectileID.SandBallFalling:
-                        if (projectile.velocity.X != 0)
-                        {
-                            target.AddBuff(mod.BuffType("Stunned"), Main.rand.Next(60, 120));
-                            //pull player in opposite direction of sandball (towards where it came from)
-                            //target.velocity.X = projectile.velocity.X > 0 ? -6f : 6f;
-                        }
+                        if (!target.HasBuff(mod.BuffType("Stunned")) && projectile.velocity.X != 0) //so only antlion sand and not falling sand 
+                            target.AddBuff(mod.BuffType("Stunned"), 90);
                         break;
 
                     case ProjectileID.Stinger:
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.beeBoss, NPCID.QueenBee))
-                            target.AddBuff(BuffID.Venom, Main.rand.Next(30, 300));
-                        target.AddBuff(BuffID.BrokenArmor, Main.rand.Next(120, 1200));
-                        target.AddBuff(mod.BuffType("Swarming"), Main.rand.Next(120, 600));
+                            target.AddBuff(mod.BuffType("Infested"), 300);
+                        target.AddBuff(BuffID.BrokenArmor, 300);
+                        target.AddBuff(mod.BuffType("Swarming"), 300);
                         break;
 
                     case ProjectileID.Skull:
-                        if (Main.rand.Next(4) == 0)
-                            target.AddBuff(BuffID.Cursed, Main.rand.Next(60, 360));
+                        if (Main.rand.Next(2) == 0)
+                            target.AddBuff(BuffID.Cursed, 60);
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.guardBoss, NPCID.DungeonGuardian))
                         {
                             target.AddBuff(mod.BuffType("GodEater"), 420);
@@ -1279,9 +1387,9 @@ namespace FargowiltasSouls.Projectiles
                     case ProjectileID.CursedFlameHostile:
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.wallBoss, NPCID.WallofFlesh))
                         {
-                            target.AddBuff(BuffID.OnFire, Main.rand.Next(60, 300));
-                            target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(120, 240));
-                            target.AddBuff(mod.BuffType("Crippled"), 60);
+                            target.AddBuff(BuffID.OnFire, 300);
+                            target.AddBuff(mod.BuffType("ClippedWings"), 240);
+                            target.AddBuff(mod.BuffType("Crippled"), 120);
                         }
                         break;
 
@@ -1293,107 +1401,107 @@ namespace FargowiltasSouls.Projectiles
                         switch (Main.rand.Next(7))
                         {
                             case 0:
-                                target.AddBuff(BuffID.Venom, Main.rand.Next(60, 600));
+                                target.AddBuff(BuffID.Venom, 300);
                                 break;
                             case 1:
-                                target.AddBuff(BuffID.Confused, Main.rand.Next(60, 600));
+                                target.AddBuff(BuffID.Confused, 300);
                                 break;
                             case 2:
-                                target.AddBuff(BuffID.CursedInferno, Main.rand.Next(60, 600));
+                                target.AddBuff(BuffID.CursedInferno, 300);
                                 break;
                             case 3:
-                                target.AddBuff(BuffID.OgreSpit, Main.rand.Next(60, 600));
+                                target.AddBuff(BuffID.OgreSpit, 300);
                                 break;
                             case 4:
-                                target.AddBuff(mod.BuffType("LivingWasteland"), Main.rand.Next(60, 600));
+                                target.AddBuff(mod.BuffType("LivingWasteland"), 600);
                                 break;
                             case 5:
-                                target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(60, 600));
+                                target.AddBuff(mod.BuffType("Defenseless"), 600);
                                 break;
                             case 6:
-                                target.AddBuff(mod.BuffType("Purified"), Main.rand.Next(60, 600));
+                                target.AddBuff(mod.BuffType("Purified"), 600);
                                 break;
 
                             default:
                                 break;
                         }
-                        target.AddBuff(BuffID.Stinky, Main.rand.Next(900, 1200));
+                        target.AddBuff(BuffID.Stinky, 1200);
                         break;
 
                     case ProjectileID.SpikedSlimeSpike:
                         target.AddBuff(BuffID.Slimed, 120);
                         break;
 
-                    //CULTIST OP
                     case ProjectileID.CultistBossLightningOrb:
                     case ProjectileID.CultistBossLightningOrbArc:
-                        target.AddBuff(mod.BuffType("LightningRod"), Main.rand.Next(60, 300));
-                        target.AddBuff(BuffID.Electrified, Main.rand.Next(60, 300));
+                        target.AddBuff(mod.BuffType("LightningRod"), 300);
+                        target.AddBuff(BuffID.Electrified, 300);
                         break;
 
                     case ProjectileID.CultistBossIceMist:
                         if (!target.HasBuff(BuffID.Frozen))
-                            target.AddBuff(BuffID.Frozen, Main.rand.Next(30, 90));
-                        target.AddBuff(BuffID.Chilled, Main.rand.Next(300, 600));
+                            target.AddBuff(BuffID.Frozen, 60);
+                        target.AddBuff(BuffID.Chilled, 120);
                         break;
 
                     case ProjectileID.CultistBossFireBall:
-                        target.AddBuff(mod.BuffType("Berserked"), Main.rand.Next(60, 300));
-                        target.AddBuff(BuffID.BrokenArmor, Main.rand.Next(90, 900));
-                        target.AddBuff(BuffID.OnFire, Main.rand.Next(120, 600));
+                        target.AddBuff(mod.BuffType("Berserked"), 300);
+                        target.AddBuff(BuffID.BrokenArmor, 300);
+                        target.AddBuff(BuffID.OnFire, 300);
                         break;
 
                     case ProjectileID.CultistBossFireBallClone:
-                        target.AddBuff(mod.BuffType("Shadowflame"), Main.rand.Next(300, 600));
+                        target.AddBuff(mod.BuffType("Shadowflame"), 600);
                         break;
 
                     case ProjectileID.PaladinsHammerHostile:
-                        target.AddBuff(mod.BuffType("Stunned"), Main.rand.Next(60));
+                        if (!target.HasBuff(mod.BuffType("Stunned")))
+                            target.AddBuff(mod.BuffType("Stunned"), 60);
                         break;
 
                     case ProjectileID.RuneBlast:
-                        target.AddBuff(mod.BuffType("FlamesoftheUniverse"), Main.rand.Next(30, 120));
-                        target.AddBuff(mod.BuffType("Hexed"), Main.rand.Next(60, 180));
-                        target.AddBuff(BuffID.Suffocation, Main.rand.Next(120, 240));
+                        target.AddBuff(mod.BuffType("FlamesoftheUniverse"), 120);
+                        target.AddBuff(mod.BuffType("Hexed"), 240);
+                        target.AddBuff(BuffID.Suffocation, 240);
                         break;
 
                     case ProjectileID.ThornBall:
                     case ProjectileID.PoisonSeedPlantera:
                     case ProjectileID.SeedPlantera:
-                        target.AddBuff(BuffID.Poisoned, Main.rand.Next(60, 300));
-                        target.AddBuff(mod.BuffType("Infested"), Main.rand.Next(60, 300));
-                        target.AddBuff(mod.BuffType("IvyVenom"), Main.rand.Next(60, 300));
+                        //target.AddBuff(BuffID.Poisoned, 300);
+                        target.AddBuff(mod.BuffType("Infested"), 180);
+                        target.AddBuff(mod.BuffType("IvyVenom"), 180);
                         break;
 
                     case ProjectileID.DesertDjinnCurse:
                         if (target.ZoneCorrupt)
-                            target.AddBuff(BuffID.CursedInferno, Main.rand.Next(300, 600));
+                            target.AddBuff(BuffID.CursedInferno, 240);
                         else if (target.ZoneCrimson)
-                            target.AddBuff(BuffID.Ichor, Main.rand.Next(300, 600));
-                        target.AddBuff(BuffID.Silenced, Main.rand.Next(60, 120));
+                            target.AddBuff(BuffID.Ichor, 240);
+                        target.AddBuff(BuffID.Silenced, 120);
                         break;
 
                     case ProjectileID.BrainScramblerBolt:
-                        target.AddBuff(mod.BuffType("Flipped"), Main.rand.Next(15, 60));
-                        target.AddBuff(mod.BuffType("Unstable"), Main.rand.Next(60, 180));
+                        target.AddBuff(mod.BuffType("Flipped"), 240);
+                        target.AddBuff(mod.BuffType("Unstable"), 120);
                         break;
 
                     case ProjectileID.MartianTurretBolt:
                     case ProjectileID.GigaZapperSpear:
-                        target.AddBuff(mod.BuffType("LightningRod"), Main.rand.Next(300, 600));
+                        target.AddBuff(mod.BuffType("LightningRod"), 300);
                         break;
 
                     case ProjectileID.RayGunnerLaser:
-                        target.AddBuff(BuffID.VortexDebuff, Main.rand.Next(60, 180));
+                        target.AddBuff(BuffID.VortexDebuff, 240);
                         break;
 
                     case ProjectileID.SaucerMissile:
-                        target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(120, 180));
-                        target.AddBuff(mod.BuffType("Crippled"), Main.rand.Next(120, 180));
+                        target.AddBuff(mod.BuffType("ClippedWings"), 300);
+                        target.AddBuff(mod.BuffType("Crippled"), 300);
                         break;
 
                     case ProjectileID.SaucerLaser:
-                        target.AddBuff(BuffID.Electrified, Main.rand.Next(240, 480));
+                        target.AddBuff(BuffID.Electrified, 600);
                         break;
 
                     case ProjectileID.UFOLaser:
@@ -1405,39 +1513,38 @@ namespace FargowiltasSouls.Projectiles
                     case ProjectileID.GreekFire1:
                     case ProjectileID.GreekFire2:
                     case ProjectileID.GreekFire3:
-                        int duration = Main.rand.Next(90, 120);
-                        target.AddBuff(BuffID.OnFire, duration);
-                        target.AddBuff(BuffID.CursedInferno, duration);
-                        target.AddBuff(mod.BuffType("Shadowflame"), duration);
+                        target.AddBuff(BuffID.OnFire, 120);
+                        target.AddBuff(BuffID.CursedInferno, 120);
+                        target.AddBuff(mod.BuffType("Shadowflame"), 120);
                         break;
 
                     case ProjectileID.VortexAcid:
                     case ProjectileID.VortexLaser:
-                        target.AddBuff(mod.BuffType("LightningRod"), Main.rand.Next(30, 180));
-                        target.AddBuff(mod.BuffType("ClippedWings"), Main.rand.Next(30, 180));
+                        target.AddBuff(mod.BuffType("LightningRod"), 600);
+                        target.AddBuff(mod.BuffType("ClippedWings"), 300);
                         break;
                         
                     case ProjectileID.VortexLightning:
                         damage *= 2;
-                        target.AddBuff(BuffID.Electrified, Main.rand.Next(30, 300));
+                        target.AddBuff(BuffID.Electrified, 300);
                         break;
 
                     case ProjectileID.LostSoulHostile:
-                        target.AddBuff(mod.BuffType("Hexed"), Main.rand.Next(30, 240));
-                        target.AddBuff(mod.BuffType("ReverseManaFlow"), Main.rand.Next(180, 360));
+                        target.AddBuff(mod.BuffType("Hexed"), 240);
+                        target.AddBuff(mod.BuffType("ReverseManaFlow"), 600);
                         break;
 
                     case ProjectileID.InfernoHostileBlast:
                     case ProjectileID.InfernoHostileBolt:
                         if (Main.rand.Next(5) == 0)
                             target.AddBuff(mod.BuffType("Fused"), 1800);
-                        target.AddBuff(mod.BuffType("Jammed"), Main.rand.Next(180, 360));
+                        target.AddBuff(mod.BuffType("Jammed"), 600);
                         break;
 
                     case ProjectileID.ShadowBeamHostile:
-                        target.AddBuff(mod.BuffType("Rotting"), Main.rand.Next(1800, 3600));
-                        target.AddBuff(mod.BuffType("Shadowflame"), Main.rand.Next(300, 600));
-                        target.AddBuff(mod.BuffType("Atrophied"), Main.rand.Next(180, 360));
+                        target.AddBuff(mod.BuffType("Rotting"), 1800);
+                        target.AddBuff(mod.BuffType("Shadowflame"), 300);
+                        target.AddBuff(mod.BuffType("Atrophied"), 600);
                         break;
 
                     case ProjectileID.PhantasmalDeathray:
@@ -1452,107 +1559,118 @@ namespace FargowiltasSouls.Projectiles
                         {
                             target.GetModPlayer<FargoPlayer>().MaxLifeReduction += 100;
                             target.AddBuff(mod.BuffType("OceanicMaul"), 5400);
-                            target.AddBuff(mod.BuffType("MutantFang"), 300);
+                            target.AddBuff(mod.BuffType("MutantFang"), 180);
                         }
                         break;
 
                     case ProjectileID.RocketSkeleton:
-                        target.AddBuff(BuffID.Dazed, Main.rand.Next(30, 150));
-                        target.AddBuff(BuffID.Confused, Main.rand.Next(60, 300));
+                        target.AddBuff(BuffID.Dazed, 120);
+                        target.AddBuff(BuffID.Confused, 120);
                         break;
 
                     case ProjectileID.FlamesTrap:
                     case ProjectileID.GeyserTrap:
                     case ProjectileID.Fireball:
-                        target.AddBuff(BuffID.OnFire, Main.rand.Next(60, 600));
+                    case ProjectileID.EyeBeam:
+                        target.AddBuff(BuffID.OnFire, 300);
                         if (NPC.golemBoss != -1 && Main.npc[NPC.golemBoss].active && Main.npc[NPC.golemBoss].type == NPCID.Golem)
                         {
+                            target.AddBuff(BuffID.BrokenArmor, 600);
+                            target.AddBuff(mod.BuffType("Defenseless"), 600);
+                            target.AddBuff(BuffID.WitheredArmor, 600);
                             if (Main.tile[(int)Main.npc[NPC.golemBoss].Center.X / 16, (int)Main.npc[NPC.golemBoss].Center.Y / 16] == null || //outside temple
                                 Main.tile[(int)Main.npc[NPC.golemBoss].Center.X / 16, (int)Main.npc[NPC.golemBoss].Center.Y / 16].wall != WallID.LihzahrdBrickUnsafe)
                             {
-                                target.AddBuff(BuffID.Burning, Main.rand.Next(60, 300));
+                                target.AddBuff(BuffID.Burning, 120);
                             }
                         }
                         break;
 
                     case ProjectileID.SpikyBallTrap:
                         if (NPC.golemBoss != -1 && Main.npc[NPC.golemBoss].active && Main.npc[NPC.golemBoss].type == NPCID.Golem)
-                            target.AddBuff(BuffID.Venom, Main.rand.Next(60, 600));
+                        {
+                            target.AddBuff(BuffID.BrokenArmor, 600);
+                            target.AddBuff(mod.BuffType("Defenseless"), 600);
+                            target.AddBuff(BuffID.WitheredArmor, 600);
+                        }
                         break;
 
                     case ProjectileID.DD2BetsyFireball:
                     case ProjectileID.DD2BetsyFlameBreath:
-                        target.AddBuff(BuffID.OnFire, Main.rand.Next(900, 1800));
-                        target.AddBuff(BuffID.Ichor, Main.rand.Next(600, 900));
-                        target.AddBuff(BuffID.WitheredArmor, Main.rand.Next(60, 300));
-                        target.AddBuff(BuffID.WitheredWeapon, Main.rand.Next(60, 300));
-                        target.AddBuff(BuffID.Burning, Main.rand.Next(60, 300));
+                        target.AddBuff(BuffID.OnFire, 600);
+                        target.AddBuff(BuffID.Ichor, 600);
+                        //target.AddBuff(BuffID.WitheredArmor, Main.rand.Next(60, 300));
+                        //target.AddBuff(BuffID.WitheredWeapon, Main.rand.Next(60, 300));
+                        target.AddBuff(BuffID.Burning, 300);
                         break;
 
                     case ProjectileID.DD2DrakinShot:
-                        target.AddBuff(mod.BuffType("Shadowflame"), Main.rand.Next(300, 600));
+                        target.AddBuff(mod.BuffType("Shadowflame"), 600);
                         break;
 
                     case ProjectileID.NebulaSphere:
-                        target.AddBuff(BuffID.VortexDebuff, Main.rand.Next(300, 540));
+                        target.AddBuff(BuffID.VortexDebuff, 300);
                         break;
 
                     case ProjectileID.NebulaLaser:
-                        target.AddBuff(mod.BuffType("Hexed"), Main.rand.Next(60, 120));
+                        target.AddBuff(mod.BuffType("Hexed"), 120);
                         break;
 
                     case ProjectileID.NebulaBolt:
-                        target.AddBuff(mod.BuffType("Lethargic"), Main.rand.Next(300, 600));
+                        target.AddBuff(mod.BuffType("Lethargic"), 600);
                         break;
 
                     case ProjectileID.StardustJellyfishSmall:
-                        target.AddBuff(BuffID.Frostburn, Main.rand.Next(300, 600));
+                        target.AddBuff(BuffID.Frostburn, 180);
                         break;
 
                     case ProjectileID.StardustSoldierLaser:
-                        target.AddBuff(BuffID.VortexDebuff, Main.rand.Next(120, 180));
+                        target.AddBuff(BuffID.VortexDebuff, 120);
                         break;
 
                     case ProjectileID.Sharknado:
-                        target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(600, 900));
+                        target.AddBuff(mod.BuffType("Defenseless"), 600);
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.fishBossEX, NPCID.DukeFishron))
                         {
-                            target.GetModPlayer<FargoPlayer>(mod).MaxLifeReduction += 100;
-                            target.AddBuff(mod.BuffType("OceanicMaul"), Main.rand.Next(1800, 3600));
+                            target.GetModPlayer<FargoPlayer>().MaxLifeReduction += 100;
+                            target.AddBuff(mod.BuffType("OceanicMaul"), 1800);
                         }
                         break;
 
                     case ProjectileID.FlamingScythe:
-                        target.AddBuff(BuffID.OnFire, Main.rand.Next(900, 1800));
-                        target.AddBuff(mod.BuffType("LivingWasteland"), Main.rand.Next(900, 1800));
+                        target.AddBuff(BuffID.OnFire, 900);
+                        target.AddBuff(mod.BuffType("LivingWasteland"), 900);
                         break;
 
                     case ProjectileID.SnowBallHostile:
-                        if (!target.HasBuff(BuffID.Frozen))
-                            target.AddBuff(BuffID.Frozen, Main.rand.Next(90));
+                        if (!target.HasBuff(BuffID.Frozen) && Main.rand.Next(2) == 0)
+                            target.AddBuff(BuffID.Frozen, 60);
                         break;
-
+                        
                     case ProjectileID.BulletSnowman:
-                        target.AddBuff(BuffID.Chilled, Main.rand.Next(300));
+                        target.AddBuff(BuffID.Chilled, 180);
                         break;
 
                     case ProjectileID.UnholyTridentHostile:
-                        target.AddBuff(BuffID.Blackout, Main.rand.Next(300, 600));
-                        target.AddBuff(mod.BuffType("Shadowflame"), Main.rand.Next(300, 600));
+                        target.AddBuff(BuffID.Darkness, 300);
+                        target.AddBuff(BuffID.Blackout, 300);
+                        target.AddBuff(mod.BuffType("Shadowflame"), 600);
+                        target.AddBuff(mod.BuffType("MarkedforDeath"), 180);
                         break;
 
                     case ProjectileID.BombSkeletronPrime:
-                        target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(300, 600));
+                        target.AddBuff(mod.BuffType("Defenseless"), 600);
                         break;
 
                     case ProjectileID.DeathLaser:
                         if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.retiBoss, NPCID.Retinazer))
-                            target.AddBuff(BuffID.Ichor, Main.rand.Next(300, 600));
+                            target.AddBuff(BuffID.Ichor, 600);
                         break;
 
+                    case ProjectileID.BulletDeadeye:
                     case ProjectileID.CannonballHostile:
-                        target.AddBuff(mod.BuffType("Defenseless"), Main.rand.Next(300, 600));
-                        target.AddBuff(mod.BuffType("Midas"), Main.rand.Next(300, 900));
+                        target.AddBuff(mod.BuffType("Defenseless"), 600);
+                        target.AddBuff(mod.BuffType("Midas"), 900);
                         break;
 
                     case ProjectileID.AncientDoomProjectile:
@@ -1562,29 +1680,29 @@ namespace FargowiltasSouls.Projectiles
 
                     case ProjectileID.SandnadoHostile:
                         if (!target.HasBuff(BuffID.Dazed))
-                            target.AddBuff(BuffID.Dazed, Main.rand.Next(120));
+                            target.AddBuff(BuffID.Dazed, 120);
                         break;
 
                     case ProjectileID.DD2OgreSmash:
-                        target.AddBuff(BuffID.BrokenArmor, Main.rand.Next(300, 600));
+                        target.AddBuff(BuffID.BrokenArmor, 300);
                         break;
 
                     case ProjectileID.DD2OgreStomp:
-                        target.AddBuff(BuffID.Dazed, Main.rand.Next(60, 120));
+                        target.AddBuff(BuffID.Dazed, 120);
                         break;
 
                     case ProjectileID.DD2DarkMageBolt:
-                        target.AddBuff(mod.BuffType("Hexed"), Main.rand.Next(60, 300));
+                        target.AddBuff(mod.BuffType("Hexed"), 240);
                         break;
 
                     case ProjectileID.IceSpike:
-                        target.AddBuff(BuffID.Slimed, Main.rand.Next(30, 300));
-                        target.AddBuff(BuffID.Frostburn, Main.rand.Next(15, 150));
+                        //target.AddBuff(BuffID.Slimed, 120);
+                        target.AddBuff(BuffID.Frostburn, 120);
                         break;
 
                     case ProjectileID.JungleSpike:
-                        target.AddBuff(BuffID.Slimed, Main.rand.Next(30, 300));
-                        target.AddBuff(mod.BuffType("Infested"), Main.rand.Next(60, 300));
+                        //target.AddBuff(BuffID.Slimed, 120);
+                        target.AddBuff(mod.BuffType("Infested"), 300);
                         break;
 
                     default:
@@ -1599,7 +1717,7 @@ namespace FargowiltasSouls.Projectiles
             {
                 if (Main.player[projectile.owner].GetModPlayer<FargoPlayer>().MasomodeCrystalTimer <= 0)
                 {
-                    Main.player[projectile.owner].GetModPlayer<FargoPlayer>().MasomodeCrystalTimer = 15;
+                    Main.player[projectile.owner].GetModPlayer<FargoPlayer>().MasomodeCrystalTimer = 30;
                     return true;
                 }
                 else
@@ -1623,35 +1741,47 @@ namespace FargowiltasSouls.Projectiles
         public override void Kill(Projectile projectile, int timeLeft)
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
-            if (!townNPCProj && modPlayer.CobaltEnchant && SoulConfig.Instance.GetValue("Cobalt Shards") && modPlayer.CobaltCD == 0 && CanSplit && projectile.friendly && projectile.damage > 0  && !projectile.minion && projectile.aiStyle != 19 && !Rotate && Main.rand.Next(4) == 0)
+            if (!townNPCProj && CanSplit && projectile.friendly && projectile.damage > 0 && !projectile.minion && projectile.aiStyle != 19 && !Rotate)
             {
-                int damage = 40;
-                if(modPlayer.EarthForce)
-                    damage = 80;
-
-                Main.PlaySound(2, (int)player.position.X, (int)player.position.Y, 27);
-
-                for (int i = 0; i < 3; i++)
+                if (modPlayer.CobaltEnchant && SoulConfig.Instance.GetValue(SoulConfig.Instance.CobaltShards) && modPlayer.CobaltCD == 0 && Main.rand.Next(4) == 0)
                 {
-                    float velX = -projectile.velocity.X * Main.rand.Next(40, 70) * 0.01f + Main.rand.Next(-20, 21) * 0.4f;
-                    float velY = -projectile.velocity.Y * Main.rand.Next(40, 70) * 0.01f + Main.rand.Next(-20, 21) * 0.4f;
-                    int p = Projectile.NewProjectile(projectile.position.X + velX, projectile.position.Y + velY, velX, velY, ProjectileID.CrystalShard, damage, 0f, projectile.owner);
+                    int damage = 40;
+                    if (modPlayer.EarthForce)
+                        damage = 80;
 
-                    Main.projectile[p].GetGlobalProjectile<FargoGlobalProjectile>().CanSplit = false;
+                    Main.PlaySound(2, (int)player.position.X, (int)player.position.Y, 27);
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        float velX = -projectile.velocity.X * Main.rand.Next(40, 70) * 0.01f + Main.rand.Next(-20, 21) * 0.4f;
+                        float velY = -projectile.velocity.Y * Main.rand.Next(40, 70) * 0.01f + Main.rand.Next(-20, 21) * 0.4f;
+                        int p = Projectile.NewProjectile(projectile.position.X + velX, projectile.position.Y + velY, velX, velY, ProjectileID.CrystalShard, damage, 0f, projectile.owner);
+
+                        Main.projectile[p].GetGlobalProjectile<FargoGlobalProjectile>().CanSplit = false;
+                    }
+
+                    modPlayer.CobaltCD = 60;
                 }
+                else if (modPlayer.AncientCobaltEnchant && SoulConfig.Instance.GetValue(SoulConfig.Instance.CobaltStingers) && modPlayer.CobaltCD == 0 && Main.rand.Next(5) == 0)
+                {
+                   Projectile[] projs = XWay(3, projectile.Center, ProjectileID.HornetStinger, 5f, 15, 0);
 
-                modPlayer.CobaltCD = 60;
+                    for (int i = 0; i < projs.Length; i++)
+                    {
+                        projs[i].penetrate = 3;
+                        projs[i].timeLeft /= 2;
+                    }
+
+                    modPlayer.CobaltCD = 60;
+                }
             }
-
-            if (modPlayer.OriEnchant && Rotate && projectile.type != ProjectileID.Bone)
-                modPlayer.OriSpawn = false;
         }
 
         public override void GrapplePullSpeed(Projectile projectile, Player player, ref float speed)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if (modPlayer.MahoganyEnchant)
             {
@@ -1662,7 +1792,7 @@ namespace FargowiltasSouls.Projectiles
 
         public override void GrappleRetreatSpeed(Projectile projectile, Player player, ref float speed)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             if (modPlayer.MahoganyEnchant)
             {
@@ -1672,17 +1802,10 @@ namespace FargowiltasSouls.Projectiles
 
         public static Projectile[] XWay(int num, Vector2 pos, int type, float speed, int damage, float knockback)
         {
-            Projectile[] projs = new Projectile[16];
-
-            double spread = (2 * Math.PI) / num;
-
+            Projectile[] projs = new Projectile[num];
+            double spread = 2 * Math.PI / num;
             for (int i = 0; i < num; i++)
-            {
-                projs[i] = NewProjectileDirectSafe(pos, new Vector2(speed, speed), type, damage, knockback, Main.myPlayer);
-                projs[i].velocity = projs[i].velocity.RotatedBy(spread * i);
-            }
-                
-
+                projs[i] = NewProjectileDirectSafe(pos, new Vector2(speed, speed).RotatedBy(spread * i), type, damage, knockback, Main.myPlayer);
             return projs;
         }
 

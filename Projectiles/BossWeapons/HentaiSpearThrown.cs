@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -60,6 +59,12 @@ namespace FargowiltasSouls.Projectiles.BossWeapons
                         Main.projectile[p].thrown = true;
                     }
                 }
+            }
+
+            if (projectile.localAI[1] == 0f)
+            {
+                projectile.localAI[1] = 1f;
+                Main.PlaySound(SoundID.Item1, projectile.Center);
             }
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.ToRadians(135f);

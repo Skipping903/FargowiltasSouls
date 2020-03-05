@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -25,6 +27,17 @@ Summons a pet Eater of Souls and Shadow Orb");
 召唤一只噬魂者宝宝和阴影珍珠");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(66, 53, 111);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -37,7 +50,7 @@ Summons a pet Eater of Souls and Shadow Orb");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).ShadowEffect(hideVisual);
+            player.GetModPlayer<FargoPlayer>().ShadowEffect(hideVisual);
         }
 
         public override void AddRecipes()
@@ -50,7 +63,8 @@ Summons a pet Eater of Souls and Shadow Orb");
             recipe.AddIngredient(ItemID.PurpleClubberfish);
             
             if(Fargowiltas.Instance.ThoriumLoaded)
-            {      
+            {
+                recipe.AddIngredient(ItemID.TheBreaker);
                 recipe.AddIngredient(ItemID.BallOHurt);
                 recipe.AddIngredient(thorium.ItemType("DemoniteTomahawk"), 300);
             }

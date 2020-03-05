@@ -29,7 +29,7 @@ namespace FargowiltasSouls.Projectiles.Souls
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
             projectile.timeLeft++;
 
@@ -38,7 +38,7 @@ namespace FargowiltasSouls.Projectiles.Souls
                 modPlayer.FrostEnchant = false;
             }
 
-            if (!(modPlayer.FrostEnchant || modPlayer.TerrariaSoul) || !SoulConfig.Instance.GetValue("Frost Icicles"))
+            if (!(modPlayer.FrostEnchant || modPlayer.TerrariaSoul) || !SoulConfig.Instance.GetValue(SoulConfig.Instance.FrostIcicles))
             {
                 projectile.Kill();
                 return;

@@ -1,8 +1,6 @@
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces
@@ -53,10 +51,12 @@ Briefly become invulnerable after striking an enemy");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            modPlayer.EarthForce = true;
             //mythril
-            if (SoulConfig.Instance.GetValue("Mythril Weapon Speed") && !modPlayer.TerrariaSoul)
-                modPlayer.AttackSpeed *= 1.2f;
+            modPlayer.MythrilEnchant = true;
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.MythrilSpeed))
+                modPlayer.AttackSpeed += .2f;
             //shards
             modPlayer.CobaltEnchant = true;
             //regen on hit, heals

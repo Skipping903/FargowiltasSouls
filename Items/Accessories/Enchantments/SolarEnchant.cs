@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -23,6 +25,17 @@ Melee attacks may inflict the Solar Flare debuff");
 近战攻击概率造成耀斑效果");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(254, 158, 35);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -35,7 +48,7 @@ Melee attacks may inflict the Solar Flare debuff");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //solar shields
             modPlayer.SolarEffect();
             //flare debuff

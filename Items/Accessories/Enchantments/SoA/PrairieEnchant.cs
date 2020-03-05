@@ -1,9 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.SoA
 {
@@ -40,9 +40,20 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.SoA
             item.value = 50000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(129, 19, 29);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (!Fargowiltas.Instance.SOALoaded) return;
+            if (!Fargowiltas.Instance.SoALoaded) return;
 
             player.thrownDamage += 0.05f;
             player.rangedDamage += 0.05f;
@@ -51,7 +62,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.SoA
 
         public override void AddRecipes()
         {
-            if (!Fargowiltas.Instance.SOALoaded) return;
+            if (!Fargowiltas.Instance.SoALoaded) return;
 
             ModRecipe recipe = new ModRecipe(mod);
 

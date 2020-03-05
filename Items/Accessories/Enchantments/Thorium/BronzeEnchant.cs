@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
@@ -24,7 +23,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             Tooltip.SetDefault(
 @"'You have the favor of Zeus'
 Attacks have a chance to cause a lightning bolt to strike
-Effects of Olympic Torch, Champion's Rebuttal, Spartan Sandals, and Spartan's Subwoofer");
+Effects of Olympic Torch, Champion's Rebuttal, and Spartan Sandals");
             DisplayName.AddTranslation(GameCulture.Chinese, "青铜魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'宙斯的青睐'
@@ -46,8 +45,8 @@ Effects of Olympic Torch, Champion's Rebuttal, Spartan Sandals, and Spartan's Su
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //lightning
             modPlayer.BronzeEnchant = true;
             //rebuttal
@@ -56,17 +55,6 @@ Effects of Olympic Torch, Champion's Rebuttal, Spartan Sandals, and Spartan's Su
             thorium.GetItem("SpartanSandles").UpdateAccessory(player, hideVisual);
             player.moveSpeed -= 0.15f;
             player.maxRunSpeed -= 1f;
-            //subwoofer
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerMarble = true;
-                }
-            }
-            thoriumPlayer.bardRangeBoost += 450;
-
             //olympic torch
             thoriumPlayer.olympicTorch = true;
         }
@@ -83,8 +71,8 @@ Effects of Olympic Torch, Champion's Rebuttal, Spartan Sandals, and Spartan's Su
             recipe.AddIngredient(thorium.ItemType("OlympicTorch"));
             recipe.AddIngredient(thorium.ItemType("ChampionsBarrier"));
             recipe.AddIngredient(thorium.ItemType("SpartanSandles"));
-            recipe.AddIngredient(thorium.ItemType("BronzeSubwoofer"));
             recipe.AddIngredient(thorium.ItemType("ChampionBlade"));
+            recipe.AddIngredient(thorium.ItemType("SpikyCaltrop"), 300);
             recipe.AddIngredient(thorium.ItemType("BronzeThrowing"), 300);
             recipe.AddIngredient(thorium.ItemType("GraniteThrowingAxe"), 300);
 

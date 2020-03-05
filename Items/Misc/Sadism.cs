@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -10,8 +9,6 @@ namespace FargowiltasSouls.Items.Misc
 {
 	public class Sadism : ModItem
 	{
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
-
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Sadism");
@@ -45,7 +42,7 @@ Grants immunity to almost all Masochist Mode debuffs");
             {
                 if (line2.mod == "Terraria" && line2.Name == "ItemName")
                 {
-                    line2.overrideColor = new Color(Main.DiscoR, 51, 255 - (int)(Main.DiscoR * 0.4));
+                    line2.overrideColor = Main.DiscoColor;//new Color(Main.DiscoR, 51, 255 - (int)(Main.DiscoR * 0.4));
                 }
             }
         }

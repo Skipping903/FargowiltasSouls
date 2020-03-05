@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -23,6 +25,17 @@ Spawns 6 fireballs to rotate around you");
 召唤6个环绕你的火球");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(235, 50, 145);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -35,7 +48,7 @@ Spawns 6 fireballs to rotate around you");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).OrichalcumEffect();
+            player.GetModPlayer<FargoPlayer>().OrichalcumEffect();
         }
 
         public override void AddRecipes()

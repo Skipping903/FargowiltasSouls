@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -28,15 +29,20 @@ Projectiles still have the same tile collision hitbox";
 减少10%移动速度和近战速度
 抛射物仍然具有同样的砖块碰撞箱";
 
-            if(thorium != null)
-            {
-                tooltip += "\nEffects of Tungsten Bulwark";
-                tooltip_ch += "\n拥有钨壁垒的效果";
-            }
-
             Tooltip.SetDefault(tooltip);
             DisplayName.AddTranslation(GameCulture.Chinese, "钨金魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(176, 210, 178);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -52,29 +58,6 @@ Projectiles still have the same tile collision hitbox";
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetModPlayer<FargoPlayer>().TungstenEnchant = true;
-
-            if (Fargowiltas.Instance.ThoriumLoaded) Thorium(player);
-        }
-
-        private void Thorium(Player player)
-        {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
-            timer++;
-            if (timer >= 30)
-            {
-                int num = 15;
-                if (thoriumPlayer.shieldHealth <= num)
-                {
-                    thoriumPlayer.shieldHealthTimerStop = true;
-                }
-                if (thoriumPlayer.shieldHealth < num)
-                {
-                    CombatText.NewText(new Rectangle((int)player.position.X, (int)player.position.Y, player.width, player.height), new Color(51, 255, 255), 1, false, true);
-                    thoriumPlayer.shieldHealth++;
-                    player.statLife++;
-                }
-                timer = 0;
-            }
         }
 
         public override void AddRecipes()

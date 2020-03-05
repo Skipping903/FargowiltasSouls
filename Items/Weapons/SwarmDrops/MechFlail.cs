@@ -17,11 +17,11 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void SetDefaults()
         {
-            item.damage = 45;
+            item.damage = 200;
             item.width = 30;
             item.height = 10;
             item.value = Item.sellPrice(0, 10);
-            item.rare = 1;
+            item.rare = 11;
             item.noMelee = true;
             item.useStyle = 5;
             item.autoReuse = true;
@@ -30,19 +30,22 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
             item.knockBack = 6f;
             item.noUseGraphic = true;
             item.shoot = mod.ProjectileType("MechFlail");
-            item.shootSpeed = 25f;
+            item.shootSpeed = 50f;
             item.UseSound = SoundID.Item1;
             item.melee = true;
         }
 
         public override void AddRecipes()
         {
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(null, "EyeFlail");
                 recipe.AddIngredient(ModLoader.GetMod("Fargowiltas").ItemType("EnergizerEye"));
-                recipe.AddTile(TileID.MythrilAnvil);
+                recipe.AddIngredient(ItemID.LunarBar, 10);
+                recipe.AddIngredient(null, "LunarCrystal", 5);
+
+                recipe.AddTile(mod, "CrucibleCosmosSheet");
                 recipe.SetResult(this);
                 recipe.AddRecipe();
             }

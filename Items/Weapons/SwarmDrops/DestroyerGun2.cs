@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -21,8 +20,8 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void SetDefaults()
         {
-            item.damage = 340;
-            item.mana = 10;
+            item.damage = 240;
+            item.mana = 30;
             item.summon = true;
             item.width = 24;
             item.height = 24;
@@ -54,12 +53,12 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void AddRecipes()
         {
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(null, "DestroyerGun");
                 recipe.AddIngredient(null, "MutantScale", 10);
-                recipe.AddIngredient(ModLoader.GetMod("Fargowiltas").ItemType("EnergizerDestroyer"));
+                recipe.AddIngredient(ModLoader.GetMod("Fargowiltas").ItemType("EnergizerDestroy"));
                 recipe.AddTile(mod, "CrucibleCosmosSheet");
                 recipe.SetResult(this);
                 recipe.AddRecipe();

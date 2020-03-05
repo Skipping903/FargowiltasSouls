@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -45,7 +44,7 @@ Effects of Fan Letter");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             modPlayer.JesterEnchant = true;
             //fan letter
             thoriumPlayer.bardResourceMax2 += 2;
@@ -66,7 +65,7 @@ Effects of Fan Letter");
             recipe.AddIngredient(thorium.ItemType("SkywareLute"));
             recipe.AddIngredient(thorium.ItemType("Panflute"));
             recipe.AddIngredient(thorium.ItemType("ConchShell"));
-            recipe.AddIngredient(ItemID.Mouse);
+            recipe.AddIngredient(thorium.ItemType("ViciousMockery"));
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

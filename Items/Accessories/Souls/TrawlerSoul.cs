@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using ThoriumMod.Items.Misc;
 using Terraria.Localization;
 
@@ -70,7 +69,7 @@ Permanent Sonar and Crate Buffs";
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //extra lures
             modPlayer.FishSoul2 = true;
-            modPlayer.AddPet("Zephyr Fish Pet", hideVisual, BuffID.ZephyrFish, ProjectileID.ZephyrFish);
+            modPlayer.AddPet(SoulConfig.Instance.ZephyrFishPet, hideVisual, BuffID.ZephyrFish, ProjectileID.ZephyrFish);
             player.fishingSkill += 60;
             player.sonarPotion = true;
             player.cratePotion = true;

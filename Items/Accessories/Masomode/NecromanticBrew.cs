@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -35,7 +33,7 @@ May attract baby skeleton heads");
         {
             player.buffImmune[mod.BuffType("Lethargic")] = true;
             player.GetModPlayer<FargoPlayer>().NecromanticBrew = true;
-            if (SoulConfig.Instance.GetValue("Skeletron Arms Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.NecromanticBrew))
                 player.AddBuff(mod.BuffType("SkeletronArms"), 2);
         }
     }

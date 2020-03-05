@@ -22,13 +22,16 @@ namespace FargowiltasSouls.Projectiles.BossWeapons
             projectile.penetrate = 4;
             projectile.timeLeft = 180;
             aiType = ProjectileID.Bullet;
+
+            projectile.usesIDStaticNPCImmunity = true;
+            projectile.idStaticNPCHitCooldown = 5;
         }
 
         public override void AI()
         {
             const int aislotHomingCooldown = 0;
-            const int homingDelay = 10;
-            const float desiredFlySpeedInPixelsPerFrame = 10;
+            const int homingDelay = 15;
+            const float desiredFlySpeedInPixelsPerFrame = 30;
             const float amountOfFramesToLerpBy = 10; // minimum of 1, please keep in full numbers even though it's a float!
 
             projectile.ai[aislotHomingCooldown]++;

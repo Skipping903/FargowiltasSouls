@@ -3,12 +3,12 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
 using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Souls
 {
+    [AutoloadEquip(EquipType.Shield)]
     public class TerrariaSoul : ModItem
     {
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
@@ -21,24 +21,24 @@ namespace FargowiltasSouls.Items.Accessories.Souls
 
             string tooltip =
 @"'A true master of Terraria'
-Summons fireballs, icicles, leaf crystals, hallowed sword and shield, beetles, and several pets
+Summons fireballs, shadow orbs, icicles, leaf crystals, flameburst minion, hallowed sword and shield, beetles, and several pets
 Toggle vanity to remove all Pets, Right Click to Guard
-Double tap down to spawn a sentry, call an ancient storm, toggle stealth, spawn a portal, and direct your empowered guardian
+Double tap down to spawn a sentry and portal, call a storm and arrow rain, toggle stealth, and direct your empowered guardian
 Gold Key encases you in gold, Freeze Key freezes time for 5 seconds, minions spew scythes
 Solar shield allows you to dash, Dash into any walls, to teleport through them
 Throw a smoke bomb to teleport to it and gain the First Strike Buff
-Attacks may spawn lightning, flower petals, spectre orbs, a Dungeon Guardian, snowballs, spears, or buff boosters
-Attacks cause increased life regen, shadow dodge, Flameburst shots, meteor showers, and reduced enemy knockback immunity
+Attacks may spawn lightning, a storm cloud, flower petals, spectre orbs, a Dungeon Guardian, snowballs, spears, or buff boosters
+Attacks cause increased life regen, shadow dodge, Flameburst shots, meteor showers, and reduced enemy immune frames
 Critical chance is set to 25%, Crit to increase it by 5%, At 100% every 10th attack gains 4% life steal
-Getting hit drops your crit back down, inflicts Blood Geyser, releases a spore explosion and reflects damage
-Projectiles may split or shatter, item and projectile size increased, attract items from further away
-Nearby enemies are ignited, You leave behind a trail of fire and rainbows when you walk
+Getting hit drops your crit back down, trigger a blood geyser, and reflects damage
+Projectiles may split or shatter and spawn stars, item and projectile size increased, attract items from further away
+Nearby enemies are ignited, You leave behind a trail of fire, jump to create a spore explosion
 Grants Crimson regen, immunity to fire, fall damage, and lava, and doubled herb collection
 Grants 50% chance for Mega Bees, 15% chance for minion crits, 20% chance for bonus loot
 Critters have increased defense and their souls will aid you, You may summon temporary minions
 All grappling hooks are more effective and fire homing shots, Greatly enhances all DD2 sentries
 Your attacks inflict Midas, Enemies explode into needles
-When you die, you explode and revive with 200 HP
+You violently explode to damage nearby enemies when hurt and revive with 200 HP when killed
 Effects of Flower Boots, Master Ninja Gear, Greedy Ring, Celestial Shell, and Shiny Stone";
 
 
@@ -63,15 +63,6 @@ Effects of Flower Boots, Master Ninja Gear, Greedy Ring, Celestial Shell, and Sh
 攻击造成点金术, 敌人会爆炸成刺
 死亡时爆炸并以200生命值重生
 拥有花之靴, 忍者极意, 贪婪戒指, 天界贝壳和闪耀石的效果";
-
-            if (thorium != null)
-            {
-                tooltip +=
-@"Effects of Spring Steps, Slag Stompers, and Proof of Avarice";
-                tooltip_ch +=
-@"拥有弹簧鞋, 熔渣重踏和贪婪之证的效果";
-            }
-
 
             Tooltip.SetDefault(tooltip);
             DisplayName.AddTranslation(GameCulture.Chinese, "泰拉之魂");
@@ -98,19 +89,18 @@ Effects of Flower Boots, Master Ninja Gear, Greedy Ring, Celestial Shell, and Sh
             item.accessory = true;
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.value = 5000000;
-            item.shieldSlot = 5;
 
             item.rare = -12;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //includes revive, both spectres, adamantite, and star heal
             modPlayer.TerrariaSoul = true;
 
             //WOOD
-            mod.GetItem("WoodForce").UpdateAccessory(player, hideVisual);
+            mod.GetItem("TimberForce").UpdateAccessory(player, hideVisual);
             //TERRA
             mod.GetItem("TerraForce").UpdateAccessory(player, hideVisual);
             //EARTH
@@ -133,7 +123,7 @@ Effects of Flower Boots, Master Ninja Gear, Greedy Ring, Celestial Shell, and Sh
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(null, "WoodForce");
+            recipe.AddIngredient(null, "TimberForce");
             recipe.AddIngredient(null, "TerraForce");
             recipe.AddIngredient(null, "EarthForce");
             recipe.AddIngredient(null, "NatureForce");
@@ -142,6 +132,7 @@ Effects of Flower Boots, Master Ninja Gear, Greedy Ring, Celestial Shell, and Sh
             recipe.AddIngredient(null, "ShadowForce");
             recipe.AddIngredient(null, "WillForce");
             recipe.AddIngredient(null, "CosmoForce");
+            recipe.AddIngredient(null, "MutatingEnergy", 10);
 
             recipe.AddTile(mod, "CrucibleCosmosSheet");
 

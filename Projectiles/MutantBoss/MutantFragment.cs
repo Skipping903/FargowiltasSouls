@@ -1,9 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.IO;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Masomode
@@ -78,7 +75,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
         {
             target.AddBuff(mod.BuffType("Hexed"), 120);
             target.AddBuff(mod.BuffType("CurseoftheMoon"), 300);
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
             switch ((int)projectile.ai[0])
             {
                 case 0: target.AddBuff(mod.BuffType("ReverseManaFlow"), 180); break; //nebula

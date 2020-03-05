@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
@@ -26,7 +25,6 @@ Your boots vibrate at an unreal frequency, increasing movement speed significant
 While moving, your damage and critical strike chance are increased
 Your attacks have a chance to unleash an explosion of Dragon's Flame
 Effects of Crash Boots, Dragon Talon Necklace, and Cursed Flail-Core
-Effects of Grim Subwoofer and Green Music Player
 Summons a pet Wyvern");
             DisplayName.AddTranslation(GameCulture.Chinese, "恐惧魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -54,8 +52,8 @@ Summons a pet Wyvern");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
-            if (SoulConfig.Instance.GetValue("Dread Speed"))
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.DreadSpeed))
             {
                 //dread set bonus
                 player.moveSpeed += 0.8f;
@@ -84,25 +82,12 @@ Summons a pet Wyvern");
             player.maxRunSpeed -= 1f;
             //cursed core
             thoriumPlayer.cursedCore = true;
-            //corrupt woofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerCursed = true;
-                }
-            }
-            //music player
-            thoriumPlayer.musicPlayer = true;
-            thoriumPlayer.MP3MovementSpeed = 2;
             //dragon 
             thoriumPlayer.dragonSet = true;
             //dragon tooth necklace
             player.armorPenetration += 15;
             //wyvern pet
-            modPlayer.AddPet("Wyvern Pet", hideVisual, thorium.BuffType("WyvernPetBuff"), thorium.ProjectileType("WyvernPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.WyvernPet, hideVisual, thorium.BuffType("WyvernPetBuff"), thorium.ProjectileType("WyvernPet"));
             modPlayer.DragonEnchant = true;
         }
 
@@ -118,8 +103,8 @@ Summons a pet Wyvern");
             recipe.AddIngredient(null, "DragonEnchant");
             recipe.AddIngredient(thorium.ItemType("CrashBoots"));
             recipe.AddIngredient(thorium.ItemType("CursedCore"));
-            recipe.AddIngredient(thorium.ItemType("CorruptSubwoofer"));
-            recipe.AddIngredient(thorium.ItemType("TunePlayerMovementSpeed"));
+            recipe.AddIngredient(thorium.ItemType("DreadDrill"));
+            recipe.AddIngredient(thorium.ItemType("DreadFork"));
             recipe.AddIngredient(ItemID.ChainGuillotines);
             recipe.AddIngredient(thorium.ItemType("ImpactDrill"));
 

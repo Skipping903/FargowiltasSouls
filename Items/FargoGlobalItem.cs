@@ -7,21 +7,12 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ThoriumMod;
-using ThoriumMod.Items;
 
 namespace FargowiltasSouls.Items
 {
     public class FargoGlobalItem : GlobalItem
     {
         private static Mod thorium = ModLoader.GetMod("ThoriumMod");
-
-        /*public override void SetDefaults(Item item)
-        {
-            if (item.type == ItemID.Stinger)
-            {
-                item.ammo = item.type;
-            }
-        }*/
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
@@ -45,24 +36,31 @@ namespace FargowiltasSouls.Items
                 item.type != 184 && item.type != ItemID.CandyCane && item.type != ItemID.SugarPlum) grabRange += p.TerraForce ? 1000 : 250;
         }
 
-        public override void PickAmmo(Item item, Player player, ref int type, ref float speed, ref int damage, ref float knockback)
+        public override void PickAmmo(Item weapon, Item ammo, Player player, ref int type, ref float speed, ref int damage, ref float knockback)
         {
-            FargoPlayer modPlayer = (FargoPlayer) player.GetModPlayer(mod, "FargoPlayer");
+            FargoPlayer modPlayer = (FargoPlayer)player.GetModPlayer(mod, "FargoPlayer");
 
-            if (modPlayer.Jammed) type = ProjectileID.ConfettiGun;
+            if (modPlayer.Jammed)
+                type = ProjectileID.ConfettiGun;
+
+            if (FargoSoulsWorld.MasochistMode) //ammo nerf, strongest on arrow/bullet/dart
+            {
+                double modifier = ammo.ammo == AmmoID.Arrow || ammo.ammo == AmmoID.Bullet || ammo.ammo == AmmoID.Dart ? .80 : .20;
+                damage -= (int)Math.Round(ammo.damage * player.rangedDamage * modifier, MidpointRounding.AwayFromZero); //always round up
+            }
         }
 
         public override bool ConsumeItem(Item item, Player player)
         {
-            FargoPlayer p = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer p = player.GetModPlayer<FargoPlayer>();
 
-            if (p.BuilderMode && (item.createTile != -1 || item.createWall != -1)) return false;
+            if (p.BuilderMode && (item.createTile != -1 || item.createWall != -1) && item.type != ItemID.PlatinumCoin && item.type != ItemID.GoldCoin) return false;
             return true;
         }
 
         public override bool OnPickup(Item item, Player player)
         {
-            FargoPlayer p = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer p = player.GetModPlayer<FargoPlayer>();
 
             if (p.JungleEnchant && item.stack == 1 && (item.type == ItemID.Daybloom || item.type == ItemID.Blinkroot || item.type == ItemID.Deathweed || item.type == ItemID.Fireblossom ||
                                                        item.type == ItemID.Moonglow || item.type == ItemID.Shiverthorn || item.type == ItemID.Waterleaf || item.type == ItemID.Mushroom ||
@@ -82,7 +80,7 @@ namespace FargowiltasSouls.Items
         {
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
-            if (item.type == ItemID.PumpkinPie && player.statLife != player.statLifeMax2 && player.HasBuff(BuffID.PotionSickness)) return false;
+            if (item.type == ItemID.PumpkinPie && player.statLife != player.statLifeMax2 && player.potionDelay > 0) return false;
 
             if (item.magic && player.GetModPlayer<FargoPlayer>().ReverseManaFlow)
             {
@@ -91,20 +89,14 @@ namespace FargowiltasSouls.Items
                 player.immuneTime = 0;
             }
 
+            if (modPlayer.BuilderMode && (item.createTile != -1 || item.createWall != -1) && item.type != ItemID.PlatinumCoin && item.type != ItemID.GoldCoin)
+            {
+                item.useTime = 1;
+                item.useAnimation = 1;
+            }
+
             //non weapons and weapons with no ammo begone
             if (item.damage <= 0 || !player.HasAmmo(item, true) || (item.mana > 0 && player.statMana < item.mana)) return true;
-
-            if (modPlayer.BorealEnchant && ++modPlayer.BorealCount >= 4)
-            {
-                modPlayer.BorealCount = 0;
-                if (SoulConfig.Instance.enchantToggles["Boreal Snowballs"])
-                {
-                    Vector2 velocity = Vector2.Normalize(Main.MouseWorld - player.Center) * (item.shootSpeed > 0 ? item.shootSpeed : 10) * .75f;
-                    int p = Projectile.NewProjectile(player.Center, velocity, ProjectileID.SnowBallFriendly, (int)(item.damage * .5f), 1, Main.myPlayer);
-                    if (p != 1000 && (player.ZoneSnow || modPlayer.WoodForce))
-                        FargoGlobalProjectile.SplitProj(Main.projectile[p], 5);
-                }
-            }
 
             if (modPlayer.AdditionalAttacks && modPlayer.AdditionalAttacksTimer <= 0)
             {
@@ -113,9 +105,17 @@ namespace FargowiltasSouls.Items
                 Vector2 position = player.Center;
                 Vector2 velocity = Vector2.Normalize(Main.MouseWorld - position);
 
-                if (modPlayer.CelestialRune && SoulConfig.Instance.GetValue("Celestial Rune Support"))
+                if (modPlayer.BorealEnchant && SoulConfig.Instance.GetValue(SoulConfig.Instance.BorealSnowballs))
                 {
-                    if (item.melee) //fireball
+                    Vector2 vel = Vector2.Normalize(Main.MouseWorld - player.Center) * 17f;
+                    int p = Projectile.NewProjectile(player.Center, vel, ProjectileID.SnowBallFriendly, (int)(item.damage * .5f), 1, Main.myPlayer);
+                    if (p != 1000 && (player.ZoneSnow || modPlayer.WoodForce))
+                        FargoGlobalProjectile.SplitProj(Main.projectile[p], 5);
+                }
+
+                if (modPlayer.CelestialRune && SoulConfig.Instance.GetValue(SoulConfig.Instance.CelestialRune))
+                {
+                    if (item.melee && item.pick == 0 && item.axe == 0 && item.hammer == 0) //fireball
                     {
                         Main.PlaySound(SoundID.Item34, position);
                         for (int i = 0; i < 3; i++)
@@ -141,9 +141,9 @@ namespace FargowiltasSouls.Items
                     }
                 }
 
-                if (modPlayer.PumpkingsCape && SoulConfig.Instance.GetValue("Pumpking's Cape Support"))
+                if (modPlayer.PumpkingsCape && SoulConfig.Instance.GetValue(SoulConfig.Instance.PumpkingCape))
                 {
-                    if (item.melee) //flaming jack
+                    if (item.melee && item.pick == 0 && item.axe == 0 && item.hammer == 0) //flaming jack
                     {
                         float distance = 2000f;
                         int target = -1;
@@ -187,9 +187,9 @@ namespace FargowiltasSouls.Items
         private void ThoriumCanUse(Player player, Item item)
         {
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
 
-            if (SoulConfig.Instance.GetValue("Illumite Missile"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.IllumiteMissile))
             {
                 //illumite effect
                 if (modPlayer.IllumiteEnchant)
@@ -207,7 +207,7 @@ namespace FargowiltasSouls.Items
             }
 
             //plague flask
-            if (modPlayer.PlagueAcc && SoulConfig.Instance.GetValue("Plague Lord's Flask"))
+            if (modPlayer.PlagueAcc && SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.PlagueFlask))
             {
                 if (item.damage >= 1 && Main.rand.Next(5) == 0)
                 {
@@ -225,7 +225,7 @@ namespace FargowiltasSouls.Items
             }
             
             //folv effect
-            if (modPlayer.FolvEnchant && SoulConfig.Instance.GetValue("Folv's Bolts"))
+            if (modPlayer.FolvEnchant && SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.FolvBolts))
             {
                 thoriumPlayer.magicCast++;
                 if (thoriumPlayer.magicCast >= 7)
@@ -260,7 +260,7 @@ namespace FargowiltasSouls.Items
         {
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
-            if (item.type == ItemID.PumpkinPie && player.statLife != player.statLifeMax2 && modPlayer.PumpkinEnchant && !modPlayer.TerrariaSoul)
+            if (item.type == ItemID.PumpkinPie && player.statLife != player.statLifeMax2 && modPlayer.PumpkinEnchant)
             {
                 int heal = player.statLifeMax2 - player.statLife;
                 player.HealEffect(heal);
@@ -285,23 +285,34 @@ namespace FargowiltasSouls.Items
             {
                 switch(item.prefix)
                 {
-                    case PrefixID.Warding:  if (SoulConfig.Instance.GetValue("Warding"))  return false; break;
-                    case PrefixID.Violent:  if (SoulConfig.Instance.GetValue("Violent"))  return false; break;
-                    case PrefixID.Quick:    if (SoulConfig.Instance.GetValue("Quick"))    return false; break;
-                    case PrefixID.Lucky:    if (SoulConfig.Instance.GetValue("Lucky"))    return false; break;
-                    case PrefixID.Menacing: if (SoulConfig.Instance.GetValue("Menacing")) return false; break;
-                    case PrefixID.Legendary:if (SoulConfig.Instance.GetValue("Legendary"))return false; break;
-                    case PrefixID.Unreal:   if (SoulConfig.Instance.GetValue("Unreal"))   return false; break;
-                    case PrefixID.Mythical: if (SoulConfig.Instance.GetValue("Mythical")) return false; break;
-                    case PrefixID.Godly:    if (SoulConfig.Instance.GetValue("Godly"))    return false; break;
-                    case PrefixID.Demonic:  if (SoulConfig.Instance.GetValue("Demonic"))  return false; break;
-                    case PrefixID.Ruthless: if (SoulConfig.Instance.GetValue("Ruthless")) return false; break;
-                    case PrefixID.Light:    if (SoulConfig.Instance.GetValue("Light"))    return false; break;
-                    case PrefixID.Deadly:   if (SoulConfig.Instance.GetValue("Deadly"))   return false; break;
-                    case PrefixID.Rapid:    if (SoulConfig.Instance.GetValue("Rapid"))    return false; break;
+                    case PrefixID.Warding:  if (SoulConfig.Instance.walletToggles.Warding)  return false; break;
+                    case PrefixID.Violent:  if (SoulConfig.Instance.walletToggles.Violent)  return false; break;
+                    case PrefixID.Quick:    if (SoulConfig.Instance.walletToggles.Quick)    return false; break;
+                    case PrefixID.Lucky:    if (SoulConfig.Instance.walletToggles.Lucky)    return false; break;
+                    case PrefixID.Menacing: if (SoulConfig.Instance.walletToggles.Menacing) return false; break;
+                    case PrefixID.Legendary:if (SoulConfig.Instance.walletToggles.Legendary)return false; break;
+                    case PrefixID.Unreal:   if (SoulConfig.Instance.walletToggles.Unreal)   return false; break;
+                    case PrefixID.Mythical: if (SoulConfig.Instance.walletToggles.Mythical) return false; break;
+                    case PrefixID.Godly:    if (SoulConfig.Instance.walletToggles.Godly)    return false; break;
+                    case PrefixID.Demonic:  if (SoulConfig.Instance.walletToggles.Demonic)  return false; break;
+                    case PrefixID.Ruthless: if (SoulConfig.Instance.walletToggles.Ruthless) return false; break;
+                    case PrefixID.Light:    if (SoulConfig.Instance.walletToggles.Light)    return false; break;
+                    case PrefixID.Deadly:   if (SoulConfig.Instance.walletToggles.Deadly)   return false; break;
+                    case PrefixID.Rapid:    if (SoulConfig.Instance.walletToggles.Rapid)    return false; break;
                     default: break;
                 }
             }
+            return true;
+        }
+
+        public override bool Shoot(Item item, Player player, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
+        {
+            if (FargoSoulsWorld.MasochistMode && !NPC.downedBoss3 && item.type == ItemID.WaterBolt)
+            {
+                type = ProjectileID.WaterGun;
+                damage = 0;
+            }
+
             return true;
         }
     }

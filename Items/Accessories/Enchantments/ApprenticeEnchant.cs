@@ -7,24 +7,15 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
     public class ApprenticeEnchant : ModItem
     {
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
-
-        public override bool Autoload(ref string name)
-        {
-            return false;
-        }
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Apprentice Enchantment");
             Tooltip.SetDefault(
-@"''
-");
-            DisplayName.AddTranslation(GameCulture.Chinese, "学徒魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"''
-");
+@"'A long way to perfection'
+While attacking, Flameburst shots manifest themselves from your shadows
+Flameburst field of view and range are dramatically increased");
         }
 
         public override void SetDefaults()
@@ -33,40 +24,35 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             item.height = 20;
             item.accessory = true;
             ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 100000;
+            item.rare = 8;
+            item.value = 150000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            
+            player.GetModPlayer<FargoPlayer>().ApprenticeEffect();
         }
 
-        /*public override void AddRecipes()
+        public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.);
-            recipe.AddIngredient(ItemID.);
+            recipe.AddIngredient(ItemID.ApprenticeHat);
+            recipe.AddIngredient(ItemID.ApprenticeRobe);
+            recipe.AddIngredient(ItemID.ApprenticeTrousers);
             recipe.AddIngredient(ItemID.ApprenticeScarf);
-            recipe.AddIngredient(ItemID.FlameStaff2);
-            recipe.AddIngredient(ItemID.TomeofInfiniteWisdom);
+            recipe.AddIngredient(ItemID.DD2FlameburstTowerT2Popper);
+            recipe.AddIngredient(ItemID.BookStaff);
+            recipe.AddIngredient(ItemID.ClingerStaff);
 
-
-
-            if (Fargowiltas.Instance.ThoriumLoaded)
-            {
-                
-            }
-            else
-            {
-                
-            }
-
-            
+            /*
+            Demon Fire Blast-Wand (with Thorium)
+            Wither Staff (with Thorium)
+            Kinetic Knife (with Thorium)
+             */
 
             recipe.AddTile(TileID.CrystalBall);
             recipe.SetResult(this);
             recipe.AddRecipe();
-        }*/
+        }
     }
 }

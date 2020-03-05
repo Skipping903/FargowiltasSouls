@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using FargowiltasSouls.NPCs;
@@ -23,16 +22,10 @@ namespace FargowiltasSouls.Buffs.Masomode
             Description.AddTranslation(GameCulture.Chinese, "无法躲避,无法进行生命偷取,无法快速移动,无法逃脱");
         }
 
-        public override bool Autoload(ref string name, ref string texture)
-        {
-            texture = "FargowiltasSouls/Buffs/PlaceholderDebuff";
-            return true;
-        }
-
         public override void Update(Player player, ref int buffIndex)
         {
-            player.GetModPlayer<FargoPlayer>(mod).noDodge = true;
-            player.GetModPlayer<FargoPlayer>(mod).noSupersonic = true;
+            player.GetModPlayer<FargoPlayer>().noDodge = true;
+            player.GetModPlayer<FargoPlayer>().noSupersonic = true;
             player.moonLeech = true;
 
             if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.fishBoss, NPCID.DukeFishron))

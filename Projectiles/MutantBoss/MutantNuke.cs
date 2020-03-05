@@ -80,11 +80,11 @@ namespace FargowiltasSouls.Projectiles.Masomode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.GetModPlayer<FargoPlayer>(mod).MaxLifeReduction += 50;
+            target.GetModPlayer<FargoPlayer>().MaxLifeReduction += 50;
             target.AddBuff(mod.BuffType("OceanicMaul"), 900);
             target.AddBuff(mod.BuffType("MutantNibble"), 900);
             target.AddBuff(mod.BuffType("CurseoftheMoon"), 900);
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

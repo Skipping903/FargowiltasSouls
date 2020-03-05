@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Minions
@@ -35,7 +34,7 @@ namespace FargowiltasSouls.Projectiles.Minions
 
         public override void AI()
         {
-            if (Main.player[projectile.owner].active && !Main.player[projectile.owner].dead && Main.player[projectile.owner].GetModPlayer<FargoPlayer>().MutantSetBonus)
+            if (Main.player[projectile.owner].active && !Main.player[projectile.owner].dead && Main.player[projectile.owner].GetModPlayer<FargoPlayer>().PhantasmalRing)
             {
                 projectile.alpha = 0;
             }
@@ -71,7 +70,7 @@ namespace FargowiltasSouls.Projectiles.Minions
             if (++projectile.localAI[0] > 20)
             {
                 projectile.localAI[0] = 0;
-                if (projectile.owner == Main.myPlayer && SoulConfig.Instance.GetValue("Phantasmal Ring Minion"))
+                if (projectile.owner == Main.myPlayer && SoulConfig.Instance.GetValue(SoulConfig.Instance.RingMinion))
                 {
                     if (++projectile.localAI[1] >= 7)
                         projectile.localAI[1] = 0;

@@ -56,13 +56,13 @@ namespace FargowiltasSouls.Projectiles.Masomode
                 if (player.active && !player.dead)
                 {
                     float distance = player.Distance(projectile.Center);
-                    const float threshold = 1200f;
+                    const float threshold = 1600f;
                     if (targetIsMe && Math.Abs(distance - threshold) < 30f && player.hurtCooldowns[0] == 0 && projectile.alpha == 0)
                     {
                         int hitDirection = projectile.Center.X > player.Center.X ? 1 : -1;
                         player.Hurt(PlayerDeathReason.ByProjectile(player.whoAmI, projectile.whoAmI),
                             Main.npc[ai1].damage / 3, hitDirection, false, false, false, 0);
-                        player.GetModPlayer<FargoPlayer>(mod).MaxLifeReduction += ai1 == FargoSoulsGlobalNPC.fishBossEX ? 50 : 25;
+                        player.GetModPlayer<FargoPlayer>().MaxLifeReduction += ai1 == FargoSoulsGlobalNPC.fishBossEX ? 50 : 25;
                         player.AddBuff(mod.BuffType("OceanicMaul"), Main.rand.Next(300, 600));
                     }
                     if (distance > threshold && distance < threshold * 3f)
@@ -85,7 +85,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
                         }
 
                         Vector2 movement = projectile.Center - player.Center;
-                        float difference = movement.Length() - 1200f;
+                        float difference = movement.Length() - 1600f;
                         movement.Normalize();
                         movement *= difference < 17f ? difference : 17f;
                         player.position += movement;
@@ -145,7 +145,7 @@ namespace FargowiltasSouls.Projectiles.Masomode
 
             for (int x = 0; x < 32; x++)
             {
-                Vector2 drawOffset = new Vector2(1200f * projectile.scale / 2f, 0f).RotatedBy(projectile.ai[0]);
+                Vector2 drawOffset = new Vector2(1600f * projectile.scale / 2f, 0f).RotatedBy(projectile.ai[0]);
                 drawOffset = drawOffset.RotatedBy(2f * PI / 32f * x);
                 const int max = 4;
                 for (int i = 0; i < max; i++)

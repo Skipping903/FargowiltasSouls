@@ -44,12 +44,6 @@ Increases flight time by 50%
 甲虫保护你免受伤害
 增加50%飞行时间";
 
-            if (thorium != null)
-            {
-                tooltip += "Effects of Bee Booties and Arachnid's Subwoofer\n";
-                tooltip_ch += "拥有蜜蜂靴和蛛网音箱的效果\n";
-            }
-
             tooltip += "Summons several pets";
             tooltip_ch += "召唤数个宠物";
 
@@ -70,7 +64,7 @@ Increases flight time by 50%
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //tide hunter, yew wood, iridescent effects
             modPlayer.LifeForce = true;
             //bees ignore defense, super bees, pet
@@ -88,34 +82,7 @@ Increases flight time by 50%
             player.thorns = 1f;
             player.turtleThorns = true;
             //needle spray
-            modPlayer.CactusEffect();
-
-            if (Fargowiltas.Instance.ThoriumLoaded) Thorium(player, hideVisual);           
-        }
-
-        private void Thorium(Player player, bool hideVisual)
-        {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
-            //bee booties
-            if (SoulConfig.Instance.GetValue("Bee Booties"))
-            {
-                thorium.GetItem("BeeBoots").UpdateAccessory(player, hideVisual);
-                player.moveSpeed -= 0.15f;
-                player.maxRunSpeed -= 1f;
-            }
-
-            if (modPlayer.ThoriumSoul) return;
-
-            //venom woofer
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerVenom = true;
-                }
-            }
+            modPlayer.CactusEffect();         
         }
 
         public override void AddRecipes()

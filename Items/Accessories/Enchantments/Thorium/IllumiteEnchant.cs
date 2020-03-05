@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -22,7 +21,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             Tooltip.SetDefault(
 @"'As if you weren't pink enough'
 Every third attack will unleash an illumite missile
-Effects of Pink Music Player
+Effects of Jazz Music Player
 Summons a pet Pink Slime");
             DisplayName.AddTranslation(GameCulture.Chinese, "荧光魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
@@ -46,14 +45,14 @@ Summons a pet Pink Slime");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             modPlayer.IllumiteEnchant = true;
             //music player
-            thoriumPlayer.musicPlayer = true;
-            thoriumPlayer.MP3LifeRegen = 2;
+            thoriumPlayer.accMusicPlayer = true;
+            thoriumPlayer.accMP3Wind = true;
             //slime pet
-            modPlayer.AddPet("Pink Slime Pet", hideVisual, thorium.BuffType("PinkSlimeBuff"), thorium.ProjectileType("PinkSlime"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.SlimePet, hideVisual, thorium.BuffType("PinkSlimeBuff"), thorium.ProjectileType("PinkSlime"));
         }
         
         private readonly string[] items =

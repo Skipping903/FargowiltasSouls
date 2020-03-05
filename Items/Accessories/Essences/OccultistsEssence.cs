@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Essences
 {
@@ -23,6 +25,17 @@ Increases your max number of sentries by 1");
 增加18%召唤伤害
 +1最大召唤栏
 +1最大哨兵栏");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color?(new Color(0, 255, 255));
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -51,7 +64,7 @@ Increases your max number of sentries by 1");
                 recipe.AddIngredient(ItemID.SummonerEmblem);
                 recipe.AddIngredient(thorium.ItemType("RosySlimeStaff"));
                 recipe.AddIngredient(thorium.ItemType("HatchlingStaff"));
-                recipe.AddIngredient(thorium.ItemType("MeatBallStaff"));
+                recipe.AddIngredient(thorium.ItemType("FalconeerCane"));
                 recipe.AddIngredient(thorium.ItemType("AmberMinion"));
                 recipe.AddIngredient(thorium.ItemType("MeteorStaff"));
                 recipe.AddIngredient(thorium.ItemType("NanoClamCane"));

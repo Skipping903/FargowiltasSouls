@@ -3,9 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader;
-using FargowiltasSouls.NPCs;
 
 namespace FargowiltasSouls.Projectiles.MutantBoss
 {
@@ -57,7 +55,7 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
                         player.GetModPlayer<FargoPlayer>().MaxLifeReduction += 200;
                         player.AddBuff(mod.BuffType("OceanicMaul"), 5400);
                         player.AddBuff(mod.BuffType("CurseoftheMoon"), 600);
-                        player.AddBuff(mod.BuffType("MutantFang"), 300);
+                        player.AddBuff(mod.BuffType("MutantFang"), 180);
                     }
                     if (distance > threshold && distance < threshold * 5f)
                     {

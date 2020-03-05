@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -21,18 +23,30 @@ All fishing rods will have 4 extra lures");
 所有鱼竿将会增加4个额外的鱼饵");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(113, 125, 109);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
             item.height = 20;
             item.accessory = true;
+            ItemID.Sets.ItemNoGravity[item.type] = true;
             item.value = 100000;
             item.rare = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).FishSoul1 = true;
+            player.GetModPlayer<FargoPlayer>().FishSoul1 = true;
             player.fishingSkill += 10;
         }
 
@@ -48,7 +62,8 @@ All fishing rods will have 4 extra lures");
             recipe.AddIngredient(ItemID.Rockfish);
             recipe.AddIngredient(ItemID.SawtoothShark);
             recipe.AddIngredient(ItemID.FrostDaggerfish, 200);
-            recipe.AddIngredient(ItemID.OldShoe, 5);
+            recipe.AddRecipeGroup("FargowiltasSouls:AnyFishingTrash", 5);
+
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);
             recipe.AddRecipe();

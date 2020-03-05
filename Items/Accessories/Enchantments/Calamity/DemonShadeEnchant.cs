@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using CalamityMod.CalPlayer;
@@ -26,8 +25,6 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 All attacks inflict Demon Flames
 Shadowbeams and Demon Scythes fall from the sky on hit
 A friendly red devil follows you around
-Enemies take ungodly damage when they touch you
-Standing still lets you absorb the shadows and boost your life regen
 Press Y to enrage nearby enemies with a dark magic spell for 10 seconds
 This makes them do 1.5 times more damage but they also take five times as much damage
 Summons a Levi pet");
@@ -59,7 +56,7 @@ Summons a Levi pet");
             {
                 if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
                 {
-                    tooltipLine.overrideColor = new Color?(new Color(255, 0, 255));
+                    tooltipLine.overrideColor = new Color(173, 52, 70);
                 }
             }
         }
@@ -68,16 +65,11 @@ Summons a Levi pet");
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-            //body
-            modPlayer.shadeRegen = true;
-            player.thorns = 100f;
-            //legs
-            modPlayer.shadowSpeed = true;
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             //set bonus
-            modPlayer.dsSetBonus = true;
+            calamity.Call("SetSetBonus", player, "demonshade", true);
 
-            if (SoulConfig.Instance.GetValue("Red Devil Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.RedDevilMinion))
             {
                 modPlayer.redDevil = true;
                 if (player.whoAmI == Main.myPlayer)
@@ -93,9 +85,9 @@ Summons a Levi pet");
                 }
             }
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.DemonShadeEnchant = true;
-            fargoPlayer.AddPet("Levi Pet", hideVisual, calamity.BuffType("Levi"), calamity.ProjectileType("Levi"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.LeviPet, hideVisual, calamity.BuffType("Levi"), calamity.ProjectileType("Levi"));
         }
 
         public override void AddRecipes()

@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -22,14 +21,13 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             Tooltip.SetDefault(
 @"'Cold to the touch'
 An icy aura surrounds you, which freezes nearby enemies after a short delay
-Effects of Frostburn Pouch
-Summons a pet Penguin");
+Effects of Frostburn Pouch");
+
             DisplayName.AddTranslation(GameCulture.Chinese, "碎冰魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'触感冰凉'
 环绕的冰锥将冰冻敌人
-拥有霜火粉袋的效果
-召唤宠物企鹅");
+拥有霜火粉袋的效果");
         }
 
         public override void SetDefaults()
@@ -47,7 +45,7 @@ Summons a pet Penguin");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //set bonus
             thoriumPlayer.icySet = true;
             if (player.ownedProjectileCounts[thorium.ProjectileType("IcyAura")] < 1)
@@ -57,9 +55,6 @@ Summons a pet Penguin");
 
             //frostburn pouch
             thoriumPlayer.frostburnPouch = true;
-
-            modPlayer.IcyEnchant = true;
-            modPlayer.AddPet("Penguin Pet", hideVisual, BuffID.BabyPenguin, ProjectileID.Penguin);
         }
         
         private readonly string[] items =
@@ -69,6 +64,7 @@ Summons a pet Penguin");
             "IcyGreaves",
             "FrostburnPouch",
             "FrostFireKatana",
+            "IceShard",
             "FrostFury",
             "Blizzard"
         };
@@ -83,7 +79,6 @@ Summons a pet Penguin");
 
             recipe.AddIngredient(thorium.ItemType("IcyCaltrop"), 300);
             recipe.AddIngredient(ItemID.IceBoomerang);
-            recipe.AddIngredient(ItemID.Fish);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

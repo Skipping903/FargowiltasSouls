@@ -2,7 +2,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
@@ -23,7 +22,7 @@ namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
 @"'A bitter cold, the power of the Jotuns...'
 All armor bonuses from Depth Diver, Yew Wood, and Tide Hunter
 All armor bonuses from Naga Skin, Icy, Cryo Magus, and Whispering
-Effects of Sea Breeze Pendant, Bubble Magnet, and Deep Dark Subwoofer
+Effects of Sea Breeze Pendant and Bubble Magnet
 Effects of Goblin War Shield, Agnor's Bowl, and Ice Bound Strider Hide
 Summons several pets");
             DisplayName.AddTranslation(GameCulture.Chinese, "约顿海姆之力");
@@ -58,12 +57,12 @@ Summons several pets");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
 
             //bubble magnet
             thoriumPlayer.bubbleMagnet = true;
             modPlayer.DepthEnchant = true;
-            modPlayer.AddPet("Jellyfish Pet", hideVisual, thorium.BuffType("JellyPet"), thorium.ProjectileType("JellyfishPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.JellyfishPet, hideVisual, thorium.BuffType("JellyPet"), thorium.ProjectileType("JellyfishPet"));
 
             //tide hunter
             modPlayer.TideHunterEnchant = true;
@@ -75,11 +74,9 @@ Summons several pets");
             //strider hide
             thoriumPlayer.frostBonusDamage = true;
             //pets
-            modPlayer.IcyEnchant = true;
-            modPlayer.AddPet("Penguin Pet", hideVisual, BuffID.BabyPenguin, ProjectileID.Penguin);
-            modPlayer.AddPet("Owl Pet", hideVisual, thorium.BuffType("SnowyOwlBuff"), thorium.ProjectileType("SnowyOwlPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.OwlPet, hideVisual, thorium.BuffType("SnowyOwlBuff"), thorium.ProjectileType("SnowyOwlPet"));
 
-            if (SoulConfig.Instance.GetValue("Icy Barrier"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.IcyBarrier))
             {
                 //icy set bonus
                 thoriumPlayer.icySet = true;
@@ -91,7 +88,7 @@ Summons several pets");
             //cryo
             modPlayer.CryoEnchant = true;
             
-            if (SoulConfig.Instance.GetValue("Whispering Tentacles"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.WhisperingTentacles))
             {
                 mod.GetItem("WhisperingEnchant").UpdateAccessory(player, hideVisual);
             }
@@ -109,24 +106,13 @@ Summons several pets");
             {
                 player.AddBuff(thorium.BuffType("AquaticAptitude"), 60, true);
                 player.GetModPlayer<FargoPlayer>().AllDamageUp(.1f);
-                modPlayer.AttackSpeed *= 1.2f;
+                modPlayer.AttackSpeed += .2f;
             }
             //quicker in water
             player.ignoreWater = true;
             if (player.wet)
             {
                 player.moveSpeed += 0.15f;
-            }
-
-            //depth woofer
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerGouge = true;
-                }
             }
 
             //goblin war shield

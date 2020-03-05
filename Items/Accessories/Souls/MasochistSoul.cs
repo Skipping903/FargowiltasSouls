@@ -8,6 +8,7 @@ using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Souls
 {
+    [AutoloadEquip(EquipType.Shield)]
     public class MasochistSoul : ModItem
     {
         public override void SetStaticDefaults()
@@ -22,8 +23,11 @@ Grants gravity control, fastfall, and immunity to knockback, almost all Masochis
 Grants autofire to all weapons, modifier protection, and you automatically use mana potions when needed
 Empowers Cute Fishron and makes armed and magic skeletons less hostile outside the Dungeon
 Your attacks create additional attacks, hearts, and inflict a cocktail of Masochist Mode debuffs
-You respawn twice as fast, have improved night vision, and erupt into various attacks when injured
+Press the Fireball Dash key to perform a short invincible dash
+Certain enemies will drop potions when defeated you catch fish almost instantly
+You respawn twice as fast, have Honey buff, improved night vision, and erupt into various attacks when injured
 Prevents boss spawns, increases spawn rate, and attacks may squeak and deal 1 damage to you
+Graze projectiles to gain increased crit damage
 Summons the aid of all Masochist Mode bosses to your side");
 
             DisplayName.AddTranslation(GameCulture.Chinese, "受虐之魂");
@@ -62,6 +66,16 @@ Summons the aid of all Masochist Mode bosses to your side");
             }
         }
 
+        public override void UpdateInventory(Player player)
+        {
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
+            player.buffImmune[BuffID.WindPushed] = true;
+            fargoPlayer.SandsofTime = true;
+            player.buffImmune[BuffID.Suffocation] = true;
+            player.manaFlower = true;
+            fargoPlayer.SecurityWallet = true;
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
@@ -84,7 +98,7 @@ Summons the aid of all Masochist Mode bosses to your side");
 
             //slimy shield
             player.buffImmune[BuffID.Slimed] = true;
-            if (SoulConfig.Instance.GetValue("Slimy Shield Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SlimyShield))
             {
                 player.maxFallSpeed *= 2f;
                 fargoPlayer.SlimyShield = true;
@@ -94,6 +108,7 @@ Summons the aid of all Masochist Mode bosses to your side");
             fargoPlayer.AgitatingLens = true;
 
             //queen stinger
+            player.honey = true;
             player.npcTypeNoAggro[210] = true;
             player.npcTypeNoAggro[211] = true;
             player.npcTypeNoAggro[42] = true;
@@ -147,16 +162,17 @@ Summons the aid of all Masochist Mode bosses to your side");
             }
 
             //sinister icon
-            if (SoulConfig.Instance.GetValue("Sinister Icon"))
-                player.GetModPlayer<FargoPlayer>().SinisterIcon = true;
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SinisterIcon))
+                fargoPlayer.SinisterIcon = true;
+            fargoPlayer.Graze = true;
 
             //dragon fang
-            if (SoulConfig.Instance.GetValue("Inflict Clipped Wings"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.DragonFang))
                 fargoPlayer.DragonFang = true;
 
             //frigid gemstone
             player.buffImmune[BuffID.Frostburn] = true;
-            if (SoulConfig.Instance.GetValue("Frostfireballs"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.FrigidGemstone))
             {
                 fargoPlayer.FrigidGemstone = true;
                 if (fargoPlayer.FrigidGemstoneCD > 0)
@@ -191,12 +207,16 @@ Summons the aid of all Masochist Mode bosses to your side");
             //nymph's perfume
             player.buffImmune[BuffID.Lovestruck] = true;
             player.buffImmune[BuffID.Stinky] = true;
-            if (SoulConfig.Instance.GetValue("Attacks Spawn Hearts"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.NymphPerfume))
             {
                 fargoPlayer.NymphsPerfume = true;
                 if (fargoPlayer.NymphsPerfumeCD > 0)
                     fargoPlayer.NymphsPerfumeCD -= 10;
             }
+
+            //tim's concoction
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.TimsConcoction))
+                player.GetModPlayer<FargoPlayer>().TimsConcoction = true;
 
             //dubious circuitry
             player.buffImmune[BuffID.CursedInferno] = true;
@@ -238,10 +258,11 @@ Summons the aid of all Masochist Mode bosses to your side");
             player.buffImmune[BuffID.VortexDebuff] = true;
             player.buffImmune[BuffID.ChaosState] = true;
             fargoPlayer.GravityGlobeEX = true;
-            if (SoulConfig.Instance.GetValue("Gravity Control"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.GravityControl))
                 player.gravControl = true;
 
             //heart of maso
+            fargoPlayer.MasochistHeart = true;
             player.buffImmune[BuffID.MoonLeech] = true;
 
             //cyclonic fin
@@ -332,6 +353,7 @@ Summons the aid of all Masochist Mode bosses to your side");
             player.buffImmune[mod.BuffType("LightningRod")] = true;
             player.buffImmune[mod.BuffType("LivingWasteland")] = true;
             player.buffImmune[mod.BuffType("Lovestruck")] = true;
+            player.buffImmune[mod.BuffType("LowGround")] = true;
             player.buffImmune[mod.BuffType("MarkedforDeath")] = true;
             player.buffImmune[mod.BuffType("Midas")] = true;
             player.buffImmune[mod.BuffType("MutantNibble")] = true;

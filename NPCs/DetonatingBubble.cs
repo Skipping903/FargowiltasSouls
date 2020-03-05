@@ -1,4 +1,3 @@
-using FargowiltasSouls.Buffs.Masomode;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -32,6 +31,7 @@ namespace FargowiltasSouls.NPCs
             npc.alpha = 255;
             npc.lavaImmune = true;
             npc.buffImmune[BuffID.OnFire] = true;
+            npc.buffImmune[BuffID.Suffocation] = true;
             npc.aiStyle = -1;
             npc.chaseable = false;
         }
@@ -77,7 +77,7 @@ namespace FargowiltasSouls.NPCs
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.Wet, 420);
-            target.AddBuff(mod.BuffType<SqueakyToy>(), Main.rand.Next(60, 180));
+            //target.AddBuff(mod.BuffType("SqueakyToy"), Main.rand.Next(60, 180));
         }
 
         public override void FindFrame(int frameHeight)

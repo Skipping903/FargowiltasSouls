@@ -1,10 +1,6 @@
-using System;
-using System.IO;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace FargowiltasSouls.Projectiles.Minions
@@ -41,7 +37,7 @@ namespace FargowiltasSouls.Projectiles.Minions
             if (projectile.damage == 0)
                 projectile.damage = (int)(100f * player.minionDamage);
 
-            Vector2 vector2_1 = new Vector2(0f, -75f); //movement code
+            Vector2 vector2_1 = new Vector2(0f, -85f); //movement code
             Vector2 vector2_2 = player.MountedCenter + vector2_1;
             float num1 = Vector2.Distance(projectile.Center, vector2_2);
             if (num1 > 1000) //teleport when out of range

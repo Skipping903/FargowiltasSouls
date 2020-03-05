@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Enums;
-using FargowiltasSouls.Buffs.Masomode;
 
 namespace FargowiltasSouls.Projectiles.MutantBoss
 {
@@ -191,13 +188,13 @@ namespace FargowiltasSouls.Projectiles.MutantBoss
             target.GetModPlayer<FargoPlayer>().MaxLifeReduction += 100;
             target.AddBuff(mod.BuffType("OceanicMaul"), 5400);
             target.AddBuff(mod.BuffType("CurseoftheMoon"), 600);
-            target.AddBuff(mod.BuffType("MutantFang"), 300);
+            target.AddBuff(mod.BuffType("MutantFang"), 180);
 
             target.immune = false;
             target.immuneTime = 0;
             target.hurtCooldowns[0] = 0;
             target.hurtCooldowns[1] = 0;
-            if (Fargowiltas.Instance.MasomodeEX)
+            if (Fargowiltas.Instance.MasomodeEXLoaded)
                 target.AddBuff(ModLoader.GetMod("MasomodeEX").BuffType("MutantJudgement"), 3600);
         }
     }

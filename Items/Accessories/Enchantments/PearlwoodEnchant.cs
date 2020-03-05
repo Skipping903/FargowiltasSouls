@@ -2,6 +2,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -12,13 +14,24 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             DisplayName.SetDefault("Pearlwood Enchantment");
             Tooltip.SetDefault(
 @"'Too little, too late…'
-You leave behind a trail of rainbows that may shrink enemies
-While in the Hallow, the rainbow trail lasts much longer");
+Projectiles may spawn a star when they hit something
+While in the Hallow, stars have damaging rainbow trails");
             DisplayName.AddTranslation(GameCulture.Chinese, "珍珠木魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'为时已晚'
 留下一道使敌人退缩的彩虹路径
 在神圣地形中,彩虹路径持续时间变长");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(173, 154, 95);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -33,7 +46,7 @@ While in the Hallow, the rainbow trail lasts much longer");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>().PearlEffect();
+            player.GetModPlayer<FargoPlayer>().PearlEnchant = true;
         }
 
         public override void AddRecipes()

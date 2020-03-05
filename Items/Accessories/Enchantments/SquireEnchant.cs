@@ -7,21 +7,16 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
     public class SquireEnchant : ModItem
     {
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
-
-        public override bool Autoload(ref string name)
-        {
-            return false;
-        }
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Adamantite Enchantment");
+            DisplayName.SetDefault("Squire Enchantment");
             Tooltip.SetDefault(
-@"'Who needs to aim?'
-Every 8th projectile you shoot will split into 3
-Any secondary projectiles may also split");
+@"'Squire, will you hurry?'
+Continually attacking an enemy will eventually remove its knockback immunity for 2 seconds
+There is a 15 second cooldown per enemy
+Ballista pierces more targets and panics when you take damage");
             DisplayName.AddTranslation(GameCulture.Chinese, "精金魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'谁需要瞄准?'
@@ -35,38 +30,32 @@ Any secondary projectiles may also split");
             item.height = 20;
             item.accessory = true;
             ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 100000;
+            item.rare = 8;
+            item.value = 150000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).AdamantiteEnchant = true;
+            player.GetModPlayer<FargoPlayer>().SquireEnchant = true;
+            player.setSquireT2 = true;
         }
 
         public override void AddRecipes()
         {
             ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddRecipeGroup("FargowiltasSouls:AnyAdamHead");
-            recipe.AddIngredient(ItemID.AdamantiteBreastplate);
-            recipe.AddIngredient(ItemID.AdamantiteLeggings);
+            recipe.AddIngredient(ItemID.SquireGreatHelm);
+            recipe.AddIngredient(ItemID.SquirePlating);
+            recipe.AddIngredient(ItemID.SquireGreaves);
+            recipe.AddIngredient(ItemID.SquireShield);
+            recipe.AddIngredient(ItemID.DD2BallistraTowerT2Popper);
+            recipe.AddIngredient(ItemID.DD2SquireDemonSword);
+            recipe.AddIngredient(ItemID.RedPhasesaber);
 
-            if (Fargowiltas.Instance.ThoriumLoaded)
-            {
-                recipe.AddIngredient(ItemID.AdamantiteGlaive);
-                recipe.AddIngredient(thorium.ItemType("AdamantiteStaff"));
-                recipe.AddIngredient(thorium.ItemType("DynastyWarFan"));
-                recipe.AddIngredient(thorium.ItemType("Scorn"));
-                recipe.AddIngredient(thorium.ItemType("OgreSnotGun"));
-            }
-            else
-            {
-                recipe.AddIngredient(ItemID.DarkLance);
-                recipe.AddIngredient(ItemID.AdamantiteGlaive);
-            }
-
-            recipe.AddIngredient(ItemID.Shotgun);
-            recipe.AddIngredient(ItemID.VenomStaff);
+//Doom Fire Axe (with Thorium)
+//Dragon's Tooth (with Thorium)
+//Rapier (with Thorium)
+//Warp Slicer (with Thorium)
+//Scalper (with Thorium)
 
             recipe.AddTile(TileID.CrystalBall);
             recipe.SetResult(this);

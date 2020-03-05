@@ -7,8 +7,6 @@ namespace FargowiltasSouls.Items.Accessories.Masomode
 {
     public class MutantAntibodies : ModItem
     {
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Mutant Antibodies");
@@ -16,7 +14,8 @@ namespace FargowiltasSouls.Items.Accessories.Masomode
 Grants immunity to Wet, Feral Bite, and Mutant Nibble
 Grants immunity to most debuffs caused by entering water
 Grants effects of Wet debuff while riding Cute Fishron
-Increases damage by 20%");
+Increases damage by 20%
+You catch fish almost instantly");
             DisplayName.AddTranslation(GameCulture.Chinese, "突变抗体");
             Tooltip.AddTranslation(GameCulture.Chinese, @"'推荐健康药物指数: 0/10'
 免疫潮湿,野性咬噬和突变啃啄
@@ -40,11 +39,7 @@ Increases damage by 20%");
             player.buffImmune[BuffID.Rabies] = true;
             player.buffImmune[mod.BuffType("MutantNibble")] = true;
             player.GetModPlayer<FargoPlayer>().MutantAntibodies = true;
-            player.meleeDamage += 0.2f;
-            player.rangedDamage += 0.2f;
-            player.magicDamage += 0.2f;
-            player.minionDamage += 0.2f;
-            player.thrownDamage += 0.2f;
+            player.GetModPlayer<FargoPlayer>().AllDamageUp(0.2f);
             if (player.mount.Active && player.mount.Type == MountID.CuteFishron)
                 player.dripping = true;
         }

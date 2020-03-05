@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using Microsoft.Xna.Framework;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -49,14 +47,17 @@ Effects of Spring Steps, Slag Stompers, and Molten Spear Tip");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //set bonus
             player.magmaStone = true;
             thoriumPlayer.magmaSet = true;
             //spring steps
-            thorium.GetItem("SpringSteps").UpdateAccessory(player, hideVisual);
-
-            if (SoulConfig.Instance.GetValue("Slag Stompers"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.SpringSteps))
+            {
+                thorium.GetItem("SpringSteps").UpdateAccessory(player, hideVisual);
+            }
+                
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.SlagStompers))
             {
                 //slag stompers
                 timer++;
@@ -78,7 +79,6 @@ Effects of Spring Steps, Slag Stompers, and Molten Spear Tip");
             "SpringSteps",
             "SlagStompers",
             "MoltenSpearTip",
-            "MagmaShiv",
             "MagmaPolearm",
             "MagmaticRicochet",
             "MagmaFlail"
@@ -91,6 +91,8 @@ Effects of Spring Steps, Slag Stompers, and Molten Spear Tip");
             ModRecipe recipe = new ModRecipe(mod);
             
             foreach (string i in items) recipe.AddIngredient(thorium.ItemType(i));
+
+            recipe.AddIngredient(thorium.ItemType("MagmaShiv"), 300);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.SetResult(this);

@@ -117,9 +117,9 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             //use speed, velocity, debuffs, crit dmg, mana up, double knockback
             modPlayer.UniverseEffect = true;
             
-            if (SoulConfig.Instance.GetValue("Universe Attack Speed"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.UniverseAttackSpeed))
             {
-                modPlayer.AttackSpeed *= 1.5f;
+                modPlayer.AttackSpeed += .5f;
             }
 
             player.maxMinions += 8;
@@ -129,7 +129,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             player.counterWeight = 556 + Main.rand.Next(6);
             player.yoyoGlove = true;
             player.yoyoString = true;
-            if (SoulConfig.Instance.GetValue("Sniper Scope"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SniperScope))
             {
                 player.scope = true;
             }
@@ -141,24 +141,24 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
 
             if (Fargowiltas.Instance.CalamityLoaded) Calamity(player);
 
-            if (Fargowiltas.Instance.DBTLoaded) DBT(player);
+            if (Fargowiltas.Instance.DBZMODLoaded) DBT(player);
         }
 
         private void Thorium(Player player)
         {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //phylactery
             if (!thoriumPlayer.lichPrevent)
             {
                 player.AddBuff(thorium.BuffType("LichActive"), 60, true);
             }
             //crystal scorpion
-            if (SoulConfig.Instance.GetValue("Crystal Scorpion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.CrystalScorpion))
             {
                 thoriumPlayer.crystalScorpion = true;
             }
             //yumas pendant
-            if (SoulConfig.Instance.GetValue("Yuma's Pendant"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.YumasPendant))
             {
                 thoriumPlayer.yuma = true;
             }
@@ -168,7 +168,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             //dead mans patch
             thoriumPlayer.deadEyeBool = true;
             //mermaid canteen
-            thoriumPlayer.canteenEffect += 750;
+            thoriumPlayer.throwerExhaustionMax += 1125;
             thoriumPlayer.canteenCadet = true;
 
             //HEALER
@@ -199,7 +199,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             //medical bag
             thoriumPlayer.medicalAcc = true;
             //head mirror arrow 
-            if (SoulConfig.Instance.GetValue("Head Mirror"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.HeadMirror))
             {
                 float num = 0f;
                 int num2 = player.whoAmI;
@@ -231,19 +231,19 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             thoriumPlayer.symphonicCrit += 15;
             thoriumPlayer.bardResourceMax2 += 30;
             //epic mouthpiece
-            thoriumPlayer.bardHomingBool = true;
+            thoriumPlayer.accWindHoming = true;
             thoriumPlayer.bardHomingBonus = 5f;
             //straight mute
-            thoriumPlayer.bardMute2 = true;
+            thoriumPlayer.accBrassMute2 = true;
             //digital tuner
-            thoriumPlayer.tuner2 = true;
+            thoriumPlayer.accPercussionTuner2 = true;
             //guitar pick claw
             thoriumPlayer.bardBounceBonus = 5;
         }
 
         private void Calamity(Player player)
         {
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             //melee
             modPlayer.eGauntlet = true;
             //removing the extra boosts it adds because meme calamity
@@ -251,7 +251,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
             player.meleeSpeed -= .15f;
             player.meleeCrit -= 5;
 
-            if (SoulConfig.Instance.GetValue("Elemental Quiver"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ElementalQuiver))
             {
                 //range
                 modPlayer.eQuiver = true;
@@ -269,7 +269,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
 
         private void DBT(Player player)
         {
-            DBZMOD.MyPlayer dbtPlayer = player.GetModPlayer<DBZMOD.MyPlayer>(dbzMod);
+            DBZMOD.MyPlayer dbtPlayer = player.GetModPlayer<DBZMOD.MyPlayer>();
 
             dbtPlayer.chargeMoveSpeed = Math.Max(dbtPlayer.chargeMoveSpeed, 2f);
             dbtPlayer.kiKbAddition += 0.4f;
@@ -288,10 +288,11 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
         {
             ModRecipe recipe = new ModRecipe(mod);
             recipe.AddIngredient(null, "GladiatorsSoul");
-            recipe.AddIngredient(null, "SharpshootersSoul");
+            recipe.AddIngredient(null, "SnipersSoul");
             recipe.AddIngredient(null, "ArchWizardsSoul");
             recipe.AddIngredient(null, "ConjuristsSoul");
             recipe.AddIngredient(null, "OlympiansSoul");
+            recipe.AddIngredient(null, "MutatingEnergy", 10);
 
             if (Fargowiltas.Instance.ThoriumLoaded)
             {
@@ -300,7 +301,7 @@ Effects of Epic Mouthpiece, Straight Mute, Digital Tuner, and Guitar Pick Claw";
                 recipe.AddIngredient(thorium.ItemType("TheRing"));              
             }
 
-            if (Fargowiltas.Instance.DBTLoaded)
+            if (Fargowiltas.Instance.DBZMODLoaded)
             {
                 recipe.AddIngredient(null, "KiSoul");
             }

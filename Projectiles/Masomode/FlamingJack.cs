@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -98,8 +97,8 @@ namespace FargowiltasSouls.Projectiles.Masomode
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(BuffID.OnFire, Main.rand.Next(300, 600));
-            target.AddBuff(mod.BuffType("LivingWasteland"), Main.rand.Next(300, 600));
+            target.AddBuff(BuffID.OnFire, 600);
+            target.AddBuff(mod.BuffType("LivingWasteland"), 600);
         }
 
         public override Color? GetAlpha(Color lightColor)

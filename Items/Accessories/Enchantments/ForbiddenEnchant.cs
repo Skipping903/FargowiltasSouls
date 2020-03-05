@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -17,24 +19,26 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             string tooltip =
 @"'Walk like an Egyptian'
 Double tap down to call an ancient storm to the cursor location
-Any projectiles shot through your storm gain 50% damage
-";
+Any projectiles shot through your storm gain 50% damage";
             string tooltip_ch =
 @"'走路像个埃及人Z(￣ｰ￣)Z'
 双击'下'键可召唤一个远古风暴到光标位置
 任何穿过风暴的抛射物获得额外50%伤害";
 
-            if(thorium != null)
-            {
-                tooltip +=
-@"Effects of Karmic Holder";
-                tooltip_ch +=
-@"拥有业果之握的效果";
-            }
-
             Tooltip.SetDefault(tooltip);
             DisplayName.AddTranslation(GameCulture.Chinese, "禁忌魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(231, 178, 28);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -49,19 +53,7 @@ Any projectiles shot through your storm gain 50% damage
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).ForbiddenEffect();
-
-            if (Fargowiltas.Instance.ThoriumLoaded) Thorium(player);
-        }
-
-        private void Thorium(Player player)
-        {
-            ThoriumPlayer thoriumPlayer = (ThoriumPlayer)player.GetModPlayer(thorium, "ThoriumPlayer");
-            thoriumPlayer.karmicHolder = true;
-            if (thoriumPlayer.healStreak >= 0 && player.ownedProjectileCounts[thorium.ProjectileType("KarmicHolderPro")] < 1)
-            {
-                Projectile.NewProjectile(player.Center.X, player.Center.Y, 0f, 0f, thorium.ProjectileType("KarmicHolderPro"), 0, 0f, player.whoAmI, 0f, 0f);
-            }
+            player.GetModPlayer<FargoPlayer>().ForbiddenEffect();
         }
 
         public override void AddRecipes()
@@ -73,18 +65,19 @@ Any projectiles shot through your storm gain 50% damage
             
             if(Fargowiltas.Instance.ThoriumLoaded)
             {      
-                recipe.AddIngredient(thorium.ItemType("KarmicHolder"));
+                recipe.AddIngredient(thorium.ItemType("HerdingStaff"));
                 recipe.AddIngredient(thorium.ItemType("WhisperRa"));
                 recipe.AddIngredient(thorium.ItemType("AxeBlade"), 300);
                 recipe.AddIngredient(ItemID.SpiritFlame);
-                recipe.AddIngredient(ItemID.BookStaff);
+                recipe.AddIngredient(ItemID.RainbowRod);
             }
             else
             {
                 recipe.AddIngredient(ItemID.SpiritFlame);
-                recipe.AddIngredient(ItemID.BookStaff);
+                recipe.AddIngredient(ItemID.RainbowRod);
             }
-            
+
+            recipe.AddIngredient(ItemID.DjinnsCurse);
             recipe.AddIngredient(ItemID.Scorpion);
             
             recipe.AddTile(TileID.CrystalBall);

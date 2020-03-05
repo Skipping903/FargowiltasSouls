@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -23,6 +25,17 @@ Summons a pet Face Monster and Crimson Heart");
 召唤巨脸怪宝宝和血腥心脏");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(200, 54, 75);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -35,7 +48,7 @@ Summons a pet Face Monster and Crimson Heart");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).CrimsonEffect(hideVisual);
+            player.GetModPlayer<FargoPlayer>().CrimsonEffect(hideVisual);
         }
 
         public override void AddRecipes()

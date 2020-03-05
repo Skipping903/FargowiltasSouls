@@ -6,12 +6,7 @@ using Terraria.Localization;
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
     public class RainEnchant : ModItem
-    {
-    public override bool Autoload(ref string name)
-        {
-            return false;
-        }
-        
+    {        
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
 
         public override void SetStaticDefaults()
@@ -19,11 +14,11 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             DisplayName.SetDefault("Rain Enchantment");
             Tooltip.SetDefault(
 @"'Come again some other day'
-A miniature storm may appear when an enemy dies");
+Grants immunity to Wet
+A miniature storm will appear after heavily damaging enemies
+Shooting it with any kind of water will make it grow
+At maximum size, water will turn into lightning bolts");
             DisplayName.AddTranslation(GameCulture.Chinese, "云雨魔石");
-            Tooltip.AddTranslation(GameCulture.Chinese, 
-@"'改天再来'
-敌人死亡时可能会出现微型风暴");
         }
 
         public override void SetDefaults()
@@ -32,17 +27,14 @@ A miniature storm may appear when an enemy dies");
             item.height = 20;
             item.accessory = true;
             ItemID.Sets.ItemNoGravity[item.type] = true;
-            item.rare = 7;
-            item.value = 100000;
+            item.rare = 6;
+            item.value = 150000;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            /*
-             * Rain
-
-spawn rain clouds when a enemy dies, or spawn rain drops everywhere above them, or circling storm clouds that shoot lightning 
-             */
+            player.buffImmune[BuffID.Wet] = true;
+            player.GetModPlayer<FargoPlayer>().RainEnchant = true;
         }
 
         public override void AddRecipes()
@@ -51,11 +43,11 @@ spawn rain clouds when a enemy dies, or spawn rain drops everywhere above them, 
 
             recipe.AddIngredient(ItemID.RainHat);
             recipe.AddIngredient(ItemID.RainCoat);
-            recipe.AddIngredient(ItemID.RainCloud);
-            recipe.AddIngredient(ItemID.Umbrella);
             recipe.AddIngredient(ItemID.UmbrellaHat);
+            recipe.AddIngredient(ItemID.Umbrella);
             recipe.AddIngredient(ItemID.NimbusRod);
-            //
+            recipe.AddIngredient(ItemID.WaterGun);
+            recipe.AddIngredient(ItemID.RainCloud, 25);
 
             recipe.AddTile(TileID.CrystalBall);
             recipe.SetResult(this);

@@ -9,12 +9,11 @@ namespace FargowiltasSouls.NPCs
 {
     public class CreeperGutted : ModNPC
     {
-        public override string Texture => "Terraria/NPC_267";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Creeper");
             DisplayName.AddTranslation(GameCulture.Chinese, "爬行者");
+            Main.npcFrameCount[npc.type] = 3;
         }
 
         public override void SetDefaults()
@@ -81,7 +80,7 @@ namespace FargowiltasSouls.NPCs
                 npc.ai[1] = 0f;
                 npc.velocity = npc.velocity.RotatedByRandom(2 * Math.PI);
 
-                if (player.whoAmI == Main.myPlayer && !SoulConfig.Instance.GetValue("Creeper Shield"))
+                if (player.whoAmI == Main.myPlayer && !SoulConfig.Instance.GetValue(SoulConfig.Instance.GuttedHeart))
                 {
                     int n = npc.whoAmI;
                     npc.StrikeNPCNoInteraction(9999, 0f, 0);
@@ -94,9 +93,26 @@ namespace FargowiltasSouls.NPCs
             npc.position += player.position - player.oldPosition;
         }
 
+        public override void FindFrame(int frameHeight)
+        {
+            if (npc.ai[2] <= 1)
+                npc.frame.Y = 0;
+            else if (npc.ai[2] <= 2)
+                npc.frame.Y = frameHeight;
+            else
+                npc.frame.Y = frameHeight * 2;
+        }
+
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             damage *= 10;
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            if (projectile.type == ProjectileID.RottenEgg)
+                return false;
+            return null;
         }
 
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)

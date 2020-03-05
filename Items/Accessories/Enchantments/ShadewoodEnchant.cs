@@ -2,6 +2,8 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -13,13 +15,24 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments
             Tooltip.SetDefault(
 @"'Surprisingly clean'
 When you take damage, damaging blood flies everywhere
-While in the Crimson, you are instead inflicted with Blood Geyser on hit
-Blood Geyser makes you constantly spew damaging blood");
+While in the Crimson, enemies getting too close will trigger this and all other on hit effects
+There is a 5 second cooldown for this");
             DisplayName.AddTranslation(GameCulture.Chinese, "阴影木魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, 
 @"'出奇的干净'
 受到伤害时会鲜血四溅
 在血腥地形时,被击中会使敌人造成大出血");
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(88, 104, 118);
+                }
+            }
         }
 
         public override void SetDefaults()

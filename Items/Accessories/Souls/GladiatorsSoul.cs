@@ -1,6 +1,5 @@
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 using static Terraria.ID.ItemID;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -88,7 +87,7 @@ Increased melee knockback
 
         private void Calamity(Player player)
         {
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             modPlayer.eGauntlet = true;
             //removing the extra boosts it adds because meme calamity
             player.meleeDamage -= .15f;
@@ -110,19 +109,19 @@ Increased melee knockback
                 recipe.AddIngredient(KOCannon);
                 recipe.AddIngredient(IceSickle);
                 recipe.AddIngredient(thorium.ItemType("PrimesFury"));
-                recipe.AddIngredient(MonkStaffT2);
                 recipe.AddIngredient(TerraBlade);
                 recipe.AddIngredient(ScourgeoftheCorruptor);
                 recipe.AddIngredient(thorium.ItemType("Spearmint"));
+                recipe.AddIngredient(MonkStaffT3);
             }
             else
             {
                 recipe.AddIngredient(IceSickle);
-                recipe.AddIngredient(MonkStaffT2);
                 recipe.AddIngredient(TerraBlade);
                 recipe.AddIngredient(ScourgeoftheCorruptor);
                 recipe.AddIngredient(Kraken);
                 recipe.AddIngredient(Flairon);
+                recipe.AddIngredient(MonkStaffT3);
                 recipe.AddIngredient(TheHorsemansBlade);
             }
 

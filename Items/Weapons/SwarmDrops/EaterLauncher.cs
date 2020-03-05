@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -14,14 +12,14 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Rockeater Launcher");
-            Tooltip.SetDefault("'The reward for slaughtering many..'");
+            Tooltip.SetDefault("'The reward for slaughtering many..'\n50% chance to not consume ammo");
             DisplayName.AddTranslation(GameCulture.Chinese, "吞噬者发射器");
             Tooltip.AddTranslation(GameCulture.Chinese, "'屠戮众多的奖励..'");
         }
 
         public override void SetDefaults()
         {
-            item.damage = 40; //
+            item.damage = 210; //
             item.ranged = true;
             item.width = 24; 
             item.height = 24; 
@@ -33,7 +31,7 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
             item.UseSound = new LegacySoundStyle(2, 62); 
             item.useAmmo = AmmoID.Rocket;
             item.value = Item.sellPrice(0, 10); 
-            item.rare = 4; 
+            item.rare = 11; 
             item.autoReuse = true; 
             item.shoot = mod.ProjectileType("EaterRocket");
             item.shootSpeed = 16f; 
@@ -52,16 +50,23 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
             return true;
         }
 
+        public override bool ConsumeAmmo(Player player)
+        {
+            return Main.rand.Next(2) == 0;
+        }
+
         public override void AddRecipes()
         {
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
 
                 recipe.AddIngredient(mod.ItemType("EaterStaff"));
                 recipe.AddIngredient(ModLoader.GetMod("Fargowiltas").ItemType("EnergizerWorm"));
+                recipe.AddIngredient(ItemID.LunarBar, 10);
+                recipe.AddIngredient(null, "LunarCrystal", 5);
 
-                recipe.AddTile(TileID.MythrilAnvil);
+                recipe.AddTile(mod, "CrucibleCosmosSheet");
                 recipe.SetResult(this);
                 recipe.AddRecipe();
             }

@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -27,6 +29,17 @@ Increases flight time by 50%";
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(109, 92, 133);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -39,7 +52,7 @@ Increases flight time by 50%";
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
             //defense beetle bois
             modPlayer.BeetleEffect();
             modPlayer.wingTimeModifier += .5f;
@@ -51,12 +64,6 @@ Increases flight time by 50%";
             recipe.AddIngredient(ItemID.BeetleHelmet);
             recipe.AddRecipeGroup("FargowiltasSouls:AnyBeetle");
             recipe.AddIngredient(ItemID.BeetleLeggings);
-
-            if (Fargowiltas.Instance.ThoriumLoaded)
-            {
-                recipe.AddIngredient(null, "FlightEnchant");
-            }
-
             recipe.AddIngredient(ItemID.BeetleWings);
             recipe.AddIngredient(ItemID.BeeWings);
             recipe.AddIngredient(ItemID.ButterflyWings);
@@ -66,6 +73,7 @@ Increases flight time by 50%";
             {      
                 recipe.AddIngredient(ItemID.GolemFist);
                 recipe.AddIngredient(thorium.ItemType("SolScorchedSlab"));
+                recipe.AddIngredient(ItemID.HeatRay);
             }
               
             recipe.AddTile(TileID.CrystalBall);

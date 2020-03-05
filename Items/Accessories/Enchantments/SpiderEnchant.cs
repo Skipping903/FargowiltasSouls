@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -23,18 +24,23 @@ Your minions can now crit with a 20% chance
 @"'蜘蛛该死'
 召唤物现在有20%的暴击率";
 
-            if(thorium != null)
-            {
-                tooltip += "Effects of Arachnid's Subwoofer\n";
-                tooltip_ch += "拥有蛛网音箱的效果\n";
-            }
-
             tooltip += "Summons a pet Spider";
             tooltip_ch += "召唤一只宠物蜘蛛";
 
             Tooltip.SetDefault(tooltip);
             DisplayName.AddTranslation(GameCulture.Chinese, "蜘蛛魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(109, 78, 69);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -49,23 +55,7 @@ Your minions can now crit with a 20% chance
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).SpiderEffect(hideVisual);
-
-            if (Fargowiltas.Instance.ThoriumLoaded) Thorium(player);
-        }
-
-        private void Thorium(Player player)
-        {
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerVenom = true;
-                }
-            }
+            player.GetModPlayer<FargoPlayer>().SpiderEffect(hideVisual);
         }
 
         public override void AddRecipes()
@@ -77,20 +67,14 @@ Your minions can now crit with a 20% chance
             
             if(Fargowiltas.Instance.ThoriumLoaded)
             {      
-                recipe.AddIngredient(thorium.ItemType("VenomSubwoofer"));
                 recipe.AddIngredient(thorium.ItemType("Webgun"));
                 recipe.AddIngredient(thorium.ItemType("Arthropod"));
-                recipe.AddIngredient(ItemID.SpiderStaff);
-                recipe.AddIngredient(ItemID.QueenSpiderStaff);
-                recipe.AddIngredient(ItemID.BatScepter);
+                recipe.AddIngredient(thorium.ItemType("RiffWeaver"));
             }
-            else
-            {
-                recipe.AddIngredient(ItemID.SpiderStaff);
-                recipe.AddIngredient(ItemID.QueenSpiderStaff);
-                recipe.AddIngredient(ItemID.BatScepter);
-            }   
-            
+
+            recipe.AddIngredient(ItemID.SpiderStaff);
+            recipe.AddIngredient(ItemID.QueenSpiderStaff);
+            recipe.AddIngredient(ItemID.WebSlinger);
             recipe.AddIngredient(ItemID.SpiderEgg);
             
             recipe.AddTile(TileID.CrystalBall);

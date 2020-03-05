@@ -1,10 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using CalamityMod.CalPlayer;
 using Terraria.Localization;
-using System;
 
 namespace FargowiltasSouls.Items.Accessories.Forces.Calamity
 {
@@ -55,18 +53,13 @@ Summons several pets");
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            CalamityPlayer calamityPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            CalamityPlayer calamityPlayer = player.GetModPlayer<CalamityPlayer>();
 
             if (!modPlayer.TerrariaSoul)
             {
                 //WULFRUM
-                //spirit glyph
-                calamityPlayer.sGenerator = true;
-                //raiders talisman
-                calamityPlayer.raiderTalisman = true;
-                //trinket of chi
-                calamityPlayer.trinketOfChi = true;
+                mod.GetItem("WulfrumEnchant").UpdateAccessory(player, hideVisual);
             }
             //AEROSPEC
             mod.GetItem("AerospecEnchant").UpdateAccessory(player, hideVisual);
@@ -89,6 +82,7 @@ Summons several pets");
             recipe.AddIngredient(null, "AerospecEnchant");
             recipe.AddIngredient(null, "StatigelEnchant");
             recipe.AddIngredient(null, "DaedalusEnchant");
+            //recipe.AddIngredient(null, "UmbraphileEnchant");
             recipe.AddIngredient(null, "BloodflareEnchant");
 
             recipe.AddTile(mod, "CrucibleCosmosSheet");

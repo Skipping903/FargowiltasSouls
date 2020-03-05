@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -43,7 +42,7 @@ Critical strikes grant Alpha's Roar, briefly increasing the damage of your summo
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //feral set bonus
             modPlayer.FeralFurEnchant = true;
         }
@@ -53,8 +52,8 @@ Critical strikes grant Alpha's Roar, briefly increasing the damage of your summo
             "FeralSkinHead",
             "FeralSkinChest",
             "FeralSkinLegs",
-            "Dagger",
-            "Bellerose",
+            "BlackCatEars",
+            "Lullaby",
             "SacrificialDagger",
             "MeteorBarrier",
             "CrimsonSummon",

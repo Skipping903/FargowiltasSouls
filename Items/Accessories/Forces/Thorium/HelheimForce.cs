@@ -1,7 +1,6 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
@@ -22,10 +21,10 @@ namespace FargowiltasSouls.Items.Accessories.Forces.Thorium
             DisplayName.SetDefault("Force of Helheim");
             Tooltip.SetDefault(
 @"'From the halls of Hel, a vision of the end...'
-All armor bonuses from Spirit Trapper, Dragon, Dread, Flesh, and Demon Blood
-All armor bonuses from White Knight, and Harbinger, Lich, and Plague Doctor
-Effects of Inner Flame, Crash Boots, Dragon Talon Necklace, and Grim Subwoofer
-Effects of Vampire Gland, Demon Blood Badge, and Blood Demon's Subwoofer 
+All armor bonuses from Spirit Trapper, Dragon, Dread, Flesh, Demon Blood, and Magma
+All armor bonuses from Berserker, White Knight, and Harbinger, Lich, and Plague Doctor
+Effects of Inner Flame, Crash Boots, and Dragon Talon Necklace
+Effects of Vampire Gland, Demon Blood Badge, Spring Steps, and Slag Stompers
 Effects of Shade Band, Lich's Gaze, and Plague Lord's Flask
 Summons several pets");
             DisplayName.AddTranslation(GameCulture.Chinese, "海姆冥界之力");
@@ -65,7 +64,7 @@ Summons several pets");
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
 
             //spirit trapper
             modPlayer.SpiritTrapperEnchant = true;
@@ -73,7 +72,7 @@ Summons several pets");
             //inner flame
             thoriumPlayer.spiritFlame = true;
 
-            if (SoulConfig.Instance.GetValue("Dread Speed"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.DreadSpeed))
             {
                 //dread
                 player.moveSpeed += 0.8f;
@@ -99,56 +98,47 @@ Summons several pets");
             thorium.GetItem("CrashBoots").UpdateAccessory(player, hideVisual);
             player.moveSpeed -= 0.15f;
             player.maxRunSpeed -= 1f;
-            if (SoulConfig.Instance.GetValue("Dragon Flames"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.DragonFlames))
             {
                 //dragon 
                 thoriumPlayer.dragonSet = true;
             }
             //wyvern pet
-            modPlayer.AddPet("Wyvern Pet", hideVisual, thorium.BuffType("WyvernPetBuff"), thorium.ProjectileType("WyvernPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.WyvernPet, hideVisual, thorium.BuffType("WyvernPetBuff"), thorium.ProjectileType("WyvernPet"));
             modPlayer.DragonEnchant = true;
 
             //demon blood effect
             modPlayer.DemonBloodEnchant = true;
             //demon blood badge
             thoriumPlayer.CrimsonBadge = true;
-            if (SoulConfig.Instance.GetValue("Flesh Drops"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.FleshDrops))
             {
                 //flesh set bonus
                 thoriumPlayer.Symbiotic = true;
             }
-            if (SoulConfig.Instance.GetValue("Vampire Gland"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.VampireGland))
             {
                 //vampire gland
                 thoriumPlayer.vampireGland = true;
             }
             //blister pet
-            modPlayer.AddPet("Blister Pet", hideVisual, thorium.BuffType("BlisterBuff"), thorium.ProjectileType("BlisterPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.BlisterPet, hideVisual, thorium.BuffType("BlisterBuff"), thorium.ProjectileType("BlisterPet"));
             modPlayer.FleshEnchant = true;
             //pet
-            modPlayer.AddPet("Moogle Pet", hideVisual, thorium.BuffType("LilMogBuff"), thorium.ProjectileType("LilMog"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.MooglePet, hideVisual, thorium.BuffType("LilMogBuff"), thorium.ProjectileType("LilMog"));
             modPlayer.KnightEnchant = true;
             //lich gaze
             thoriumPlayer.lichGaze = true;
             modPlayer.PlagueAcc = true;
+            //berserker
+            mod.GetItem("BerserkerEnchant").UpdateAccessory(player, hideVisual);
 
             if (modPlayer.ThoriumSoul) return;
 
-            //woofers
-            thoriumPlayer.bardRangeBoost += 450;
-            for (int i = 0; i < 255; i++)
-            {
-                Player player2 = Main.player[i];
-                if (player2.active && !player2.dead && Vector2.Distance(player2.Center, player.Center) < 450f)
-                {
-                    thoriumPlayer.empowerCursed = true;
-                    thoriumPlayer.empowerIchor = true;
-                }
-            }
             //dragon tooth necklace
             player.armorPenetration += 15;
 
-            if (SoulConfig.Instance.GetValue("Harbinger Overcharge"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.HarbingerOvercharge))
             {
                 //harbinger
                 if (player.statLife > (int)(player.statLifeMax2 * 0.75))
@@ -174,6 +164,7 @@ Summons several pets");
             recipe.AddIngredient(null, "SpiritTrapperEnchant");
             recipe.AddIngredient(null, "DreadEnchant");
             recipe.AddIngredient(null, "DemonBloodEnchant");
+            recipe.AddIngredient(null, "BerserkerEnchant");
             recipe.AddIngredient(null, "HarbingerEnchant");
             recipe.AddIngredient(null, "PlagueDoctorEnchant");
 

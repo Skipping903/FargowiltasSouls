@@ -2,15 +2,15 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using ThoriumMod;
 using Terraria.Localization;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
+    [AutoloadEquip(EquipType.Shield)]
     public class IronEnchant : ModItem
     {
         private readonly Mod thorium = ModLoader.GetMod("ThoriumMod");
-        public int timer;
 
         public override void SetStaticDefaults()
         {
@@ -28,15 +28,20 @@ You attract items from a larger range";
 右键用盾牌防御
 拾取物品半径增大";
 
-            if (thorium != null)
-            {
-                tooltip += "\nEffects of Iron Shield";
-                tooltip_ch += "\n拥有铁盾的效果";
-            }
-
             Tooltip.SetDefault(tooltip); 
             DisplayName.AddTranslation(GameCulture.Chinese, "铁魔石");
             Tooltip.AddTranslation(GameCulture.Chinese, tooltip_ch);
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(152, 142, 131);
+                }
+            }
         }
 
         public override void SetDefaults()
@@ -47,44 +52,27 @@ You attract items from a larger range";
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.rare = 2;
             item.value = 40000;
-            item.shieldSlot = 5;
+            //item.shieldSlot = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
-            //sheild raise
-            modPlayer.IronEffect();
+
+            //EoC Shield
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.CthulhuShield))
+            {
+                player.dash = 2;
+            }
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.IronShield))
+            {
+                //shield
+                modPlayer.IronEffect();
+            }
             //magnet
-            if (SoulConfig.Instance.GetValue("Iron Magnet"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.IronMagnet, false))
             {
                 modPlayer.IronEnchant = true;
-            }
-            //EoC Shield
-            player.dash = 2;
-
-            if (Fargowiltas.Instance.ThoriumLoaded) Thorium(player);
-        }
-
-        private void Thorium(Player player)
-        {
-            ThoriumPlayer thoriumPlayer = (ThoriumPlayer)player.GetModPlayer(thorium, "ThoriumPlayer");
-            //thorium shield
-            timer++;
-            if (timer >= 30)
-            {
-                int num = 18;
-                if (thoriumPlayer.shieldHealth <= num)
-                {
-                    thoriumPlayer.shieldHealthTimerStop = true;
-                }
-                if (thoriumPlayer.shieldHealth < num)
-                {
-                    CombatText.NewText(new Rectangle((int)player.position.X, (int)player.position.Y, player.width, player.height), new Color(51, 255, 255), 1, false, true);
-                    thoriumPlayer.shieldHealth++;
-                    player.statLife++;
-                }
-                timer = 0;
             }
         }
 

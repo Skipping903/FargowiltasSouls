@@ -32,9 +32,9 @@ namespace FargowiltasSouls.Projectiles.Minions
         public override void AI()
         {
             Player player = Main.player[projectile.owner];
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
 
-            if (!modPlayer.SilverEnchant || !SoulConfig.Instance.GetValue("Silver Sword Familiar"))
+            if (!modPlayer.SilverEnchant || !SoulConfig.Instance.GetValue(SoulConfig.Instance.SilverSword))
             {
                 projectile.Kill();
                 return;

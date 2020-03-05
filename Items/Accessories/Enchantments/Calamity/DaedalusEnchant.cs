@@ -1,9 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod.CalPlayer;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -53,30 +53,39 @@ Summons a Bear and Third Sage pet");
             item.value = 500000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(64, 115, 164);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Daedalus Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusEffects))
             {
-                modPlayer.daedalusReflect = true;
-                modPlayer.daedalusShard = true;
-                modPlayer.daedalusAbsorb = true;
-                modPlayer.daedalusCrystal = true;
-                modPlayer.daedalusSplit = true;
+                calamity.Call("SetSetBonus", player, "daedalus_melee", true);
+                calamity.Call("SetSetBonus", player, "daedalus_ranged", true);
+                calamity.Call("SetSetBonus", player, "daedalus_magic", true);
+                calamity.Call("SetSetBonus", player, "daedalus_summon", true);
+                calamity.Call("SetSetBonus", player, "daedalus_rogue", true);
             }
             
-            if (SoulConfig.Instance.GetValue("Permafrost's Concoction"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PermafrostPotion))
             {
                 //permafrost concoction
-                modPlayer.permafrostsConcoction = true;
+                calamity.GetItem("PermafrostsConcoction").UpdateAccessory(player, hideVisual);
             }
             
             if (player.GetModPlayer<FargoPlayer>().Eternity) return;
 
-            if (SoulConfig.Instance.GetValue("Daedalus Crystal Minion") && player.whoAmI == Main.myPlayer)
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DaedalusMinion) && player.whoAmI == Main.myPlayer)
             {
                 if (player.FindBuffIndex(calamity.BuffType("DaedalusCrystal")) == -1)
                 {
@@ -89,13 +98,13 @@ Summons a Bear and Third Sage pet");
             }
 
             //regenerator
-            if (SoulConfig.Instance.GetValue("Regenator"))
-                modPlayer.regenator = true;
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.Regenerator))
+                calamity.GetItem("Regenator").UpdateAccessory(player, hideVisual);
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.DaedalusEnchant = true;
-            fargoPlayer.AddPet("Third Sage Pet", hideVisual, calamity.BuffType("ThirdSageBuff"), calamity.ProjectileType("ThirdSage"));
-            fargoPlayer.AddPet("Bear Pet", hideVisual, calamity.BuffType("BearBuff"), calamity.ProjectileType("Bear"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.ThirdSagePet, hideVisual, calamity.BuffType("ThirdSageBuff"), calamity.ProjectileType("ThirdSage"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.BearPet, hideVisual, calamity.BuffType("BearBuff"), calamity.ProjectileType("Bear"));
         }
 
         public override void AddRecipes()

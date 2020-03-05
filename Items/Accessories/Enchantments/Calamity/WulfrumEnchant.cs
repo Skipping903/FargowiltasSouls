@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using CalamityMod;
 using Terraria.Localization;
-using CalamityMod.CalPlayer;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -42,21 +41,31 @@ Effects of the Spirit Glyph, Raider's Talisman, and Trinket of Chi");
             item.defense = 3;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(129, 168, 109);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
             if (player.statLife <= (int)(player.statLifeMax2 * 0.5))
             {
                 player.statDefense += 5;
             }
             //spirit glyph
-            modPlayer.sGenerator = true;
+            calamity.GetItem("SpiritGenerator").UpdateAccessory(player, hideVisual);
             //raiders talisman
-            modPlayer.raiderTalisman = true;
+            calamity.GetItem("RaidersTalisman").UpdateAccessory(player, hideVisual);
             //trinket of chi
-            modPlayer.trinketOfChi = true;
+            calamity.GetItem("TrinketofChi").UpdateAccessory(player, hideVisual);
         }
 
         public override void AddRecipes()

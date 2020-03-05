@@ -1,10 +1,8 @@
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ID;
 using static Terraria.ID.ItemID;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using CalamityMod;
 using Terraria.Localization;
 using CalamityMod.CalPlayer;
 
@@ -86,7 +84,7 @@ Increases your maximum mana by 200
 
         private void Calamity(Player player)
         {
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             modPlayer.eTalisman = true;
         }
 

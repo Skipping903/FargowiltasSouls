@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
@@ -19,17 +18,17 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void SetDefaults()
         {
-            item.damage = 48;
+            item.damage = 60;
             item.ranged = true;
             item.width = 24;
             item.height = 24;
-            item.useTime = 8;
-            item.useAnimation = 8;
+            item.useTime = 6;
+            item.useAnimation = 6;
             item.useStyle = 5;
             item.noMelee = true;
             item.knockBack = 1.5f;
             item.value = 50000;
-            item.rare = 5;
+            item.rare = 11;
             item.autoReuse = true;
             item.shoot = ProjectileID.HornetStinger;
             //item.useAmmo = ItemID.Stinger;
@@ -81,12 +80,15 @@ namespace FargowiltasSouls.Items.Weapons.SwarmDrops
 
         public override void AddRecipes()
         {
-            if (Fargowiltas.Instance.FargosLoaded)
+            if (Fargowiltas.Instance.FargowiltasLoaded)
             {
                 ModRecipe recipe = new ModRecipe(mod);
                 recipe.AddIngredient(null, "HiveStaff");
                 recipe.AddIngredient(ModLoader.GetMod("Fargowiltas").ItemType("EnergizerBee"));
-                recipe.AddTile(TileID.MythrilAnvil);
+                recipe.AddIngredient(ItemID.LunarBar, 10);
+                recipe.AddIngredient(null, "LunarCrystal", 5);
+
+                recipe.AddTile(mod, "CrucibleCosmosSheet");
                 recipe.SetResult(this);
                 recipe.AddRecipe();
             }

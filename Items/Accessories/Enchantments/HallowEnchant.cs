@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -26,6 +28,17 @@ Summons a magical fairy");
 召唤魔法妖精");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(150, 133, 100);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -38,7 +51,7 @@ Summons a magical fairy");
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).HallowEffect(hideVisual, 80);
+            player.GetModPlayer<FargoPlayer>().HallowEffect(hideVisual, 80);
         }
 
         public override void AddRecipes()
@@ -55,8 +68,8 @@ Summons a magical fairy");
                 recipe.AddIngredient(thorium.ItemType("EnchantedShield"));
                 recipe.AddIngredient(ItemID.Excalibur);
                 recipe.AddIngredient(ItemID.LightDisc, 5);
+                recipe.AddIngredient(thorium.ItemType("SteamgunnerController"));
                 recipe.AddIngredient(thorium.ItemType("HolyStaff"));
-                recipe.AddIngredient(thorium.ItemType("MusicSheet4"));
             }
             else
             {

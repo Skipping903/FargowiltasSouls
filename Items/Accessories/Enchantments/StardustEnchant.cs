@@ -2,6 +2,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments
 {
@@ -27,6 +29,17 @@ There is a 60 second cooldown for this effect, a sound effect plays when it's ba
 60秒的冷却时间, 冷却结束时会播放音效");
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(0, 174, 238);
+                }
+            }
+        }
+
         public override void SetDefaults()
         {
             item.width = 20;
@@ -39,7 +52,7 @@ There is a 60 second cooldown for this effect, a sound effect plays when it's ba
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<FargoPlayer>(mod).StardustEffect();
+            player.GetModPlayer<FargoPlayer>().StardustEffect();
         }
 
         public override void AddRecipes()

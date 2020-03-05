@@ -1,10 +1,9 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using CalamityMod.CalPlayer;
 using Terraria.Localization;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -52,71 +51,41 @@ Summons a Brimling pet");
             item.value = 1000000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(194, 89, 89);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-
-            if (SoulConfig.Instance.GetValue("Ataxia Effects"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.AtaxiaEffects))
             {
-                //all
-                modPlayer.ataxiaBlaze = true;
-                //melee
-                modPlayer.ataxiaGeyser = true;
-                //range
-                modPlayer.ataxiaBolt = true;
-                //magic
-                modPlayer.ataxiaMage = true;
-                //throw
-                modPlayer.ataxiaVolley = true;
+                calamity.Call("SetSetBonus", player, "ataxia", true);
+                calamity.Call("SetSetBonus", player, "ataxia_melee", true);
+                calamity.Call("SetSetBonus", player, "ataxia_ranged", true);
+                calamity.Call("SetSetBonus", player, "ataxia_magic", true);
+                calamity.Call("SetSetBonus", player, "ataxia_rogue", true);
             }
             
-            if (SoulConfig.Instance.GetValue("Plague Hive"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PlagueHive))
             {
-                //plague hive
-                player.buffImmune[calamity.BuffType("Plague")] = true;
-                modPlayer.uberBees = true;
-                player.strongBees = true;
-                modPlayer.alchFlask = true;
-                int num = 0;
-                Lighting.AddLight((int)(player.Center.X / 16f), (int)(player.Center.Y / 16f), 0.1f, 2f, 0.2f);
-                int num2 = calamity.BuffType("Plague");
-                float num3 = 300f;
-                bool flag = num % 60 == 0;
-                int num4 = 60;
-                int num5 = Main.rand.Next(10);
-                if (player.whoAmI == Main.myPlayer && num5 == 0)
-                {
-                    for (int i = 0; i < 200; i++)
-                    {
-                        NPC npc = Main.npc[i];
-                        if (npc.active && !npc.friendly && npc.damage > 0 && !npc.dontTakeDamage && !npc.buffImmune[num2] && Vector2.Distance(player.Center, npc.Center) <= num3)
-                        {
-                            if (npc.FindBuffIndex(num2) == -1)
-                            {
-                                npc.AddBuff(num2, 120, false);
-                            }
-                            if (flag)
-                            {
-                                npc.StrikeNPC(num4, 0f, 0, false, false, false);
-                                if (Main.netMode != 0)
-                                {
-                                    NetMessage.SendData(28, -1, -1, null, i, (float)num4, 0f, 0f, 0, 0, 0);
-                                }
-                            }
-                        }
-                    }
-                }
-                num++;
+                calamity.GetItem("PlagueHive").UpdateAccessory(player, hideVisual);
             }
             
             if (player.GetModPlayer<FargoPlayer>().Eternity) return;
 
-            if (SoulConfig.Instance.GetValue("Chaos Spirit Minion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ChaosMinion))
             {
                 //summon
-                modPlayer.chaosSpirit = true;
+                calamity.Call("SetSetBonus", player, "ataxia_summon", true);
                 if (player.whoAmI == Main.myPlayer)
                 {
                     if (player.FindBuffIndex(calamity.BuffType("ChaosSpirit")) == -1)
@@ -130,9 +99,9 @@ Summons a Brimling pet");
                 }
             }
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.AtaxiaEnchant = true;
-            fargoPlayer.AddPet("Brimling Pet", hideVisual, calamity.BuffType("BrimlingBuff"), calamity.ProjectileType("Brimling"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.BrimlingPet, hideVisual, calamity.BuffType("BrimlingBuff"), calamity.ProjectileType("BrimlingPet"));
         }
 
         public override void AddRecipes()

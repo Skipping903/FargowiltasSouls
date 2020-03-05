@@ -1,5 +1,4 @@
 ﻿using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Localization;
 
@@ -7,13 +6,11 @@ namespace FargowiltasSouls.Items.Accessories.Masomode
 {
     public class CelestialRune : ModItem
     {
-        public override string Texture => "FargowiltasSouls/Items/Placeholder";
-
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Celestial Rune");
             Tooltip.SetDefault(@"'A fallen enemy's spells, repurposed'
-Grants immunity to Marked for Death and Hexed
+Grants immunity to Marked for Death
 You may periodically fire additional attacks depending on weapon type
 Taking damage creates a friendly Ancient Vision to attack enemies"); 
             DisplayName.AddTranslation(GameCulture.Chinese, "天界符文");
@@ -35,7 +32,6 @@ Taking damage creates a friendly Ancient Vision to attack enemies");
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.buffImmune[mod.BuffType("MarkedforDeath")] = true;
-            player.buffImmune[mod.BuffType("Hexed")] = true;
             player.GetModPlayer<FargoPlayer>().CelestialRune = true;
             player.GetModPlayer<FargoPlayer>().AdditionalAttacks = true;
         }

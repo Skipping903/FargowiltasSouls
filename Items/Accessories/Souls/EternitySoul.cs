@@ -7,7 +7,6 @@ using System;
 using CalamityMod.CalPlayer;
 using ThoriumMod.Items.Misc;
 using Terraria.Localization;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Souls
@@ -22,7 +21,6 @@ namespace FargowiltasSouls.Items.Accessories.Souls
         public bool jumped;
         public bool canHover;
         public int hoverTimer;
-        //public int jumpTimer;
 
         public static int tooltipIndex = 0;
         public static int Counter = 10;
@@ -45,12 +43,14 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "All attacks inflict Flames of the Universe",
     "All attacks inflict Sadism",
     "All attacks inflict Midas",
-    "All attacks reduce enemy knockback immunity",
+    "All attacks reduce enemy immunity frames",
     "Summons fireballs arund you",
+    "Summons 2 shadow orbs around you",
     "Summons icicles around you",
     "Summons leaf crystals around you",
     "Summons a hallowed sword and shield",
     "Summons beetles to protect you",
+    "Summons a Flameburst minion",
     "Summons a ton of pets",
     "Summons all Masochist Mode bosses to your side ",
     "Attacks may spawn lightning",
@@ -60,6 +60,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "Attacks may spawn snowballs",
     "Attacks may spawn spears",
     "Attacks may spawn hearts",
+    "Attacks may spawn a miniture storm",
     "Attacks may spawn buff boosters",
     "Attacks cause increased life regen",
     "Attacks cause shadow dodge",
@@ -69,9 +70,9 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "Attacks cause meteor showers",
     "Projectiles may split",
     "Projectiles may shatter",
+    "Projectiles spawn stars",
     "Item and projectile size increased",
     "You leave a trail of fire",
-    "You leave a trail of rainbows",
     "Nearby enemies are ignited",
     "Minions occasionally spew scythes",
     "You may spawn temporary minions",
@@ -81,6 +82,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "Greatly enhances all DD2 sentries",
     "Double-tap down to spawn a palm tree sentry",
     "Double-tap down to call an ancient storm",
+    "Double-tap down to call a rain of arrows",
     "Double-tap down to toggle stealth",
     "Double-tap down to spawn a portal",
     "Double-tap down to direct your empowered guardian",
@@ -90,9 +92,10 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "Solar shield allows you to dash",
     "Dashing into solid blocks teleports you through them",
     "Throw a smoke bomb to teleport to it and gain the first strike buff",
+    "Jumping will release a spore explosion",
+    "Enemies getting too close will trigger all on hit effects",
     "Getting hit reflects damage",
-    "Getting hit releases a spore explosion",
-    "Getting hit inflicts Blood Geyser",
+    "Getting hit triggers a blood geyser",
     "Getting hit may squeak",
     "Getting hit causes you to erupt into spiky balls",
     "Getting hit causes you to erupt into Ancient Visions",
@@ -126,7 +129,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
     "Near infinite mining reach",
     "Mining speed dramatically increased",
     "You reflect all projectiles",
-    "When you die, you explode",
+    "When you are hurt, you violently explode to damage nearby enemies",
     "When you die, you revive with full HP",
     "Effects of Fire Gauntlet",
     "Effects of Yoyo Bag",
@@ -173,7 +176,7 @@ namespace FargowiltasSouls.Items.Accessories.Souls
             "Armor bonuses from Warlock",
             "Armor bonuses from Biotech",
             "Armor bonuses from Cyber Punk",
-            "Armor bonuses from Conductor",
+            "Armor bonuses from Maestro",
             "Armor bonuses from Bronze",
             "Armor bonuses from Darksteel",
             "Armor bonuses from Durasteel",
@@ -508,9 +511,9 @@ Additionally grants:");
             //UNIVERSE
             modPlayer.UniverseEffect = true;
             modPlayer.AllDamageUp(2f);
-            if (SoulConfig.Instance.GetValue("Universe Attack Speed"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.UniverseAttackSpeed))
             {
-                modPlayer.AttackSpeed *= 2;
+                modPlayer.AttackSpeed += 1;
             }
             player.maxMinions += 20;
             player.maxTurrets += 10;
@@ -518,7 +521,7 @@ Additionally grants:");
             player.counterWeight = 556 + Main.rand.Next(6);
             player.yoyoGlove = true;
             player.yoyoString = true;
-            if (SoulConfig.Instance.GetValue("Universe Scope"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SniperScope))
             {
                 player.scope = true;
             }
@@ -553,18 +556,18 @@ Additionally grants:");
             //charm of myths
             player.pStone = true;
             //bee cloak, sweet heart necklace, star veil
-            if (SoulConfig.Instance.GetValue("Stars On Hit"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.StarCloak))
             {
                 player.starCloak = true;
             }
-            if (SoulConfig.Instance.GetValue("Bees On Hit"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.BeesOnHit))
             {
                 player.bee = true;
             }
             player.panic = true;
             player.longInvince = true;
             //spore sac
-            if (SoulConfig.Instance.GetValue("Spore Sac"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SporeSac))
             {
                 player.SporeSac();
                 player.sporeSac = true;
@@ -587,7 +590,7 @@ Additionally grants:");
 
             //SUPERSONIC
             //frost spark plus super speed
-            if (SoulConfig.Instance.GetValue("Supersonic Speed Boosts") && !player.GetModPlayer<FargoPlayer>().noSupersonic)
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.SupersonicSpeed) && !player.GetModPlayer<FargoPlayer>().noSupersonic)
             {
                 player.maxRunSpeed += 15f;
                 player.runAcceleration += .25f;
@@ -656,7 +659,7 @@ Additionally grants:");
             //pick speed
             player.pickSpeed -= 0.90f;
             //mining helmet
-            if (SoulConfig.Instance.GetValue("Mining Shine Buff")) Lighting.AddLight(player.Center, 0.8f, 0.8f, 0f);
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.MinerShine)) Lighting.AddLight(player.Center, 0.8f, 0.8f, 0f);
             //presserator
             player.autoActuator = true;
             //royal gel
@@ -682,7 +685,7 @@ Additionally grants:");
             player.npcTypeNoAggro[336] = true;
             player.npcTypeNoAggro[537] = true;
             //builder mode
-            if (SoulConfig.Instance.GetValue("Builder Mode"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.BuilderMode))
                 modPlayer.BuilderMode = true;
             //cell phone
             player.accWatch = 3;
@@ -708,9 +711,9 @@ Additionally grants:");
 
             if (Fargowiltas.Instance.CalamityLoaded) Calamity(player, hideVisual);
 
-            if (Fargowiltas.Instance.DBTLoaded) DBT(player);
+            if (Fargowiltas.Instance.DBZMODLoaded) DBT(player);
 
-            if (Fargowiltas.Instance.SOALoaded) SOA(player, hideVisual);
+            if (Fargowiltas.Instance.SoALoaded) SOA(player, hideVisual);
 
             if (Fargowiltas.Instance.ApothLoaded)
             {
@@ -720,20 +723,20 @@ Additionally grants:");
 
         private void Thorium(Player player, bool hideVisual)
         {
-            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>(mod);
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            FargoPlayer modPlayer = player.GetModPlayer<FargoPlayer>();
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //phylactery
             if (!thoriumPlayer.lichPrevent)
             {
                 player.AddBuff(thorium.BuffType("LichActive"), 60, true);
             }
             //crystal scorpion
-            if (SoulConfig.Instance.GetValue("Crystal Scorpion"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.CrystalScorpion))
             {
                 thoriumPlayer.crystalScorpion = true;
             }
             //yumas pendant
-            if (SoulConfig.Instance.GetValue("Yuma's Pendant"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.YumasPendant))
             {
                 thoriumPlayer.yuma = true;
             }
@@ -743,7 +746,7 @@ Additionally grants:");
             //dead mans patch
             thoriumPlayer.deadEyeBool = true;
             //mermaid canteen
-            thoriumPlayer.canteenEffect += 750;
+            thoriumPlayer.throwerExhaustionMax += 1125;
             thoriumPlayer.canteenCadet = true;
 
             //HEALER
@@ -770,7 +773,7 @@ Additionally grants:");
             //medical bag
             thoriumPlayer.medicalAcc = true;
             //head mirror arrow 
-            if (SoulConfig.Instance.GetValue("Head Mirror"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.HeadMirror))
             {
                 float num = 0f;
                 int num2 = player.whoAmI;
@@ -799,12 +802,12 @@ Additionally grants:");
             //BARD
             thoriumPlayer.bardResourceMax2 = 20; //the max allowed in thorium
             //epic mouthpiece
-            thoriumPlayer.bardHomingBool = true;
+            thoriumPlayer.accWindHoming = true;
             thoriumPlayer.bardHomingBonus = 5f;
             //straight mute
-            thoriumPlayer.bardMute2 = true;
+            thoriumPlayer.accBrassMute2 = true;
             //digital tuner
-            thoriumPlayer.tuner2 = true;
+            thoriumPlayer.accPercussionTuner2 = true;
             //guitar pick claw
             thoriumPlayer.bardBounceBonus = 5;
             //COLOSSUS
@@ -836,7 +839,7 @@ Additionally grants:");
             magmaPlayer.magmaLine = true;
             //SUPERSONIC
             //air walkers
-            if (SoulConfig.Instance.GetValue("Air Walkers"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.AirWalkers))
             {
                 if (player.controlDown)
                 {
@@ -876,11 +879,13 @@ Additionally grants:");
             //survivalist boots
             if (Math.Abs(player.velocity.X) > 2f)
             {
+                thoriumPlayer.lifeRegenPenaltyReduction += 0.1f;
                 player.lifeRegen += 2;
                 player.lifeRegenTime++;
+                thoriumPlayer.manaRegenPenaltyReduction += 0.1f;
                 player.manaRegenBonus += 2;
                 player.manaRegenDelayBonus++;
-                thoriumPlayer.bardResourceRecharge += 2;
+                thoriumPlayer.inspirationRegenBonus += 0.03f;
             }
             //weighted winglets
             if (player.controlDown && !player.controlUp)
@@ -894,8 +899,8 @@ Additionally grants:");
             }
             //WORLD SHAPER
             //pets
-            modPlayer.AddPet("Inspiring Lantern Pet", hideVisual, thorium.BuffType("SupportLanternBuff"), thorium.ProjectileType("SupportLantern"));
-            modPlayer.AddPet("Lock Box Pet", hideVisual, thorium.BuffType("LockBoxBuff"), thorium.ProjectileType("LockBoxPet"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.LanternPet, hideVisual, thorium.BuffType("SupportLanternBuff"), thorium.ProjectileType("SupportLantern"));
+            modPlayer.AddPet(SoulConfig.Instance.thoriumToggles.BoxPet, hideVisual, thorium.BuffType("LockBoxBuff"), thorium.ProjectileType("LockBoxPet"));
 
             //THORIUM SOUL
             mod.GetItem("ThoriumSoul").UpdateAccessory(player, hideVisual);
@@ -903,7 +908,7 @@ Additionally grants:");
 
         private void Calamity(Player player, bool hideVisual)
         {
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
+            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
             //UNIVERSE
             //melee
             modPlayer.eGauntlet = true;
@@ -912,7 +917,7 @@ Additionally grants:");
             player.meleeSpeed -= .15f;
             player.meleeCrit -= 5;
 
-            if (SoulConfig.Instance.GetValue("Elemental Quiver"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.ElementalQuiver))
             {
                 //range
                 modPlayer.eQuiver = true;
@@ -948,7 +953,7 @@ Additionally grants:");
 
         private void DBT(Player player)
         {
-            DBZMOD.MyPlayer dbtPlayer = player.GetModPlayer<DBZMOD.MyPlayer>(dbzMod);
+            DBZMOD.MyPlayer dbtPlayer = player.GetModPlayer<DBZMOD.MyPlayer>();
 
             dbtPlayer.chargeMoveSpeed = Math.Max(dbtPlayer.chargeMoveSpeed, 2f);
             dbtPlayer.kiKbAddition += 0.4f;
@@ -982,7 +987,7 @@ Additionally grants:");
 
         public override void HorizontalWingSpeeds(Player player, ref float speed, ref float acceleration)
         {
-            speed = SoulConfig.Instance.GetValue("Dimension Speed Boosts") ? 25f : 15f;
+            speed = SoulConfig.Instance.GetValue(SoulConfig.Instance.SupersonicSpeed) ? 25f : 15f;
             acceleration *= 3.5f;
         }
 
@@ -1003,7 +1008,7 @@ Additionally grants:");
                 recipe.AddIngredient(calamity.ItemType("Rock"));
             }
 
-            if (Fargowiltas.Instance.SOALoaded)
+            if (Fargowiltas.Instance.SoALoaded)
             {
                 recipe.AddIngredient(null, "SoASoul");
             }

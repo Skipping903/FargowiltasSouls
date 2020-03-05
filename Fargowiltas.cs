@@ -1,11 +1,9 @@
-﻿using FargowiltasSouls.Items.Accessories.Enchantments;
-using FargowiltasSouls.Items.Accessories.Forces;
-using FargowiltasSouls.NPCs;
+﻿using FargowiltasSouls.NPCs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FargowiltasSouls.ModCompatibilities;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -19,20 +17,11 @@ namespace FargowiltasSouls
         internal static ModHotKey FreezeKey;
         internal static ModHotKey GoldKey;
         internal static ModHotKey SmokeBombKey;
+        internal static ModHotKey BetsyDashKey;
 
         internal static List<int> DebuffIDs;
 
         internal static Fargowiltas Instance;
-        //loaded
-        internal bool FargosLoaded;
-        internal bool ThoriumLoaded;
-        internal bool AALoaded;
-        internal bool BlueMagicLoaded;
-        internal bool CalamityLoaded;
-        internal bool DBTLoaded;
-        internal bool SOALoaded;
-        internal bool ApothLoaded;
-        internal bool MasomodeEX;
 
         internal bool LoadedNewSprites;
 
@@ -59,1147 +48,436 @@ namespace FargowiltasSouls
                 FreezeKey = RegisterHotKey("冻结时间", "P");
                 GoldKey = RegisterHotKey("金身", "O");
                 SmokeBombKey = RegisterHotKey("Throw Smoke Bomb", "I");
+                BetsyDashKey = RegisterHotKey("Betsy Dash", "C");
             }
             else
             {
                 FreezeKey = RegisterHotKey("Freeze Time", "P");
                 GoldKey = RegisterHotKey("Turn Gold", "O");
                 SmokeBombKey = RegisterHotKey("Throw Smoke Bomb", "I");
+                BetsyDashKey = RegisterHotKey("Fireball Dash", "C");
             }
             
-            AddMusicBox(GetSoundSlot(SoundType.Music, "Sounds/Music/rePrologue"), ItemType("MutantMusicBox"), TileType("MutantMusicBoxSheet"));
+            AddMusicBox(GetSoundSlot(SoundType.Music, "Sounds/Music/SteelRed"), ItemType("MutantMusicBox"), TileType("MutantMusicBoxSheet"));
+            AddMusicBox(GetSoundSlot(SoundType.Music, "Sounds/Music/Stigma"), ItemType("AbomMusicBox"), TileType("AbomMusicBoxSheet"));
 
             #region Toggles
+
             #region enchants
-            ModTranslation text = CreateTranslation("WoodHeader");
-            text.SetDefault("[i:" + Instance.ItemType<WoodForce>() + "] Force of Wood");
-            AddTranslation(text);
-            text = CreateTranslation("LifeHeader");
-            text.SetDefault("[i:" + Instance.ItemType<LifeForce>() + "] Force of Life");
-            AddTranslation(text);
-            text = CreateTranslation("NatureHeader");
-            text.SetDefault("[i:" + Instance.ItemType<NatureForce>() + "] Force of Nature");
-            AddTranslation(text);
-            text = CreateTranslation("ShadowHeader");
-            text.SetDefault("[i:" + Instance.ItemType<ShadowForce>() + "] Shadow Force");
-            AddTranslation(text);
-            text = CreateTranslation("SpiritHeader");
-            text.SetDefault("[i:" + Instance.ItemType<SpiritForce>() + "] Force of Spirit");
-            AddTranslation(text);
-            text = CreateTranslation("CosmoHeader");
-            text.SetDefault("[i:" + Instance.ItemType<CosmoForce>() + "] Force of Cosmos");
-            AddTranslation(text);
-            ModTranslation borealtrans = CreateTranslation("BorealConfig");
-            borealtrans.SetDefault("[i:" + Instance.ItemType<BorealWoodEnchant>() + "][c/8B7464: Boreal Snowballs]");
-            AddTranslation(borealtrans);
-            text = CreateTranslation("MahoganyConfig");
-            text.SetDefault("[i:" + Instance.ItemType<RichMahoganyEnchant>() + "][c/b56c64: Mahogany Hook Speed]");
-            AddTranslation(text);
-            text = CreateTranslation("EbonConfig");
-            text.SetDefault("[i:" + Instance.ItemType<EbonwoodEnchant>() + "][c/645a8d: Ebonwood Shadowflame]");
-            AddTranslation(text);
-            text = CreateTranslation("ShadeConfig");
-            text.SetDefault("[i:" + Instance.ItemType<ShadewoodEnchant>() + "][c/586876: Blood Geyser On Hit]");
-            AddTranslation(text);
-            text = CreateTranslation("PalmConfig");
-            text.SetDefault("[i:" + Instance.ItemType<PalmWoodEnchant>() + "][c/b78d56: Palmwood Sentry]");
-            AddTranslation(text);
-            text = CreateTranslation("PearlConfig");
-            text.SetDefault("[i:" + Instance.ItemType<PearlwoodEnchant>() + "][c/ad9a5f: Pearlwood Rainbow]");
-            AddTranslation(text);
-            text = CreateTranslation("EarthHeader");
-            text.SetDefault("[i:" + Instance.ItemType<EarthForce>() + "] Force of Earth");
-            AddTranslation(text);
-            text = CreateTranslation("AdamantiteConfig");
-            text.SetDefault("[i:" + Instance.ItemType<AdamantiteEnchant>() + "][c/dd557d: Adamantite Projectile Splitting]");
-            AddTranslation(text);
-            text = CreateTranslation("CobaltConfig");
-            text.SetDefault("[i:" + Instance.ItemType<CobaltEnchant>() + "][c/3da4c4: Cobalt Shards]");
-            AddTranslation(text);
-            text = CreateTranslation("MythrilConfig");
-            text.SetDefault("[i:" + Instance.ItemType<MythrilEnchant>() + "][c/9dd290: Mythril Weapon Speed]");
-            AddTranslation(text);
-            text = CreateTranslation("OrichalcumConfig");
-            text.SetDefault("[i:" + Instance.ItemType<OrichalcumEnchant>() + "][c/eb3291: Orichalcum Fireballs]");
-            AddTranslation(text);
-            text = CreateTranslation("PalladiumConfig");
-            text.SetDefault("[i:" + Instance.ItemType<PalladiumEnchant>() + "][c/f5ac28: Palladium Healing]");
-            AddTranslation(text);
-            text = CreateTranslation("TitaniumConfig");
-            text.SetDefault("[i:" + Instance.ItemType<TitaniumEnchant>() + "][c/828c88: Titanium Shadow Dodge]");
-            AddTranslation(text);
-            text = CreateTranslation("TerraHeader");
-            text.SetDefault("[i:" + Instance.ItemType<TerraForce>() + "] Terra Force");
-            AddTranslation(text);
-            text = CreateTranslation("CopperConfig");
-            text.SetDefault("[i:" + Instance.ItemType<CopperEnchant>() + "][c/d56617: Copper Lightning]");
-            AddTranslation(text);
-            text = CreateTranslation("IronMConfig");
-            text.SetDefault("[i:" + Instance.ItemType<IronEnchant>() + "][c/988e83: Iron Magnet]");
-            AddTranslation(text);
-            text = CreateTranslation("IronSConfig");
-            text.SetDefault("[i:" + Instance.ItemType<IronEnchant>() + "][c/988e83: Iron Shield]");
-            AddTranslation(text);
-            text = CreateTranslation("CthulhuShield");
-            text.SetDefault("[i:" + Instance.ItemType<IronEnchant>() + "][c/988e83: Shield of Cthulhu]");
-            AddTranslation(text);
-            text = CreateTranslation("TinConfig");
-            text.SetDefault("[i:" + Instance.ItemType<TinEnchant>() + "][c/a28b4e: Tin Crits]");
-            AddTranslation(text);
-            text = CreateTranslation("TungstenConfig");
-            text.SetDefault("[i:" + Instance.ItemType<TungstenEnchant>() + "][c/b0d2b2: Tungsten Effect]");
-            AddTranslation(text);
-            text = CreateTranslation("WillHeader");
-            text.SetDefault("[i:" + Instance.ItemType<WillForce>() + "] Force of Will");
-            AddTranslation(text);
-            text = CreateTranslation("GladiatorConfig");
-            text.SetDefault("[i:" + Instance.ItemType<GladiatorEnchant>() + "][c/9c924e: Gladiator Rain]");
-            AddTranslation(text);
-            text = CreateTranslation("GoldConfig");
-            text.SetDefault("[i:" + Instance.ItemType<GoldEnchant>() + "][c/e7b21c: Gold Lucky Coin]");
-            AddTranslation(text);
-            text = CreateTranslation("RedRidingConfig");
-            text.SetDefault("[i:" + Instance.ItemType<RedRidingEnchant>() + "][c/c01b3c: Red Riding Super Bleed]");
-            AddTranslation(text);
-            text = CreateTranslation("ValhallaConfig");
-            text.SetDefault("[i:" + Instance.ItemType<ValhallaKnightEnchant>() + "][c/93651e: Valhalla Knockback]");
-            AddTranslation(text);
-            string[] EnchConfig = {
-            //force of life
-            "BeetleConfig",
-            "CactusConfig",
-            "PumpkinConfig",
-            "SpiderConfig",
-            "TurtleConfig",
-            //force of nature
-            "ChlorophyteConfig",
-            "CrimsonConfig",
-            "FrostConfig",
-            "JungleConfig",
-            "MoltenConfig",
-            "ShroomiteConfig",
-            //shadow force
-            "DarkArtConfig",
-            "NecroConfig",
-            "ShadowConfig",
-            "ShinobiConfig",
-            "SpookyConfig",
-            //force of spirit
-            "ForbiddenConfig",
-            "HallowedConfig",
-            "HalllowSConfig",
-            "SilverConfig",
-            "SpectreConfig",
-            "TikiConfig",
-            //force of cosmos
-            "MeteorConfig",
-            "NebulaConfig",
-            "SolarConfig",
-            "StardustConfig",
-            "VortexSConfig",
-            "VortexVConfig"
-            };
-            string[] EnchName = {
-            //force of life
-            "Beetles",
-            "Cactus Needles",
-            "Pumpkin Fire",
-            "Spider Swarm",
-            "Turtle Shell Buff",
-            //force of nature
-            "Chlorophyte Leaf Crystal",
-            "Crimson Regen",
-            "Frost Icicles",
-            "Jungle Spores",
-            "Molten Inferno Buff",
-            "Shroomite Stealth",
-            //shadow force
-            "Dark Artist Effect",
-            "Necro Guardian",
-            "Shadow Darkness",
-            "Shinobi Through Walls",
-            "Spooky Scythes",
-            //force of spirit
-            "Forbidden Storm",
-            "Hallowed Enchanted Sword Familiar",
-            "Hallowed Shield",
-            "Silver Sword Familiar",
-            "Spectre Orbs",
-            "Tiki Minions",
-            //force of cosmos
-            "Meteor Shower",
-            "Nebula Boosters",
-            "Solar Shield",
-            "Stardust Guardian",
-            "Vortex Stealth",
-            "Vortex Voids"
-            };
-            string[] EnchColor = {
-            //force of life
-            "3357e4",
-            "799e1d",
-            "e3651c",
-            "6d4e45",
-            "f89c5c",
-            //force of nature
-            "248900",
-            "C8364B",
-            "7abdb9",
-            "71971f",
-            "c12b2b",
-            "008cf4",
-            //shadow force
-            "9b5cb0",
-            "565643",
-            "42356f",
-            "935b18",
-            "644e74",
-            //force of spirit
-            "e7b21c",
-            "968564",
-            "968564",
-            "b4b4cc",
-            "accdfc",
-            "56A52B",
-            //force of cosmos
-            "5f4752",
-            "fe7ee5",
-            "fe9e23",
-            "00aeee",
-            "00f2aa",
-            "00f2aa"
-            };
-            string[] EnchItem = {
-            //force of life
-            "BeetleEnchant",
-            "CactusEnchant",
-            "PumpkinEnchant",
-            "SpiderEnchant",
-            "TurtleEnchant",
-            //force of nature
-            "ChlorophyteEnchant",
-            "CrimsonEnchant",
-            "FrostEnchant",
-            "JungleEnchant",
-            "MoltenEnchant",
-            "ShroomiteEnchant",
-            //shadow force
-            "DarkArtistEnchant",
-            "NecroEnchant",
-            "ShadowEnchant",
-            "ShinobiEnchant",
-            "SpookyEnchant",
-            //force of spirit
-            "ForbiddenEnchant",
-            "HallowEnchant",
-            "HallowEnchant",
-            "SilverEnchant",
-            "SpectreEnchant",
-            "TikiEnchant",
-            //force of cosmos
-            "MeteorEnchant",
-            "NebulaEnchant",
-            "SolarEnchant",
-            "StardustEnchant",
-            "VortexEnchant",
-            "VortexEnchant"
-            };
-            for (int x = 0; x < EnchConfig.Length; x++)
-            {
-                text = CreateTranslation(EnchConfig[x]);
-                text.SetDefault("[i:" + Instance.ItemType(EnchItem[x]) + "][c/" + EnchColor[x] + ": " + EnchName[x] + "]");
-                AddTranslation(text);
-            }
+
+            AddToggle("WoodHeader", "Force of Timber", "TimberForce", "ffffff");
+            AddToggle("BorealConfig", "Boreal Snowballs", "BorealWoodEnchant", "8B7464");
+            AddToggle("MahoganyConfig", "Mahogany Hook Speed", "RichMahoganyEnchant", "b56c64");
+            AddToggle("EbonConfig", "Ebonwood Shadowflame", "EbonwoodEnchant", "645a8d");
+            AddToggle("ShadeConfig", "Blood Geyser On Hit", "ShadewoodEnchant", "586876");
+            AddToggle("PalmConfig", "Palmwood Sentry", "PalmWoodEnchant", "b78d56");
+            AddToggle("PearlConfig", "Pearlwood Rain", "PearlwoodEnchant", "ad9a5f");
+
+            AddToggle("EarthHeader", "Force of Earth", "EarthForce", "ffffff");
+            AddToggle("AdamantiteConfig", "Adamantite Projectile Splitting", "AdamantiteEnchant", "dd557d");
+            AddToggle("CobaltConfig", "Cobalt Shards", "CobaltEnchant", "3da4c4");
+            AddToggle("AncientCobaltConfig", "Ancient Cobalt Stingers", "AncientCobaltEnchant", "ffffff");
+            AddToggle("MythrilConfig", "Mythril Weapon Speed", "MythrilEnchant", "9dd290");
+            AddToggle("OrichalcumConfig", "Orichalcum Fireballs", "OrichalcumEnchant", "eb3291");
+            AddToggle("PalladiumConfig", "Palladium Healing", "PalladiumEnchant", "f5ac28");
+            AddToggle("TitaniumConfig", "Titanium Shadow Dodge", "TitaniumEnchant", "828c88");
+
+            AddToggle("TerraHeader", "Terra Force", "TerraForce", "ffffff");
+            AddToggle("CopperConfig", "Copper Lightning", "CopperEnchant", "d56617");
+            AddToggle("IronMConfig", "Iron Magnet", "IronEnchant", "988e83");
+            AddToggle("IronSConfig", "Iron Shield", "IronEnchant", "988e83");
+            AddToggle("CthulhuShield", "Shield of Cthulhu", "IronEnchant", "988e83");
+            AddToggle("TinConfig", "Tin Crits", "TinEnchant", "a28b4e");
+            AddToggle("TungstenConfig", "Tungsten Effect", "TungstenEnchant", "b0d2b2");
+
+            AddToggle("WillHeader", "Force of Will", "WillForce", "ffffff");
+            AddToggle("GladiatorConfig", "Gladiator Rain", "GladiatorEnchant", "9c924e");
+            AddToggle("GoldConfig", "Gold Lucky Coin", "GoldEnchant", "e7b21c");
+            AddToggle("HuntressConfig", "Huntress Ability", "HuntressEnchant", "ffffff");
+            AddToggle("ValhallaConfig", "Valhalla Effect", "ValhallaKnightEnchant", "93651e");
+            AddToggle("SquireConfig", "Squire Knockback", "SquireEnchant", "ffffff");
+
+            AddToggle("LifeHeader", "Force of Life", "LifeForce", "ffffff");
+            AddToggle("BeetleConfig", "Beetles", "BeetleEnchant", "6D5C85");
+            AddToggle("CactusConfig", "Cactus Needles", "CactusEnchant", "799e1d");
+            AddToggle("PumpkinConfig", "Pumpkin Fire", "PumpkinEnchant", "e3651c");
+            AddToggle("SpiderConfig", "Spider Swarm", "SpiderEnchant", "6d4e45");
+            AddToggle("TurtleConfig", "Turtle Shell Buff", "TurtleEnchant", "f89c5c");
+
+            AddToggle("NatureHeader", "Force of Nature", "NatureForce", "ffffff");
+            AddToggle("ChlorophyteConfig", "Chlorophyte Leaf Crystal", "ChlorophyteEnchant", "248900");
+            AddToggle("ChlorophyteFlowerConfig", "Flower Boots", "ChlorophyteEnchant", "248900");
+            AddToggle("CrimsonConfig", "Crimson Regen", "CrimsonEnchant", "C8364B");
+            AddToggle("RainConfig", "Rain Clouds", "RainEnchant", "ffffff");
+            AddToggle("FrostConfig", "Frost Icicles", "FrostEnchant", "7abdb9");
+            AddToggle("JungleConfig", "Jungle Spores", "JungleEnchant", "71971f");
+            AddToggle("MoltenConfig", "Molten Inferno Buff", "MoltenEnchant", "c12b2b");
+            AddToggle("MoltenEConfig", "Molten Explosion On Hit", "MoltenEnchant", "c12b2b");
+            AddToggle("ShroomiteConfig", "Shroomite Stealth", "ShroomiteEnchant", "008cf4");
+
+            AddToggle("ShadowHeader", "Shadow Force", "ShadowForce", "ffffff");
+            AddToggle("DarkArtConfig", "Flameburst Minion", "DarkArtistEnchant", "9b5cb0");
+            AddToggle("ApprenticeConfig", "Apprentice Effect", "ApprenticeEnchant", "ffffff");
+            AddToggle("NecroConfig", "Necro Guardian", "NecroEnchant", "565643");
+            AddToggle("ShadowConfig", "Shadow Darkness", "ShadowEnchant", "42356f");
+            AddToggle("AncientShadowConfig", "Ancient Shadow Orbs", "AncientShadowEnchant", "42356f");
+            AddToggle("MonkConfig", "Monk Dash", "MonkEnchant", "ffffff");
+            AddToggle("ShinobiConfig", "Shinobi Through Walls", "ShinobiEnchant", "935b18");
+            AddToggle("ShinobiTabiConfig", "Tabi Dash", "ShinobiEnchant", "935b18");
+            AddToggle("ShinobiClimbingConfig", "Tiger Climbing Gear", "ShinobiEnchant", "935b18");
+            AddToggle("SpookyConfig", "Spooky Scythes", "SpookyEnchant", "644e74");
+
+            AddToggle("SpiritHeader", "Force of Spirit", "SpiritForce", "ffffff");
+            AddToggle("ForbiddenConfig", "Forbidden Storm", "ForbiddenEnchant", "e7b21c");
+            AddToggle("HallowedConfig", "Hallowed Enchanted Sword Familiar", "HallowEnchant", "968564");
+            AddToggle("HallowSConfig", "Hallowed Shield", "HallowEnchant", "968564");
+            AddToggle("SilverConfig", "Silver Sword Familiar", "SilverEnchant", "b4b4cc");
+            AddToggle("SpectreConfig", "Spectre Orbs", "SpectreEnchant", "accdfc");
+            AddToggle("TikiConfig", "Tiki Minions", "TikiEnchant", "56A52B");
+
+            AddToggle("CosmoHeader", "Force of Cosmos", "CosmoForce", "ffffff");
+            AddToggle("MeteorConfig", "Meteor Shower", "MeteorEnchant", "5f4752");
+            AddToggle("NebulaConfig", "Nebula Boosters", "NebulaEnchant", "fe7ee5");
+            AddToggle("SolarConfig", "Solar Shield", "SolarEnchant", "fe9e23");
+            AddToggle("StardustConfig", "Stardust Guardian", "StardustEnchant", "00aeee");
+            AddToggle("VortexSConfig", "Vortex Stealth", "VortexEnchant", "00f2aa");
+            AddToggle("VortexVConfig", "Vortex Voids", "VortexEnchant", "00f2aa");
+
             #endregion
+
             #region masomode toggles
-            string[] masoTogName = { 
-            //deathbringer fairy
-            "Slimy Shield Effects",
-            "Scythes When Dashing",
-            "Skeletron Arms Minion",
+
+            //Masomode Header
+            AddToggle("MasoHeader", "Masochist Mode", "MutantStatue", "ffffff");
+            AddToggle("MasoBossRecolors", "Boss Recolors (Restart to use)", "Masochist", "ffffff");
+            AddToggle("MasoIconConfig", "Sinister Icon", "SinisterIcon", "ffffff");
+
+            //supreme death fairy header
+            AddToggle("SupremeFairyHeader", "Supreme Deathbringer Fairy", "SupremeDeathbringerFairy", "ffffff");
+            AddToggle("MasoSlimeConfig", "Slimy Shield Effects", "SlimyShield", "ffffff");
+            AddToggle("MasoEyeConfig", "Scythes When Dashing", "AgitatingLens", "ffffff");
+            AddToggle("MasoSkeleConfig", "Skeletron Arms Minion", "NecromanticBrew", "ffffff");
+
+            //bionomic 
+            AddToggle("BionomicHeader", "Bionomic Cluster", "BionomicCluster", "ffffff");
+            AddToggle("MasoConcoctionConfig", "Tim's Concoction", "TimsConcoction", "ffffff");
+            AddToggle("MasoRainbowConfig", "Rainbow Slime Minion", "ConcentratedRainbowMatter", "ffffff");
+            AddToggle("MasoFrigidConfig", "Frostfireballs", "FrigidGemstone", "ffffff");
+            AddToggle("MasoNymphConfig", "Attacks Spawn Hearts", "NymphsPerfume", "ffffff");
+            AddToggle("MasoSqueakConfig", "Squeaky Toy On Hit", "SqueakyToy", "ffffff");
+            AddToggle("MasoPouchConfig", "Tentacles On Hit", "WretchedPouch", "ffffff");
+            AddToggle("MasoClippedConfig", "Inflict Clipped Wings", "DragonFang", "ffffff");
+            AddToggle("TribalCharmConfig", "Tribal Charm Auto Swing", "TribalCharm", "ffffff");
+            AddToggle("WalletHeader", "Security Wallet", "SecurityWallet", "ffffff");
+
+            //dubious 
+            AddToggle("DubiousHeader", "Dubious Circuitry", "DubiousCircuitry", "ffffff");
+            AddToggle("MasoLightningConfig", "Inflict Lightning Rod", "GroundStick", "ffffff");
+            AddToggle("MasoProbeConfig", "Probes Minion", "GroundStick", "ffffff");
+
             //pure heart
-            "Tiny Eaters",
-            "Creeper Shield",
-            //bionomic cluster
-            "Rainbow Slime Minion",
-            "Frostfireballs",
-            "Attacks Spawn Hearts",
-            "Squeaky Toy On Hit",
-            "Tentacles On Hit",
-            "Inflict Clipped Wings",
-            //dubious circutry
-            "Inflict Lightning Rod",
-            "Probes Minion",
-            //heart of the masochist
-            "Gravity Control",
-            "Pumpking's Cape Support",
-            "Flocko Minion",
-            "Saucer Minion",
-            "True Eyes Minion",
-            //chalice of the moon
-            "Celestial Rune Support",
-            "Plantera Minion",
-            "Lihzahrd Ground Pound",
-            "Ancient Visions On Hit",
-            "Cultist Minion",
-            "Spectral Fishron",
+            AddToggle("PureHeartHeader", "Pure Heart", "PureHeart", "ffffff");
+            AddToggle("MasoEaterConfig", "Tiny Eaters", "CorruptHeart", "ffffff");
+            AddToggle("MasoBrainConfig", "Creeper Shield", "GuttedHeart", "ffffff");
+
             //lump of flesh
-            "Pungent Eye Minion",
-            //mutant armor
-            "Abominationn Minion",
-            "Phantasmal Ring Minion",
-            //other
-            "Spiky Balls On Hit",
-            "Sinister Icon",
-            "Boss Recolors (Restart to use)"};
-            string[] masoTogNameCh = { 
-            //deathbringer fairy
-            "Slimy Shield Effects",
-            "Scythes When Dashing",
-            "Skeletron Arms Minion",
-            //pure heart
-            "Tiny Eaters",
-            "Creeper Shield",
-            //bionomic cluster
-            "Rainbow Slime Minion",
-            "Frostfireballs",
-            "Attacks Spawn Hearts",
-            "Squeaky Toy On Hit",
-            "Tentacles On Hit",
-            "Inflict Clipped Wings",
-            //dubious circutry
-            "Inflict Lightning Rod",
-            "Probes Minion",
+            AddToggle("LumpofFleshHeader", "Lump of Flesh", "LumpOfFlesh", "ffffff");
+            AddToggle("MasoPugentConfig", "Pungent Eye Minion", "LumpOfFlesh", "ffffff");
+
+            //chalice 
+            AddToggle("ChaliceHeader", "Chalice of the Moon", "ChaliceoftheMoon", "ffffff");
+            AddToggle("MasoCultistConfig", "Cultist Minion", "ChaliceoftheMoon", "ffffff");
+            AddToggle("MasoPlantConfig", "Plantera Minion", "MagicalBulb", "ffffff");
+            AddToggle("MasoGolemConfig", "Lihzahrd Ground Pound", "LihzahrdTreasureBox", "ffffff");
+            AddToggle("MasoSpikeConfig", "Spiky Balls On Hit", "LihzahrdTreasureBox", "ffffff");
+            AddToggle("MasoCelestConfig", "Celestial Rune Support", "CelestialRune", "ffffff");
+            AddToggle("MasoVisionConfig", "Ancient Visions On Hit", "CelestialRune", "ffffff");
+
             //heart of the masochist
-            "Gravity Control",
-            "Pumpking's Cape Support",
-            "Flocko Minion",
-            "Saucer Minion",
-            "True Eyes Minion",
-            //chalice of the moon
-            "Celestial Rune Support",
-            "Plantera Minion",
-            "Lihzahrd Ground Pound",
-            "Ancient Visions On Hit",
-            "Cultist Minion",
-            "Spectral Fishron",
-            //lump of flesh
-            "Pungent Eye Minion",
+            AddToggle("HeartHeader", "Heart of the Masochist", "HeartoftheMasochist", "ffffff");
+            AddToggle("MasoPump", "Pumpking's Cape Support", "PumpkingsCape", "ffffff");
+            AddToggle("MasoFlockoConfig", "Flocko Minion", "IceQueensCrown", "ffffff");
+            AddToggle("MasoUfoConfig", "Saucer Minion", "SaucerControlConsole", "ffffff");
+            AddToggle("MasoGravConfig", "Gravity Control", "GalacticGlobe", "ffffff");
+            AddToggle("MasoGrav2Config", "Stabilized Gravity", "GalacticGlobe", "ffffff");
+            AddToggle("MasoTrueEyeConfig", "True Eyes Minion", "GalacticGlobe", "ffffff");
+
+            //cyclonic fin
+            AddToggle("CyclonicHeader", "Cyclonic Fin", "CyclonicFin", "ffffff");
+            AddToggle("MasoFishronConfig", "Spectral Fishron", "CyclonicFin", "ffffff");
+
             //mutant armor
-            "Abominationn Minion",
-            "Phantasmal Ring Minion",
-            //other
-            "Spiky Balls On Hit",
-            "Sinister Icon",
-            "Boss Recolors (Restart to use)"};
-            string[] masoTogConfigName = {
-            //deathbringer fairy
-            "MasoSlimeConfig",
-            "MasoEyeConfig",
-            "MasoSkeleConfig",
-            //pure heart
-            "MasoEaterConfig",
-            "MasoBrainConfig",
-            //bionomic cluster
-            "MasoRainbowConfig",
-            "MasoFrigidConfig",
-            "MasoNymphConfig",
-            "MasoSqueakConfig",
-            "MasoPouchConfig",
-            "MasoClippedConfig",
-            //dubious circutry
-            "MasoLightningConfig",
-            "MasoProbeConfig",
-            //heart of the masochist
-            "MasoGravConfig",
-            "MasoPump",
-            "MasoFlockoConfig",
-            "MasoUfoConfig",
-            "MasoTrueEyeConfig",
-            //chalice of the moon
-            "MasoCelestConfig",
-            "MasoPlantConfig",
-            "MasoGolemConfig",
-            "MasoVisionConfig",
-            "MasoCultistConfig",
-            "MasoFishronConfig",
-            //lump of flesh
-            "MasoPugentConfig",
-            //mutant armor
-            "MasoAbomConfig",
-            "MasoRingConfig",
-            //other
-            "MasoSpikeConfig",
-            "MasoIconConfig",
-            "MasoBossRecolors"};
-            for (int x = 0; x <= 29; x++)
-            {
-                text = CreateTranslation(masoTogConfigName[x]);
-                if (Language.ActiveCulture == GameCulture.Chinese)
-                {
-                    text.SetDefault(masoTogNameCh[x]);
-                }
-                else
-                {
-                    text.SetDefault(masoTogName[x]);
-                }
-                AddTranslation(text);
-            }
+            AddToggle("MutantArmorHeader", "True Mutant Armor", "HeartoftheMasochist", "ffffff");
+            AddToggle("MasoAbomConfig", "Abominationn Minion", "MutantMask", "ffffff");
+            AddToggle("MasoRingConfig", "Phantasmal Ring Minion", "MutantMask", "ffffff");
+
             #endregion
-            #region pet toggles
-            int[] petnums = {
-            //NORMAL PETS
-            1810,//black cat
-            3628,//companion cube
-            1837, //cursed sapling
-            1242, //dino pet
-            3857, //dragon
-            994, //eater
-            1311, //eye spring
-            3060, //face monster
-            3855, //gato
-            1170, //hornet
-            1172, //lizard
-            2587, //mini minitaur
-            1180, //parrot
-            669, //penguin
-            1927, //puppy
-            1182, //seedling
-            1169, //dungeon guardian
-            1312, // snowman
-            1798, // spider
-            1799, //squashling
-            1171, //tiki
-            1181, //truffle
-            753, //turtle
-            2420, //zephyr fish
-                  //LIGHT PETS
-            3062, //crimson heart
-            425, //fairy
-            3856, //flickerwick
-            3043, //magic lanturn
-            115, //shadow orb
-            3577, //suspicious eye
-            1183//wisp
-            };
-            string[] petTogName = {
-            "Black Cat Pet",
-            "Companion Cube Pet",
-            "Cursed Sapling Pet",
-            "Dino Pet",
-            "Dragon Pet",
-            "Eater Pet",
-            "Eye Spring Pet",
-            "Face Monster Pet",
-            "Gato Pet",
-            "Hornet Pet",
-            "Lizard Pet",
-            "Mini Minotaur Pet",
-            "Parrot Pet",
-            "Penguin Pet",
-            "Puppy Pet",
-            "Seedling Pet",
-            "Skeletron Pet",
-            "Snowman Pet",
-            "Spider Pet",
-            "Squashling Pet",
-            "Tiki Pet",
-            "Truffle Pet",
-            "Turtle Pet",
-            "Zephyr Fish Pet",
-            //LIGHT PETS
-            "Crimson Heart Pet",
-            "Fairy Pet",
-            "Flickerwick Pet",
-            "Magic Lantern Pet",
-            "Shadow Orb Pet",
-            "Suspicious Eye Pet",
-            "Wisp Pet" };
-            string[] petTogConfigName = {
-            "PetCatConfig",
-            "PetCubeConfig",
-            "PetCurseSapConfig",
-            "PetDinoConfig",
-            "PetDragonConfig",
-            "PetEaterConfig",
-            "PetEyeSpringConfig",
-            "PetFaceMonsterConfig",
-            "PetGatoConfig",
-            "PetHornetConfig",
-            "PetLizardConfig",
-            "PetMinitaurConfig",
-            "PetParrotConfig",
-            "PetPenguinConfig",
-            "PetPupConfig",
-            "PetSeedConfig",
-            "PetDGConfig",
-            "PetSnowmanConfig",
-            "PetSpiderConfig",
-            "PetSquashConfig",
-            "PetTikiConfig",
-            "PetShroomConfig",
-            "PetTurtleConfig",
-            "PetZephyrConfig",
-            //LIGHT PETS
-            "PetHeartConfig",
-            "PetNaviConfig",
-            "PetFlickerConfig",
-            "PetLanturnConfig",
-            "PetOrbConfig",
-            "PetSuspEyeConfig",
-            "PetWispConfig" };
-            for (int x = 0; x <= 30; x++)
-            {
-                text = CreateTranslation(petTogConfigName[x]);
-                text.SetDefault("[I:" + petnums[x] + "] " + petTogName[x]);
-                AddTranslation(text);
-            }
-            #endregion
-            #region wallet toggles
-            string[] prefix = {
-        "Warding",
-        "Violent",
-        "Quick",
-        "Lucky",
-        "Menacing",
-        "Legendary",
-        "Unreal",
-        "Mythical",
-        "Godly",
-        "Demonic",
-        "Ruthless",
-        "Light",
-        "Deadly",
-        "Rapid"};
-            string[] prefixconf = {
-        "WalletWardingConfig",
-        "WalletViolentConfig",
-        "WalletQuickConfig",
-        "WalletLuckyConfig",
-        "WalletMenacingConfig",
-        "WalletLegendaryConfig",
-        "WalletUnrealConfig",
-        "WalletMythicalConfig",
-        "WalletGodlyConfig",
-        "WalletDemonicConfig",
-        "WalletRuthlessConfig",
-        "WalletLightConfig",
-        "WalletDeadlyConfig",
-        "WalletRapidConfig" };
-            for (int x = 0; x <= 13; x++)
-            {
-                text = CreateTranslation(prefixconf[x]);
-                text.SetDefault(prefix[x]);
-                AddTranslation(text);
-            }
-            #endregion
+
             #region soul toggles
-            string[] soultognames = {
-            //Universe
-            "Melee Speed",
-            "Sniper Scope",
-            "Universe Attack Speed",
-            //dimensions
-            "Mining Hunter Buff",
-            "Mining Dangersense Buff",
-            "Mining Spelunker Buff",
-            "Mining Shine Buff",
-            "Builder Mode",
-            "Spore Sac",
-            "Stars On Hit",
-            "Bees On Hit",
-            "Supersonic Speed Boosts",
-            //idk 
-            "Eternity Stacking"};
-            string[] soultogconfig = {
-            //Universe
-            "MeleeConfig",
-            "SniperConfig",
-            "UniverseConfig",
-            //dimensions
-            "MiningHuntConfig",
-            "MiningDangerConfig",
-            "MiningSpelunkConfig",
-            "MiningShineConfig",
-            "BuilderConfig",
-            "DefenseSporeConfig",
-            "DefenseStarConfig",
-            "DefenseBeeConfig",
-            "SupersonicConfig",
-            //idk 
-            "EternityConfig" };
-            string[] soultogitemnames = {
-            //Universe
-            "GladiatorsSoul",
-            "SharpshootersSoul",
-            "UniverseSoul",
-            //dimensions
-            "MinerEnchant",
-            "MinerEnchant",
-            "MinerEnchant",
-            "MinerEnchant",
-            "WorldShaperSoul",
-            "ColossusSoul",
-            "ColossusSoul",
-            "ColossusSoul",
-            "SupersonicSoul",
-            //idk 
-            "EternitySoul" };
-            string[] soulcolor = {
-            //Universe
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            //dimensions
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            //idk 
-            "ffffff" };
-            for (int x = 0; x <= 12; x++)
-            {
-                text = CreateTranslation(soultogconfig[x]);
-                text.SetDefault("[i:" + Instance.ItemType(soultogitemnames[x]) + "][c/" + soulcolor[x] + ": " + soultognames[x] + "]");
-                AddTranslation(text);
-            }
+
+            AddToggle("SoulHeader", "Souls", "UniverseSoul", "ffffff");
+            AddToggle("MeleeConfig", "Melee Speed", "GladiatorsSoul", "ffffff");
+            AddToggle("SniperConfig", "Sniper Scope", "SnipersSoul", "ffffff");
+            AddToggle("UniverseConfig", "Universe Attack Speed", "UniverseSoul", "ffffff");
+            AddToggle("MiningHuntConfig", "Mining Hunter Buff", "MinerEnchant", "ffffff");
+            AddToggle("MiningDangerConfig", "Mining Dangersense Buff", "MinerEnchant", "ffffff");
+            AddToggle("MiningSpelunkConfig", "Mining Spelunker Buff", "MinerEnchant", "ffffff");
+            AddToggle("MiningShineConfig", "Mining Shine Buff", "MinerEnchant", "ffffff");
+            AddToggle("BuilderConfig", "Builder Mode", "WorldShaperSoul", "ffffff");
+            AddToggle("DefenseSporeConfig", "Spore Sac", "ColossusSoul", "ffffff");
+            AddToggle("DefenseStarConfig", "Stars On Hit", "ColossusSoul", "ffffff");
+            AddToggle("DefenseBeeConfig", "Bees On Hit", "ColossusSoul", "ffffff");
+            AddToggle("SupersonicConfig", "Supersonic Speed Boosts", "SupersonicSoul", "ffffff");
+            AddToggle("EternityConfig", "Eternity Stacking", "EternitySoul", "ffffff");
+
+            #endregion
+
+            #region pet toggles
+
+            AddToggle("PetHeader", "Pets", 2420, "ffffff");
+            AddToggle("PetCatConfig", "Black Cat Pet", 1810, "ffffff");
+            AddToggle("PetCubeConfig", "Companion Cube Pet", 3628, "ffffff");
+            AddToggle("PetCurseSapConfig", "Cursed Sapling Pet", 1837, "ffffff");
+            AddToggle("PetDinoConfig", "Dino Pet", 1242, "ffffff");
+            AddToggle("PetDragonConfig", "Dragon Pet", 3857, "ffffff");
+            AddToggle("PetEaterConfig", "Eater Pet", 994, "ffffff");
+            AddToggle("PetEyeSpringConfig", "Eye Spring Pet", 1311, "ffffff");
+            AddToggle("PetFaceMonsterConfig", "Face Monster Pet", 3060, "ffffff");
+            AddToggle("PetGatoConfig", "Gato Pet", 3855, "ffffff");
+            AddToggle("PetHornetConfig", "Hornet Pet", 1170, "ffffff");
+            AddToggle("PetLizardConfig", "Lizard Pet", 1172, "ffffff");
+            AddToggle("PetMinitaurConfig", "Mini Minotaur Pet", 2587, "ffffff");
+            AddToggle("PetParrotConfig", "Parrot Pet", 1180, "ffffff");
+            AddToggle("PetPenguinConfig", "Penguin Pet", 669, "ffffff");
+            AddToggle("PetPupConfig", "Puppy Pet", 1927, "ffffff");
+            AddToggle("PetSeedConfig", "Seedling Pet", 1182, "ffffff");
+            AddToggle("PetDGConfig", "Skeletron Pet", 1169, "ffffff");
+            AddToggle("PetSnowmanConfig", "Snowman Pet", 1312, "ffffff");
+            AddToggle("PetSpiderConfig", "Spider Pet", 1798, "ffffff");
+            AddToggle("PetSquashConfig", "Squashling Pet", 1799, "ffffff");
+            AddToggle("PetTikiConfig", "Tiki Pet", 1171, "ffffff");
+            AddToggle("PetShroomConfig", "Truffle Pet", 1181, "ffffff");
+            AddToggle("PetTurtleConfig", "Turtle Pet", 753, "ffffff");
+            AddToggle("PetZephyrConfig", "Zephyr Fish Pet", 2420, "ffffff");
+            AddToggle("PetHeartConfig", "Crimson Heart Pet", 3062, "ffffff");
+            AddToggle("PetNaviConfig", "Fairy Pet", 425, "ffffff");
+            AddToggle("PetFlickerConfig", "Flickerwick Pet", 3856, "ffffff");
+            AddToggle("PetLanturnConfig", "Magic Lantern Pet", 3043, "ffffff");
+            AddToggle("PetOrbConfig", "Shadow Orb Pet", 115, "ffffff");
+            AddToggle("PetSuspEyeConfig", "Suspicious Eye Pet", 3577, "ffffff");
+            AddToggle("PetWispConfig", "Wisp Pet", 1183, "ffffff");
+
             #endregion
 
             #region thorium
 
-            string[] thoriumTogNames = {
-            "Air Walkers",
-            "Crystal Scorpion",
-            "Yuma's Pendant",
-            "Head Mirror",
-            "Celestial Aura",
-            "Ascension Statuette",
-            "Mana-Charged Rocketeers",
-            "Bronze Lightning",
-            "Illumite Missile",
-            "Jester Bell",
-            "Eye of the Beholder",
-            "Terrarium Spirits",
-            "Crietz",
-            "Yew Wood Crits",
-            "Cryo-Magus Damage",
-            "White Dwarf Flares",
-            "Tide Hunter Foam",
-            "Whispering Tentacles",
-            "Icy Barrier",
-            "Plague Lord's Flask",
-            "Tide Turner Globules",
-            "Tide Turner Daggers",
-            "Folv's Aura",
-            "Folv's Bolts",
-            "Vampire Gland",
-            "Flesh Drops",
-            "Dragon Flames",
-            "Harbinger Overcharge",
-            "Assassin Damage",
-            "Pyromancer Bursts",
-            "Conduit Shield",
-            "Incandescent Spark",
-            "Greedy Magnet",
-            "Cyber Punk States",
-            "Metronome",
-            "Mix Tape",
-            "Lodestone Resistance",
-            "Biotech Probe",
-            "Proof of Avarice",
-            "Slag Stompers",
-            "Spring Steps",
-            "Berserker Effect",
-            "Bee Booties",
-            "Ghastly Carapace",
-            "Spirit Trapper Wisps",
-            "Warlock Wisps",
-            "Dread Speed",
-            "Spawn Divers",
-            "Demon Blood Effect",
-            "Li'l Devil Minion",
-            "Li'l Cherub Minion",
-            "Sapling Minion",
-            "Omega Pet",
-            "I.F.O. Pet",
-            "Bio-Feeder Pet",
-            "Blister Pet",
-            "Wyvern Pet",
-            "Inspiring Lantern Pet",
-            "Lock Box Pet",
-            "Life Spirit Pet",
-            "Holy Goat Pet",
-            "Owl Pet",
-            "Jellyfish Pet",
-            "Moogle Pet",
-            "Maid Pet",
-            "Pink Slime Pet",
-            "Glitter Pet",
-            "Coin Bag Pet"};
-
-            string[] thoriumTogConfig = {
-            "ThoriumAirWalkersConfig",
-            "ThoriumCrystalScorpionConfig",
-            "ThoriumYumasPendantConfig",
-            "ThoriumHeadMirrorConfig",
-            "ThoriumCelestialAuraConfig",
-            "ThoriumAscensionStatueConfig",
-            "ThoriumManaBootsConfig",
-            "ThoriumBronzeLightningConfig",
-            "ThoriumIllumiteMissileConfig",
-            "ThoriumJesterBellConfig",
-            "ThoriumBeholderEyeConfig",
-            "ThoriumTerrariumSpiritsConfig",
-            "ThoriumCrietzConfig",
-            "ThoriumYewCritsConfig",
-            "ThoriumCryoDamageConfig",
-            "ThoriumWhiteDwarfConfig",
-            "ThoriumTideFoamConfig",
-            "ThoriumWhisperingTentaclesConfig",
-            "ThoriumIcyBarrierConfig",
-            "ThoriumPlagueFlaskConfig",
-            "ThoriumTideGlobulesConfig",
-            "ThoriumTideDaggersConfig",
-            "ThoriumFolvAuraConfig",
-            "ThoriumFolvBoltsConfig",
-            "ThoriumVampireGlandConfig",
-            "ThoriumFleshDropsConfig",
-            "ThoriumDragonFlamesConfig",
-            "ThoriumHarbingerOverchargeConfig",
-            "ThoriumAssassinDamageConfig",
-            "ThoriumpyromancerBurstsConfig",
-            "ThoriumConduitShieldConfig",
-            "ThoriumIncandescentSparkConfig",
-            "ThoriumGreedyMagnetConfig",
-            "ThoriumCyberStatesConfig",
-            "ThoriumMetronomeConfig",
-            "ThoriumMixTapeConfig",
-            "ThoriumLodestoneConfig",
-            "ThoriumBiotechProbeConfig",
-            "ThoriumProofAvariceConfig",
-            "ThoriumSlagStompersConfig",
-            "ThoriumSpringStepsConfig",
-            "ThoriumBerserkerConfig",
-            "ThoriumBeeBootiesConfig",
-            "ThoriumGhastlyCarapaceConfig",
-            "ThoriumSpiritWispsConfig",
-            "ThoriumWarlockWispsConfig",
-            "ThoriumDreadConfig",
-            "ThoriumDiverConfig",
-            "ThoriumDemonBloodConfig",
-            "ThoriumDevilMinionConfig",
-            "ThoriumCherubMinionConfig",
-            "ThoriumSaplingMinionConfig",
-            "ThoriumOmegaPetConfig",
-            "ThoriumIFOPetConfig",
-            "ThoriumBioFeederPetConfig",
-            "ThoriumBlisterPetConfig",
-            "ThoriumWyvernPetConfig",
-            "ThoriumLanternPetConfig",
-            "ThoriumBoxPetConfig",
-            "ThoriumSpiritPetConfig",
-            "ThoriumGoatPetConfig",
-            "ThoriumOwlPetConfig",
-            "ThoriumJellyfishPetConfig",
-            "ThoriumMooglePetConfig",
-            "ThoriumMaidPetConfig",
-            "ThoriumSlimePetConfig",
-            "ThoriumGlitterPetConfig",
-            "ThoriumCoinPetConfig"};
-
-            string[] thoriumTogItems = {
-            "SupersonicSoul",
-            "ConjuristsSoul",
-            "ConjuristsSoul",
-            "GuardianAngelsSoul",
-            "CelestialEnchant",
-            "CelestialEnchant",
-            "MalignantEnchant",
-            "BronzeEnchant",
-            "IllumiteEnchant",
-            "JesterEnchant",
-            "ValadiumEnchant",
-            "TerrariumEnchant",
-            "ThoriumEnchant",
-            "YewWoodEnchant",
-            "CryoMagusEnchant",
-            "WhiteDwarfEnchant",
-            "TideHunterEnchant",
-            "WhisperingEnchant",
-            "IcyEnchant",
-            "PlagueDoctorEnchant",
-            "TideTurnerEnchant",
-            "TideTurnerEnchant",
-            "FolvEnchant",
-            "FolvEnchant",
-            "FleshEnchant",
-            "FleshEnchant",
-            "DragonEnchant",
-            "HarbingerEnchant",
-            "AssassinEnchant",
-            "PyromancerEnchant",
-            "ConduitEnchant",
-            "DurasteelEnchant",
-            "DurasteelEnchant",
-            "CyberPunkEnchant",
-            "ConductorEnchant",
-            "NobleEnchant",
-            "LodestoneEnchant",
-            "BiotechEnchant",
-            "GoldEnchant",
-            "MagmaEnchant",
-            "MagmaEnchant",
-            "BerserkerEnchant",
-            "BeeEnchant",
-            "SpectreEnchant",
-            "SpiritTrapperEnchant",
-            "WarlockEnchant",
-            "DreadEnchant",
-            "ThoriumEnchant",
-            "DemonBloodEnchant",
-            "WarlockEnchant",
-            "SacredEnchant",
-            "LivingWoodEnchant",
-            "ConduitEnchant",
-            "ConduitEnchant",
-            "MeteorEnchant",
-            "FleshEnchant",
-            "DragonEnchant",
-            "GeodeEnchant",
-            "GeodeEnchant",
-            "SacredEnchant",
-            "LifeBinderEnchant",
-            "CryoMagusEnchant",
-            "DepthDiverEnchant",
-            "WhiteKnightEnchant",
-            "DreamWeaverEnchant",
-            "IllumiteEnchant",
-            "PlatinumEnchant",
-            "GoldEnchant"};
-
-            string[] thoriumColor = {
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff"};
-
-            for (int x = 0; x < thoriumTogNames.Length; x++)
+            if (ModLoader.GetMod("ThoriumMod") != null)
             {
-                text = CreateTranslation(thoriumTogConfig[x]);
-                text.SetDefault("[i:" + Instance.ItemType(thoriumTogItems[x]) + "][c/" + thoriumColor[x] + ": " + thoriumTogNames[x] + "]");
-                AddTranslation(text);
+                AddToggle("ThoriumHeader", "Thorium Toggles", "ThoriumSoul", "ffffff");
+
+                AddToggle("ThoriumCrystalScorpionConfig", "Crystal Scorpion", "ConjuristsSoul", "ffffff");
+                AddToggle("ThoriumYumasPendantConfig", "Yuma's Pendant", "ConjuristsSoul", "ffffff");
+                AddToggle("ThoriumHeadMirrorConfig", "Head Mirror", "GuardianAngelsSoul", "ffffff");
+                AddToggle("ThoriumAirWalkersConfig", "Air Walkers", "SupersonicSoul", "ffffff");
+                AddToggle("ThoriumGlitterPetConfig", "Glitter Pet", "PlatinumEnchant", "ffffff");
+                AddToggle("ThoriumCoinPetConfig", "Coin Bag Pet", "GoldEnchant", "ffffff");
+                AddToggle("ThoriumBioFeederPetConfig", "Bio-Feeder Pet", "MeteorEnchant", "ffffff");
+                AddToggle("ThoriumLanternPetConfig", "Inspiring Lantern Pet", "GeodeEnchant", "ffffff");
+                AddToggle("ThoriumBoxPetConfig", "Lock Box Pet", "GeodeEnchant", "ffffff");
+
+                AddToggle("MuspelheimForce", "Force of Muspelheim", "MuspelheimForce", "ffffff");
+                AddToggle("ThoriumBeeBootiesConfig", "Bee Booties", "BulbEnchant", "ffffff");
+                AddToggle("ThoriumSaplingMinionConfig", "Sapling Minion", "LivingWoodEnchant", "ffffff");
+
+                AddToggle("JotunheimForce", "Force of Jotunheim", "JotunheimForce", "ffffff");
+                AddToggle("ThoriumJellyfishPetConfig", "Jellyfish Pet", "DepthDiverEnchant", "ffffff");
+                AddToggle("ThoriumTideFoamConfig", "Tide Hunter Foam", "TideHunterEnchant", "ffffff");
+                AddToggle("ThoriumYewCritsConfig", "Yew Wood Crits", "YewWoodEnchant", "ffffff");
+                AddToggle("ThoriumCryoDamageConfig", "Cryo-Magus Damage", "CryoMagusEnchant", "ffffff");
+                AddToggle("ThoriumOwlPetConfig", "Owl Pet", "CryoMagusEnchant", "ffffff");
+                AddToggle("ThoriumIcyBarrierConfig", "Icy Barrier", "IcyEnchant", "ffffff");
+                AddToggle("ThoriumWhisperingTentaclesConfig", "Whispering Tentacles", "WhisperingEnchant", "ffffff");
+
+                AddToggle("AlfheimForce", "Force of Alfheim", "AlfheimForce", "ffffff");
+                AddToggle("ThoriumCherubMinionConfig", "Li'l Cherub Minion", "SacredEnchant", "ffffff");
+                AddToggle("ThoriumSpiritPetConfig", "Life Spirit Pet", "SacredEnchant", "ffffff");
+                AddToggle("ThoriumWarlockWispsConfig", "Warlock Wisps", "WarlockEnchant", "ffffff");
+                AddToggle("ThoriumDevilMinionConfig", "Li'l Devil Minion", "WarlockEnchant", "ffffff");
+                AddToggle("ThoriumBiotechProbeConfig", "Biotech Probe", "BiotechEnchant", "ffffff");
+                AddToggle("ThoriumGoatPetConfig", "Holy Goat Pet", "LifeBinderEnchant", "ffffff");
+
+                AddToggle("NiflheimForce", "Force of Niflheim", "NiflheimForce", "ffffff");
+                AddToggle("ThoriumMixTapeConfig", "Mix Tape", "NobleEnchant", "ffffff");
+                AddToggle("ThoriumCyberStatesConfig", "Cyber Punk States", "CyberPunkEnchant", "ffffff");
+                AddToggle("ThoriumMetronomeConfig", "Metronome", "MaestroEnchant", "ffffff");
+                AddToggle("ThoriumMarchingBandConfig", "Marching Band Effect", "MarchingBandEnchant", "ffffff");
+
+                AddToggle("SvartalfheimForce", "Force of Svartalfheim", "SvartalfheimForce", "ffffff");
+                AddToggle("ThoriumEyeoftheStormConfig", "Eye of the Storm", "GraniteEnchant", "ffffff");
+                AddToggle("ThoriumBronzeLightningConfig", "Bronze Lightning", "BronzeEnchant", "ffffff");
+                AddToggle("ThoriumIncandescentSparkConfig", "Incandescent Spark", "DurasteelEnchant", "ffffff");
+                AddToggle("ThoriumGreedyMagnetConfig", "Greedy Magnet", "DurasteelEnchant", "ffffff");
+                AddToggle("ThoriumConduitShieldConfig", "Conduit Shield", "ConduitEnchant", "ffffff");
+                AddToggle("ThoriumOmegaPetConfig", "Omega Pet", "ConduitEnchant", "ffffff");
+                AddToggle("ThoriumIFOPetConfig", "I.F.O. Pet", "ConduitEnchant", "ffffff");
+
+                AddToggle("MidgardForce", "Force of Midgard", "MidgardForce", "ffffff");
+                AddToggle("ThoriumLodestoneConfig", "Lodestone Resistance", "LodestoneEnchant", "ffffff");
+                AddToggle("ThoriumBeholderEyeConfig", "Eye of the Beholder", "ValadiumEnchant", "ffffff");
+                AddToggle("ThoriumIllumiteMissileConfig", "Illumite Missile", "IllumiteEnchant", "ffffff");
+                AddToggle("ThoriumSlimePetConfig", "Pink Slime Pet", "IllumiteEnchant", "ffffff");
+                AddToggle("ThoriumTerrariumSpiritsConfig", "Terrarium Spirits", "TerrariumEnchant", "ffffff");
+                AddToggle("ThoriumDiverConfig", "Spawn Divers", "ThoriumEnchant", "ffffff");
+                AddToggle("ThoriumCrietzConfig", "Crietz", "ThoriumEnchant", "ffffff");
+                AddToggle("ThoriumJesterBellConfig", "Jester Bell", "JesterEnchant", "ffffff");
+
+                AddToggle("VanaheimForce", "Force of Vanaheim", "VanaheimForce", "ffffff");
+                AddToggle("ThoriumFolvAuraConfig", "Folv's Aura", "FolvEnchant", "ffffff");
+                AddToggle("ThoriumFolvBoltsConfig", "Folv's Bolts", "FolvEnchant", "ffffff");
+                AddToggle("ThoriumManaBootsConfig", "Mana-Charged Rocketeers", "MalignantEnchant", "ffffff");
+                AddToggle("ThoriumWhiteDwarfConfig", "White Dwarf Flares", "WhiteDwarfEnchant", "ffffff");
+                AddToggle("ThoriumCelestialAuraConfig", "Celestial Aura", "CelestialEnchant", "ffffff");
+                AddToggle("ThoriumAscensionStatueConfig", "Ascension Statuette", "CelestialEnchant", "ffffff");
+
+                AddToggle("HelheimForce", "Force of Helheim", "HelheimForce", "ffffff");
+                AddToggle("ThoriumSpiritWispsConfig", "Spirit Trapper Wisps", "SpiritTrapperEnchant", "ffffff");
+                AddToggle("ThoriumDreadConfig", "Dread Speed", "DreadEnchant", "ffffff");
+                AddToggle("ThoriumDragonFlamesConfig", "Dragon Flames", "DragonEnchant", "ffffff");
+                AddToggle("ThoriumWyvernPetConfig", "Wyvern Pet", "DragonEnchant", "ffffff");
+                AddToggle("ThoriumDemonBloodConfig", "Demon Blood Effect", "DemonBloodEnchant", "ffffff");
+                AddToggle("ThoriumFleshDropsConfig", "Flesh Drops", "FleshEnchant", "ffffff");
+                AddToggle("ThoriumVampireGlandConfig", "Vampire Gland", "FleshEnchant", "ffffff");
+                AddToggle("ThoriumBlisterPetConfig", "Blister Pet", "FleshEnchant", "ffffff");
+                AddToggle("ThoriumBerserkerConfig", "Berserker Effect", "BerserkerEnchant", "ffffff");
+                AddToggle("ThoriumSlagStompersConfig", "Slag Stompers", "MagmaEnchant", "ffffff");
+                AddToggle("ThoriumSpringStepsConfig", "Spring Steps", "MagmaEnchant", "ffffff");
+                AddToggle("ThoriumHarbingerOverchargeConfig", "Harbinger Overcharge", "HarbingerEnchant", "ffffff");
+                AddToggle("ThoriumMooglePetConfig", "Moogle Pet", "WhiteKnightEnchant", "ffffff");
+                AddToggle("ThoriumPlagueFlaskConfig", "Plague Lord's Flask", "PlagueDoctorEnchant", "ffffff");
+
+                AddToggle("AsgardForce", "Force of Asgard", "AsgardForce", "ffffff");
+                AddToggle("ThoriumTideGlobulesConfig", "Tide Turner Globules", "TideTurnerEnchant", "ffffff");
+                AddToggle("ThoriumTideDaggersConfig", "Tide Turner Daggers", "TideTurnerEnchant", "ffffff");
+                AddToggle("ThoriumAssassinDamageConfig", "Assassin Damage", "AssassinEnchant", "ffffff");
+                AddToggle("ThoriumpyromancerBurstsConfig", "Pyromancer Bursts", "PyromancerEnchant", "ffffff");
+                AddToggle("ThoriumMaidPetConfig", "Maid Pet", "DreamWeaverEnchant", "ffffff");
+            }
+            else
+            {
+                AddToggle("ThoriumHeader", "Enable Thorium for these Toggles", "", "ffffff");
             }
 
             #endregion
 
             #region calamity
-            string[] calamityTogNames = {
 
-            "Victide Sea Urchin",
-            "Profaned Soul Artifact",
-            "Slime God Minion",
-            "Reaver Orb Minion",
-            "Omega Blue Tentacles",
-            "Silva Crystal Minion",
-            "Godly Soul Artifact",
-            "Mechworm Minion",
-            "Nebulous Core",
-            "Red Devil Minion",
-            "Permafrost's Concoction",
-            "Daedalus Crystal Minion",
-            "Polterghast Mines",
-            "Plague Hive",
-            "Chaos Spirit Minion",
-            "Valkyrie Minion",
-            "Yharim's Gift",
-            "Fungal Clump Minion",
-            "Elemental Waifus",
-            "Shellfish Minions",
-            "Amidias' Pendant",
-            "Giant Pearl",
-            "Poisonous Sea Water",
-            "Daedalus Effects",
-            "Reaver Effects",
-            "Astral Stars",
-            "Ataxia Effects",
-            "Xeroc Effects",
-            "Tarragon Effects",
-            "Bloodflare Effects",
-            "God Slayer Effects",
-            "Silva Effects",
-            "Auric Tesla Effects",
-            "Elemental Quiver",
-            "Luxor's Gift",
-            "Gladiator's Locket",
-            "Unstable Prism",
-            "Regenator",
-            "Abyssal Diving Suit",
-            "Kendra Pet",
-            "Perforator Pet",
-            "Bear Pet",
-            "Third Sage Pet",
-            "Brimling Pet",
-            "Danny Pet",
-            "Siren Pet",
-            "Chibii Pet",
-            "Akato Pet",
-            "Fox Pet",
-            "Levi Pet"
-        };
-
-            string[] calamityTogConfig = {
-            "CalamityUrchinConfig",
-            "CalamityProfanedArtifactConfig",
-            "CalamitySlimeMinionConfig",
-            "CalamityReaverMinionConfig",
-            "CalamityOmegaTentaclesConfig",
-            "CalamitySilvaMinionConfig",
-            "CalamityGodlyArtifactConfig",
-            "CalamityMechwormMinionConfig",
-            "CalamityNebulousCoreConfig",
-            "CalamityDevilMinionConfig",
-            "CalamityPermafrostPotionConfig",
-            "CalamityDaedalusMinionConfig",
-            "CalamityPolterMinesConfig",
-            "CalamityPlagueHiveConfig",
-            "CalamityChaosMinionConfig",
-            "CalamityValkyrieMinionConfig",
-            "CalamityYharimGiftConfig",
-            "CalamityFungalMinionConfig",
-            "CalamityWaifuMinionsConfig",
-            "CalamityShellfishMinionConfig",
-            "CalamityAmidiasPendantConfig",
-            "CalamityGiantPearlConfig",
-            "CalamityPoisonSeawaterConfig",
-            "CalamityDaedalusEffectsConfig",
-            "CalamityReaverEffectsConfig",
-            "CalamityAstralStarsConfig",
-            "CalamityAtaxiaEffectsConfig",
-            "CalamityXerocEffectsConfig",
-            "CalamityTarragonEffectsConfig",
-            "CalamityBloodflareEffectsConfig",
-            "CalamityGodSlayerEffectsConfig",
-            "CalamitySilvaEffectsConfig",
-            "CalamityAuricEffectsConfig",
-            "CalamityElementalQuiverConfig",
-            "CalamityLuxorGiftConfig",
-            "CalamityGladiatorLocketConfig",
-            "CalamityUnstablePrismConfig",
-            "CalamityRegeneratorConfig",
-            "CalamityDivingSuitConfig",
-            "CalamityKendraConfig",
-            "CalamityPerforatorConfig",
-            "CalamityBearConfig",
-            "CalamityThirdSageConfig",
-            "CalamityBrimlingConfig",
-            "CalamityDannyConfig",
-            "CalamitySirenConfig",
-            "CalamityChibiiConfig",
-            "CalamityAkatoConfig",
-            "CalamityFoxConfig",
-            "CalamityLeviConfig"
-    };
-
-            string[] calamityTogItems = {
-            "VictideEnchant",
-            "TarragonEnchant",
-            "StatigelEnchant",
-            "ReaverEnchant",
-            "OmegaBlueEnchant",
-            "SilvaEnchant",
-            "SilvaEnchant",
-            "GodSlayerEnchant",
-            "GodSlayerEnchant",
-            "DemonShadeEnchant",
-            "DaedalusEnchant",
-            "DaedalusEnchant",
-            "BloodflareEnchant",
-            "AtaxiaEnchant",
-            "AtaxiaEnchant",
-            "AerospecEnchant",
-            "SilvaEnchant",
-            "SilvaEnchant",
-            "AuricEnchant",
-            "MolluskEnchant",
-            "MolluskEnchant",
-            "MolluskEnchant",
-            "SilvaEnchant",
-            "DaedalusEnchant",
-            "ReaverEnchant",
-            "AstralEnchant",
-            "AtaxiaEnchant",
-            "XerocEnchant",
-            "TarragonEnchant",
-            "BloodflareEnchant",
-            "GodSlayerEnchant",
-            "SilvaEnchant",
-            "AuricEnchant",
-            "SharpshootersSoul",
-            "VictideEnchant",
-            "AerospecEnchant",
-            "AerospecEnchant",
-            "DaedalusEnchant",
-            "OmegaBlueEnchant",
-            "AerospecEnchant",
-            "StatigelEnchant",
-            "DaedalusEnchant",
-            "DaedalusEnchant",
-            "AtaxiaEnchant",
-            "MolluskEnchant",
-            "OmegaBlueEnchant",
-            "GodSlayerEnchant",
-            "SilvaEnchant",
-            "SilvaEnchant",
-            "DemonShadeEnchant"};
-
-            string[] calamityColor = {
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff",
-            "ffffff"};
-
-            for (int x = 0; x < calamityTogNames.Length; x++)
+            if (ModLoader.GetMod("CalamityMod") != null)
             {
-                text = CreateTranslation(calamityTogConfig[x]);
-                text.SetDefault("[i:" + Instance.ItemType(calamityTogItems[x]) + "][c/" + calamityColor[x] + ": " + calamityTogNames[x] + "]");
-                AddTranslation(text);
+                AddToggle("CalamityHeader", "Calamity Toggles", "CalamitySoul", "ffffff");
+                AddToggle("CalamityElementalQuiverConfig", "Elemental Quiver", "SnipersSoul", "ffffff");
+
+                AddToggle("ApocalypseForce", "Force of the Apocalypse", "ApocalypseForce", "ffffff");
+                AddToggle("CalamityValkyrieMinionConfig", "Valkyrie Minion", "AerospecEnchant", "ffffff");
+                AddToggle("CalamityGladiatorLocketConfig", "Gladiator's Locket", "AerospecEnchant", "ffffff");
+                AddToggle("CalamityUnstablePrismConfig", "Unstable Prism", "AerospecEnchant", "ffffff");
+                AddToggle("CalamityKendraConfig", "Kendra Pet", "AerospecEnchant", "ffffff");
+                AddToggle("CalamitySlimeMinionConfig", "Slime God Minion", "StatigelEnchant", "ffffff");
+                AddToggle("CalamityPerforatorConfig", "Perforator Pet", "StatigelEnchant", "ffffff");
+                AddToggle("CalamityDaedalusEffectsConfig", "Daedalus Effects", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityDaedalusMinionConfig", "Daedalus Crystal Minion", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityPermafrostPotionConfig", "Permafrost's Concoction", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityRegeneratorConfig", "Regenator", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityBearConfig", "Bear Pet", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityThirdSageConfig", "Third Sage Pet", "DaedalusEnchant", "ffffff");
+                AddToggle("CalamityBloodflareEffectsConfig", "Bloodflare Effects", "BloodflareEnchant", "ffffff");
+                AddToggle("CalamityPolterMinesConfig", "Polterghast Mines", "BloodflareEnchant", "ffffff");
+
+                AddToggle("DesolationForce", "Force of the Desolation", "DesolationForce", "ffffff");
+                AddToggle("CalamityUrchinConfig", "Victide Sea Urchin", "VictideEnchant", "ffffff");
+                AddToggle("CalamityLuxorGiftConfig", "Luxor's Gift", "VictideEnchant", "ffffff");
+                AddToggle("CalamityXerocEffectsConfig", "Xeroc Effects", "XerocEnchant", "ffffff");
+                AddToggle("CalamitySilvaEffectsConfig", "Silva Effects", "SilvaEnchant", "ffffff");
+                AddToggle("CalamitySilvaMinionConfig", "Silva Crystal Minion", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityGodlyArtifactConfig", "Godly Soul Artifact", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityYharimGiftConfig", "Yharim's Gift", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityFungalMinionConfig", "Fungal Clump Minion", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityPoisonSeawaterConfig", "Poisonous Sea Water", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityAkatoConfig", "Akato Pet", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityFoxConfig", "Fox Pet", "SilvaEnchant", "ffffff");
+                AddToggle("CalamityOmegaTentaclesConfig", "Omega Blue Tentacles", "OmegaBlueEnchant", "ffffff");
+                AddToggle("CalamityDivingSuitConfig", "Abyssal Diving Suit", "OmegaBlueEnchant", "ffffff");
+                AddToggle("CalamityReaperToothNecklaceConfig", "Reaper Tooth Necklace", "OmegaBlueEnchant", "ffffff");
+                AddToggle("CalamitySirenConfig", "Siren Pet", "OmegaBlueEnchant", "ffffff");
+                AddToggle("CalamityGodSlayerEffectsConfig", "God Slayer Effects", "GodSlayerEnchant", "ffffff");
+                AddToggle("CalamityMechwormMinionConfig", "Mechworm Minion", "GodSlayerEnchant", "ffffff");
+                AddToggle("CalamityNebulousCoreConfig", "Nebulous Core", "GodSlayerEnchant", "ffffff");
+                AddToggle("CalamityChibiiConfig", "Chibii Pet", "GodSlayerEnchant", "ffffff");
+                AddToggle("CalamityAuricEffectsConfig", "Auric Tesla Effects", "AuricEnchant", "ffffff");
+                AddToggle("CalamityWaifuMinionsConfig", "Elemental Waifus", "AuricEnchant", "ffffff");
+
+                AddToggle("DevastationForce", "Force of the Devastation", "DevastationForce", "ffffff");
+                AddToggle("CalamityShellfishMinionConfig", "Shellfish Minions", "MolluskEnchant", "ffffff");
+                AddToggle("CalamityAmidiasPendantConfig", "Amidias' Pendant", "MolluskEnchant", "ffffff");
+                AddToggle("CalamityGiantPearlConfig", "Giant Pearl", "MolluskEnchant", "ffffff");
+                AddToggle("CalamityDannyConfig", "Danny Pet", "MolluskEnchant", "ffffff");
+                AddToggle("CalamityReaverEffectsConfig", "Reaver Effects", "ReaverEnchant", "ffffff");
+                AddToggle("CalamityReaverMinionConfig", "Reaver Orb Minion", "ReaverEnchant", "ffffff");
+                AddToggle("CalamityFabledTurtleConfig", "Fabled Turtle Shell", "ReaverEnchant", "ffffff");
+                AddToggle("CalamityAtaxiaEffectsConfig", "Ataxia Effects", "AtaxiaEnchant", "ffffff");
+                AddToggle("CalamityChaosMinionConfig", "Chaos Spirit Minion", "AtaxiaEnchant", "ffffff");
+                AddToggle("CalamityPlagueHiveConfig", "Plague Hive", "AtaxiaEnchant", "ffffff");
+                AddToggle("CalamityBrimlingConfig", "Brimling Pet", "AtaxiaEnchant", "ffffff");
+                AddToggle("CalamityAstralStarsConfig", "Astral Stars", "AstralEnchant", "ffffff");
+                AddToggle("CalamityTarragonEffectsConfig", "Tarragon Effects", "TarragonEnchant", "ffffff");
+                AddToggle("CalamityProfanedArtifactConfig", "Profaned Soul Artifact", "TarragonEnchant", "ffffff");
+                AddToggle("CalamityDevilMinionConfig", "Red Devil Minion", "DemonShadeEnchant", "ffffff");
+                AddToggle("CalamityLeviConfig", "Levi Pet", "DemonShadeEnchant", "ffffff");
+            }
+            else
+            {
+                AddToggle("CalamityHeader", "Enable Calamity for these Toggles", "", "ffffff");
             }
 
             #endregion
 
             #endregion
 
-            
+        }
+
+        public void AddToggle(String toggle, String name, String item, String color)
+        {
+            ModTranslation text = CreateTranslation(toggle);
+            text.SetDefault("[i:" + Instance.ItemType(item) + "][c/" + color + ": " + name + "]");
+            AddTranslation(text);
+        }
+
+        //for vanilla items reeeee
+        public void AddToggle(String toggle, String name, int item, String color)
+        {
+            ModTranslation text = CreateTranslation(toggle);
+            text.SetDefault("[i:" + item + "][c/" + color + ": " + name + "]");
+            AddTranslation(text);
         }
 
         public override void Unload()
         {
             if (DebuffIDs != null)
                 DebuffIDs.Clear();
+
+            //game will reload golem textures, this helps prevent the crash on reload
+            Main.NPCLoaded[NPCID.Golem] = false;
+            Main.NPCLoaded[NPCID.GolemFistLeft] = false;
+            Main.NPCLoaded[NPCID.GolemFistRight] = false;
+            Main.NPCLoaded[NPCID.GolemHead] = false;
+            Main.NPCLoaded[NPCID.GolemHeadFree] = false;
         }
 
         public override object Call(params object[] args)
         {
             if ((string)args[0] == "FargoSoulsAI")
             {
-                int n = (int)args[1];
-                Main.npc[n].GetGlobalNPC<FargoSoulsGlobalNPC>().AI(Main.npc[n]);
+                /*int n = (int)args[1];
+                Main.npc[n].GetGlobalNPC<FargoSoulsGlobalNPC>().AI(Main.npc[n]);*/
             }
             return base.Call(args);
         }
@@ -1209,15 +487,15 @@ namespace FargowiltasSouls
         {
             try
             {
-                FargosLoaded = ModLoader.GetMod("Fargowiltas") != null;
-                BlueMagicLoaded = ModLoader.GetMod("Bluemagic") != null;
-                CalamityLoaded = ModLoader.GetMod("CalamityMod") != null;
-                ThoriumLoaded = ModLoader.GetMod("ThoriumMod") != null;
-                AALoaded = ModLoader.GetMod("AAMod") != null;
-                DBTLoaded = ModLoader.GetMod("DBZMOD") != null;
-                SOALoaded = ModLoader.GetMod("SacredTools") != null;
-                ApothLoaded = ModLoader.GetMod("ApothTestMod") != null;
-                MasomodeEX = ModLoader.GetMod("MasomodeEX") != null;
+                CalamityCompatibility = new CalamityCompatibility(this).TryLoad() as CalamityCompatibility;
+                ThoriumCompatibility = new ThoriumCompatibility(this).TryLoad() as ThoriumCompatibility;
+                SoACompatibility = new SoACompatibility(this).TryLoad() as SoACompatibility;
+
+                //FargowiltasCompatibility = new FargowiltasCompatibility(this).TryLoad() as FargowiltasCompatibility;
+                MasomodeEXCompatibility = new MasomodeEXCompatibility(this).TryLoad() as MasomodeEXCompatibility;
+
+                DBZMODCompatibility = new DBZMODCompatibility(this).TryLoad() as DBZMODCompatibility;
+                ApothCompatibility = new ApothTestModCompatibility(this).TryLoad() as ApothTestModCompatibility;
 
                 DebuffIDs = new List<int> { 20, 22, 23, 24, 36, 39, 44, 46, 47, 67, 68, 69, 70, 80,
                     88, 94, 103, 137, 144, 145, 148, 149, 156, 160, 163, 164, 195, 196, 197, 199 };
@@ -1267,8 +545,52 @@ namespace FargowiltasSouls
                 Mod bossChecklist = ModLoader.GetMod("BossChecklist");
                 if (bossChecklist != null)
                 {
-                    bossChecklist.Call("AddBossWithInfo", "Duke Fishron EX", 14.01f, (Func<bool>)(() => FargoSoulsWorld.downedFishronEX), "Fish using a [i:" + ItemType("TruffleWormEX") + "]");
-                    bossChecklist.Call("AddBossWithInfo", "Mutant", 14.02f, (Func<bool>)(() => FargoSoulsWorld.downedMutant), "Spawn by throwing [i:" + ItemType("AbominationnVoodooDoll") + "] in lava in Mutant's presence");
+                    bossChecklist.Call(
+                        "AddBoss",
+                        14.01f,
+                        ModContent.NPCType<NPCs.AbomBoss.AbomBoss>(),
+                        this,
+                        "Abominationn",
+                        (Func<bool>)(() => FargoSoulsWorld.downedAbom),
+                        ModContent.ItemType<Items.Summons.AbomsCurse>(),
+                        new List<int> { ModContent.ItemType<Items.Tiles.AbomTrophy>(), ModContent.ItemType<Items.Tiles.AbomMusicBox>() },
+                        new List<int> { ModContent.ItemType<Items.Misc.MutatingEnergy>(), ModContent.ItemType<Items.Misc.MutantScale>() },
+                        "Spawn by using the Abominationn's Curse.",
+                        "The Abominationn has destroyed everyone.",
+                        "FargowiltasSouls/NPCs/AbomBoss/AbomBoss_Still",
+                        "FargowiltasSouls/NPCs/AbomBoss/AbomBoss_Head_Boss"
+                    );
+                    /*bossChecklist.Call(                  this code crashes the game when you scroll down to the boss in the checklist
+                        "AddBoss",                         probably has something to do with the NPC line...
+                        14.6f,
+                        NPCID.DukeFishron,                 ...because fish.
+                        this,
+                        "Duke Fishron EX",
+                        (Func<bool>)(() => FargoSoulsWorld.downedFishronEX),
+                        ModContent.ItemType<Items.Misc.TruffleWormEX>(),
+                        ModContent.ItemType<Items.Misc.AbomMusicBox>(),
+                        ModContent.ItemType<Items.Misc.MutatingEnergy>(),
+                        "Fish using the Truffle Worm EX.",
+                        "The Duke returns to the depths victoriously...",
+                        "FargowiltasSouls/NPCs/Vanilla/NPC_370",
+                        "FargowiltasSouls/NPCs/Vanilla/NPC_Head_Boss_4"
+                    );*/
+                    bossChecklist.Call("AddBossWithInfo", "Duke Fishron EX", 14.02f, (Func<bool>)(() => FargoSoulsWorld.downedFishronEX), "Fish using a [i:" + ItemType("TruffleWormEX") + "]");
+                    bossChecklist.Call(
+                        "AddBoss",
+                        14.03f,
+                        ModContent.NPCType<NPCs.MutantBoss.MutantBoss>(),
+                        this,
+                        "Mutant",
+                        (Func<bool>)(() => FargoSoulsWorld.downedMutant),
+                        ModContent.ItemType<Items.Summons.AbominationnVoodooDoll>(),
+                        new List<int> { ModContent.ItemType<Items.Tiles.MutantTrophy>(), ModContent.ItemType<Items.Tiles.MutantMusicBox>() },
+                        ModContent.ItemType<Items.Misc.Sadism>(),
+                        "Throw the Abominationn's Voodoo Doll into a pool of lava while the Abominationn is alive, in the Mutant's presence.",
+                        "The Mutant has won, of course.",
+                        "FargowiltasSouls/NPCs/MutantBoss/MutantBoss_Still",
+                        "FargowiltasSouls/NPCs/MutantBoss/MutantBoss_Head_Boss"
+                    );
                 }
 
                 if (ThoriumLoaded)
@@ -1297,18 +619,35 @@ namespace FargowiltasSouls
                 if (CalamityLoaded)
                 {
                     Mod calamity = ModLoader.GetMod("CalamityMod");
-                    ModProjDict.Add(calamity.ProjectileType("Kendra"), 101);
+
+                    String[] calamityPets = { "KendraPet" , "PerforaMini", "ThirdSage", "Bear", "BrimlingPet", "DannyDevitoPet",
+                    "SirenYoung", "ChibiiDoggo", "ChibiiDoggoFly", "Akato", "Fox", "Levi" };
+                    int calamityIndex = 101;
+
+                    /*ModProjDict.Add(calamity.ProjectileType("KendraPet"), 101);
                     ModProjDict.Add(calamity.ProjectileType("PerforaMini"), 102);
                     ModProjDict.Add(calamity.ProjectileType("ThirdSage"), 103);
                     ModProjDict.Add(calamity.ProjectileType("Bear"), 104);
-                    ModProjDict.Add(calamity.ProjectileType("Brimling"), 105);
-                    ModProjDict.Add(calamity.ProjectileType("DannyDevito"), 106);
+                    ModProjDict.Add(calamity.ProjectileType("BrimlingPet"), 105);
+                    ModProjDict.Add(calamity.ProjectileType("DannyDevitoPet"), 106);
                     ModProjDict.Add(calamity.ProjectileType("SirenYoung"), 107);
                     ModProjDict.Add(calamity.ProjectileType("ChibiiDoggo"), 108);
                     ModProjDict.Add(calamity.ProjectileType("ChibiiDoggoFly"), 109);
                     ModProjDict.Add(calamity.ProjectileType("Akato"), 110);
                     ModProjDict.Add(calamity.ProjectileType("Fox"), 111);
                     ModProjDict.Add(calamity.ProjectileType("Levi"), 112);
+                    //ModProjDict.ContainsKey*/
+
+                    for (int i = 0; i < calamityPets.Length; i++)
+                    {
+                        if (!ModProjDict.ContainsKey(calamity.ProjectileType(calamityPets[i])))
+                        {
+                            ModProjDict.Add(calamity.ProjectileType(calamityPets[i]), calamityIndex++);
+                        }
+                    }
+
+                    
+
                 }
             }
             catch (Exception e)
@@ -1319,70 +658,22 @@ namespace FargowiltasSouls
 
         public override void AddRecipes()
         {
-            if (ThoriumLoaded)
-            {
-                Mod thorium = ModLoader.GetMod("ThoriumMod");
+            ThoriumCompatibility?.TryAddRecipes();
 
-                ModRecipe recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelArrow"));
-                recipe.AddRecipe();
+            ModRecipe recipe = new ModRecipe(this);
+            recipe.AddIngredient(ItemID.SoulofLight, 7);
+            recipe.AddIngredient(ItemID.SoulofNight, 7);
+            recipe.AddIngredient(ItemType("VolatileEnergy"));
+            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.SetResult(ModLoader.GetMod("Fargowiltas").ItemType("JungleChest"));
+            recipe.AddRecipe();
 
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelAxe"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelBattleAxe"), 10);
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelBlade"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelBow"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelChestplate"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelGreaves"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelHelmet"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelMallet"));
-                recipe.AddRecipe();
-
-                recipe = new ModRecipe(this);
-                recipe.AddIngredient(thorium.ItemType("FoldedMetal"));
-                recipe.AddTile(thorium, "ArcaneArmorFabricator");
-                recipe.SetResult(thorium.ItemType("SteelPickaxe"));
-                recipe.AddRecipe();
-            }
+            recipe = new ModRecipe(this);
+            recipe.AddIngredient(ItemID.WizardHat);
+            recipe.AddIngredient(ItemType("VolatileEnergy"), 5);
+            recipe.AddTile(TileID.MythrilAnvil);
+            recipe.SetResult(ModLoader.GetMod("Fargowiltas").ItemType("RuneOrb"));
+            recipe.AddRecipe();
         }
 
         public override void AddRecipeGroups()
@@ -1403,68 +694,9 @@ namespace FargowiltasSouls
             group = new RecipeGroup(() => Lang.misc[37] + " Adamantite Repeater", ItemID.AdamantiteRepeater, ItemID.TitaniumRepeater);
             RecipeGroup.RegisterGroup("FargowiltasSouls:AnyAdamantiteRepeater", group);
 
-            if (Instance.ThoriumLoaded)
-            {
-                Mod thorium = ModLoader.GetMod("ThoriumMod");
-
-                //combo yoyos
-                group = new RecipeGroup(() => Lang.misc[37] + " Combination Yoyo", thorium.ItemType("Nocturnal"), thorium.ItemType("Sanguine"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyThoriumYoyo", group);
-            }
-
-            if (Instance.CalamityLoaded)
-            {
-                Mod calamity = ModLoader.GetMod("CalamityMod");
-
-                //aerospec
-                group = new RecipeGroup(() => Lang.misc[37] + " Aerospec Helmet", calamity.ItemType("AerospecHat"), calamity.ItemType("AerospecHeadgear"), calamity.ItemType("AerospecHelm"), calamity.ItemType("AerospecHood"), calamity.ItemType("AerospecHelmet"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyAerospecHelmet", group);
-                //ataxia
-                group = new RecipeGroup(() => Lang.misc[37] + " Ataxia Helmet", calamity.ItemType("AtaxiaHeadgear"), calamity.ItemType("AtaxiaHelm"), calamity.ItemType("AtaxiaHood"), calamity.ItemType("AtaxiaHelmet"), calamity.ItemType("AtaxiaMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyAtaxiaHelmet", group);
-                //auric
-                group = new RecipeGroup(() => Lang.misc[37] + " Auric Helmet", calamity.ItemType("AuricTeslaHelm"), calamity.ItemType("AuricTeslaPlumedHelm"), calamity.ItemType("AuricTeslaHoodedFacemask"), calamity.ItemType("AuricTeslaSpaceHelmet"), calamity.ItemType("AuricTeslaWireHemmedVisage"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyAuricHelmet", group);
-                //bloodflare
-                group = new RecipeGroup(() => Lang.misc[37] + " Bloodflare Helmet", calamity.ItemType("BloodflareHelm"), calamity.ItemType("BloodflareHelmet"), calamity.ItemType("BloodflareHornedHelm"), calamity.ItemType("BloodflareHornedMask"), calamity.ItemType("BloodflareMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyBloodflareHelmet", group);
-                //daedalus
-                group = new RecipeGroup(() => Lang.misc[37] + " Daedalus Helmet", calamity.ItemType("DaedalusHelm"), calamity.ItemType("DaedalusHelmet"), calamity.ItemType("DaedalusHat"), calamity.ItemType("DaedalusHeadgear"), calamity.ItemType("DaedalusVisor"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyDaedalusHelmet", group);
-                //godslayer
-                group = new RecipeGroup(() => Lang.misc[37] + " Godslayer Helmet", calamity.ItemType("GodSlayerHelm"), calamity.ItemType("GodSlayerHelmet"), calamity.ItemType("GodSlayerVisage"), calamity.ItemType("GodSlayerHornedHelm"), calamity.ItemType("GodSlayerMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyGodslayerHelmet", group);
-                //reaver
-                group = new RecipeGroup(() => Lang.misc[37] + " Reaver Helmet", calamity.ItemType("ReaverHelm"), calamity.ItemType("ReaverVisage"), calamity.ItemType("ReaverMask"), calamity.ItemType("ReaverHelmet"), calamity.ItemType("ReaverCap"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyReaverHelmet", group);
-                //silva
-                group = new RecipeGroup(() => Lang.misc[37] + " Silva Helmet", calamity.ItemType("SilvaHelm"), calamity.ItemType("SilvaHornedHelm"), calamity.ItemType("SilvaMaskedCap"), calamity.ItemType("SilvaHelmet"), calamity.ItemType("SilvaMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnySilvaHelmet", group);
-                //statigel
-                group = new RecipeGroup(() => Lang.misc[37] + " Statigel Helmet", calamity.ItemType("StatigelHelm"), calamity.ItemType("StatigelHeadgear"), calamity.ItemType("StatigelCap"), calamity.ItemType("StatigelHood"), calamity.ItemType("StatigelMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyStatigelHelmet", group);
-                //tarragon
-                group = new RecipeGroup(() => Lang.misc[37] + " Tarragon Helmet", calamity.ItemType("TarragonHelm"), calamity.ItemType("TarragonVisage"), calamity.ItemType("TarragonMask"), calamity.ItemType("TarragonHornedHelm"), calamity.ItemType("TarragonHelmet"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyTarragonHelmet", group);
-                //victide
-                group = new RecipeGroup(() => Lang.misc[37] + " Victide Helmet", calamity.ItemType("VictideHelm"), calamity.ItemType("VictideVisage"), calamity.ItemType("VictideMask"), calamity.ItemType("VictideHelmet"), calamity.ItemType("VictideHeadgear"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyVictideHelmet", group);
-                //wulfrum
-                group = new RecipeGroup(() => Lang.misc[37] + " Wulfrum Helmet", calamity.ItemType("WulfrumHelm"), calamity.ItemType("WulfrumHeadgear"), calamity.ItemType("WulfrumHood"), calamity.ItemType("WulfrumHelmet"), calamity.ItemType("WulfrumMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyWulfrumHelmet", group);
-            }
-
-            if (Instance.SOALoaded)
-            {
-                Mod soa = ModLoader.GetMod("SacredTools");
-
-                //flarium
-                group = new RecipeGroup(() => Lang.misc[37] + " Flarium Helmet", soa.ItemType("FlariumCowl"), soa.ItemType("FlariumHelmet"), soa.ItemType("FlariumHood"), soa.ItemType("FlariumCrown"), soa.ItemType("FlariumMask"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyFlariumHelmet", group);
-                //asthraltite
-                group = new RecipeGroup(() => Lang.misc[37] + " Asthraltite Helmet", soa.ItemType("AsthralMelee"), soa.ItemType("AsthralRanged"), soa.ItemType("AsthralMage"), soa.ItemType("AsthralSummon"), soa.ItemType("AsthralThrown"));
-                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyAstralHelmet", group);
-            }
+            CalamityCompatibility?.TryAddRecipeGroups();
+            ThoriumCompatibility?.TryAddRecipeGroups();
+            SoACompatibility?.TryAddRecipeGroups();
 
             //evil wood
             group = new RecipeGroup(() => Lang.misc[37] + " Evil Wood", ItemID.Ebonwood, ItemID.Shadewood);
@@ -1523,8 +755,40 @@ namespace FargowiltasSouls
             RecipeGroup.RegisterGroup("FargowiltasSouls:AnySpectreHead", group);
 
             //book cases
-            group = new RecipeGroup(() => Lang.misc[37] + " Wooden Bookcase", ItemID.Bookcase, ItemID.EbonwoodBookcase, ItemID.RichMahoganyBookcase, ItemID.LivingWoodBookcase,
-                ItemID.ShadewoodBookcase, ItemID.PalmWoodBookcase, ItemID.BorealWoodBookcase);
+            group = new RecipeGroup(() => Lang.misc[37] + " Bookcase", new int[]
+            {
+                ItemID.Bookcase,
+                ItemID.BlueDungeonBookcase,
+                ItemID.BoneBookcase,
+                ItemID.BorealWoodBookcase,
+                ItemID.CactusBookcase,
+                ItemID.CrystalBookCase,
+                ItemID.DynastyBookcase,
+                ItemID.EbonwoodBookcase,
+                ItemID.FleshBookcase,
+                ItemID.FrozenBookcase,
+                ItemID.GlassBookcase,
+                ItemID.GoldenBookcase,
+                ItemID.GothicBookcase,
+                ItemID.GraniteBookcase,
+                ItemID.GreenDungeonBookcase,
+                ItemID.HoneyBookcase,
+                ItemID.LivingWoodBookcase,
+                ItemID.MarbleBookcase,
+                ItemID.MeteoriteBookcase,
+                ItemID.MushroomBookcase,
+                ItemID.ObsidianBookcase,
+                ItemID.PalmWoodBookcase,
+                ItemID.PearlwoodBookcase,
+                ItemID.PinkDungeonBookcase,
+                ItemID.PumpkinBookcase,
+                ItemID.RichMahoganyBookcase,
+                ItemID.ShadewoodBookcase,
+                ItemID.SkywareBookcase,
+                ItemID.SlimeBookcase,
+                ItemID.SpookyBookcase,
+                ItemID.SteampunkBookcase
+            });
             RecipeGroup.RegisterGroup("FargowiltasSouls:AnyBookcase", group);
 
             //beetle body
@@ -1541,8 +805,17 @@ namespace FargowiltasSouls
                 ItemID.RedAdmiralButterfly, ItemID.SulphurButterfly, ItemID.TreeNymphButterfly, ItemID.UlyssesButterfly, ItemID.ZebraSwallowtailButterfly);
             RecipeGroup.RegisterGroup("FargowiltasSouls:AnyButterfly", group);
 
+            //vanilla squirrels
+            group = new RecipeGroup(() => Lang.misc[37] + " Squirrel", ItemID.Squirrel, ItemID.SquirrelRed);
+            RecipeGroup.RegisterGroup("FargowiltasSouls:AnySquirrel", group);
+
+            //gold pick
             group = new RecipeGroup(() => Lang.misc[37] + " Gold Pickaxe", ItemID.GoldPickaxe, ItemID.PlatinumPickaxe);
             RecipeGroup.RegisterGroup("FargowiltasSouls:AnyGoldPickaxe", group);
+
+            //fish trash
+            group = new RecipeGroup(() => Lang.misc[37] + " Fishing Trash", ItemID.OldShoe, ItemID.TinCan, ItemID.FishingSeaweed);
+            RecipeGroup.RegisterGroup("FargowiltasSouls:AnyFishingTrash", group);
 
             if (ThoriumLoaded)
             {
@@ -1563,6 +836,9 @@ namespace FargowiltasSouls
                 //fan letter
                 group = new RecipeGroup(() => Lang.misc[37] + " Fan Letter", thorium.ItemType("FanLetter"), thorium.ItemType("FanLetter2"));
                 RecipeGroup.RegisterGroup("FargowiltasSouls:AnyLetter", group);
+                //bugle horn
+                group = new RecipeGroup(() => Lang.misc[37] + " Bugle Horn", thorium.ItemType("GoldenBugleHorn"), thorium.ItemType("PlatinumBugle"));
+                RecipeGroup.RegisterGroup("FargowiltasSouls:AnyBugleHorn", group);
 
                 //butterflies
                 group = new RecipeGroup(() => Lang.misc[37] + " Dungeon Butterfly", thorium.ItemType("BlueDungeonButterfly"), thorium.ItemType("GreenDungeonButterfly"), thorium.ItemType("PinkDungeonButterfly"));
@@ -1608,6 +884,9 @@ namespace FargowiltasSouls
                     fargoNPC.masoBool[1] = reader.ReadBoolean();
                     fargoNPC.masoBool[2] = reader.ReadBoolean();
                     fargoNPC.masoBool[3] = reader.ReadBoolean();
+                    fargoNPC.Counter = reader.ReadInt32();
+                    fargoNPC.Counter2 = reader.ReadInt32();
+                    fargoNPC.Timer = reader.ReadInt32();
                     break;
 
                 case 3: //rainbow slime/paladin, MP clients syncing to server
@@ -1704,6 +983,27 @@ namespace FargowiltasSouls
                     }
                     break;
 
+                case 12: //prime limbs spin
+                    if (Main.netMode == 1)
+                    {
+                        int n = reader.ReadByte();
+                        FargoSoulsGlobalNPC limb = Main.npc[n].GetGlobalNPC<FargoSoulsGlobalNPC>();
+                        limb.masoBool[2] = reader.ReadBoolean();
+                        limb.Counter = reader.ReadInt32();
+                        Main.npc[n].localAI[3] = reader.ReadSingle();
+                    }
+                    break;
+
+                case 13: //prime limbs swipe
+                    if (Main.netMode == 1)
+                    {
+                        int n = reader.ReadByte();
+                        FargoSoulsGlobalNPC limb = Main.npc[n].GetGlobalNPC<FargoSoulsGlobalNPC>();
+                        limb.Counter = reader.ReadInt32();
+                        limb.Counter2 = reader.ReadInt32();
+                    }
+                    break;
+
                 case 77: //server side spawning fishron EX
                     if (Main.netMode == 2)
                     {
@@ -1727,7 +1027,7 @@ namespace FargowiltasSouls
             }
 
             //BaseMod Stuff
-            MsgType msg = (MsgType)reader.ReadByte();
+            /*MsgType msg = (MsgType)reader.ReadByte();
             if (msg == MsgType.ProjectileHostility) //projectile hostility and ownership
             {
                 int owner = reader.ReadInt32();
@@ -1764,7 +1064,7 @@ namespace FargowiltasSouls
                     ((ParentProjectile)Main.projectile[id].modProjectile).SetAI(newAI, aitype);
                 }
                 if (Main.netMode == 2) BaseNet.SyncAI(classID, id, newAI, aitype);
-            }
+            }*/
         }
 
         public override void UpdateMusic(ref int music, ref MusicPriority priority)
@@ -1776,12 +1076,12 @@ namespace FargowiltasSouls
                     music = GetSoundSlot(SoundType.Music, "Sounds/Music/MonsterMadhouse");
                     priority = MusicPriority.Event;
                 }
-
-                if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.mutantBoss, NPCType("MutantBoss")))
+                /*if (FargoSoulsGlobalNPC.BossIsAlive(ref FargoSoulsGlobalNPC.mutantBoss, ModContent.NPCType<NPCs.MutantBoss.MutantBoss>())
+                    && Main.player[Main.myPlayer].Distance(Main.npc[FargoSoulsGlobalNPC.mutantBoss].Center) < 3000)
                 {
-                    music = GetSoundSlot(SoundType.Music, "Sounds/Music/rePrologue");
-                    priority = MusicPriority.BossHigh;
-                }
+                    music = GetSoundSlot(SoundType.Music, "Sounds/Music/SteelRed");
+                    priority = (MusicPriority)12;
+                }*/
             }
         }
 
@@ -1826,6 +1126,30 @@ namespace FargowiltasSouls
         {
             return NormalSpawn(spawnInfo) && NoBiome(spawnInfo) && NoZone(spawnInfo);
         }
+
+
+        #region Compatibilities
+
+        internal CalamityCompatibility CalamityCompatibility { get; private set; }
+        internal bool CalamityLoaded => CalamityCompatibility != null;
+
+        internal ThoriumCompatibility ThoriumCompatibility { get; private set; }
+        internal bool ThoriumLoaded => ThoriumCompatibility != null;
+
+        internal SoACompatibility SoACompatibility { get; private set; }
+        internal bool SoALoaded => SoACompatibility != null;
+
+        internal MasomodeEXCompatibility MasomodeEXCompatibility { get; private set; }
+        internal bool MasomodeEXLoaded => MasomodeEXCompatibility != null;
+
+
+        internal DBZMODCompatibility DBZMODCompatibility { get; private set; }
+        internal bool DBZMODLoaded => DBZMODCompatibility != null;
+
+        internal ApothTestModCompatibility ApothCompatibility { get; private set; }
+        internal bool ApothLoaded => ApothCompatibility != null;
+
+        #endregion
     }
 
     enum MsgType : byte

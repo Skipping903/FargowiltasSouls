@@ -1,7 +1,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
 using Terraria.Localization;
 
@@ -44,9 +43,9 @@ Heals ally life equal to your bonus healing");
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            if (SoulConfig.Instance.GetValue("Biotech Probe"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.BiotechProbe))
             {
-                ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+                ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
                 thoriumPlayer.essenceSet = true;
                 if (player.ownedProjectileCounts[thorium.ProjectileType("LifeEssence")] < 1)
                 {

@@ -1,10 +1,10 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using CalamityMod.CalPlayer;
 using Terraria.Localization;
+using System.Collections.Generic;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Calamity
 {
@@ -48,16 +48,26 @@ Summons a Siren pet");
             item.value = 1000000;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> list)
+        {
+            foreach (TooltipLine tooltipLine in list)
+            {
+                if (tooltipLine.mod == "Terraria" && tooltipLine.Name == "ItemName")
+                {
+                    tooltipLine.overrideColor = new Color(35, 95, 161);
+                }
+            }
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.CalamityLoaded) return;
 
-            CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>(calamity);
-            player.ignoreWater = true;
-
-            if (SoulConfig.Instance.GetValue("Omega Blue Tentacles"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.OmegaTentacles))
             {
-                modPlayer.omegaBlueSet = true;
+                calamity.Call("SetSetBonus", player, "omegablue", true);
+                CalamityPlayer modPlayer = player.GetModPlayer<CalamityPlayer>();
+                
                 if (modPlayer.omegaBlueCooldown > 0)
                 {
                     if (modPlayer.omegaBlueCooldown == 1)
@@ -85,32 +95,26 @@ Summons a Siren pet");
             }
 
             //abyssal diving suit
-            if (SoulConfig.Instance.GetValue("Abyssal Diving Suit"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.DivingSuit))
             {
-                //because screw that slow speed out of water ech
-                if (!Collision.DrownCollision(player.position, player.width, player.height, player.gravDir))
-                {
-                    player.runAcceleration *= 2.5f;
-                    player.maxRunSpeed *= 2.5f;
-                }
-                modPlayer.abyssalDivingSuit = true;
-                if (hideVisual)
-                {
-                    modPlayer.abyssalDivingSuitHide = true;
-                }
+                calamity.GetItem("AbyssalDivingSuit").UpdateAccessory(player, hideVisual);
             }
 
             //lumenous amulet
-            modPlayer.abyssalAmulet = true;
-            modPlayer.lumenousAmulet = true;
-            //reaper tooth necklace
-            player.armorPenetration += 100;
-            //aquatic emblem
-            modPlayer.aquaticEmblem = true;
+            calamity.GetItem("LumenousAmulet").UpdateAccessory(player, hideVisual);
 
-            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>(mod);
+            //reaper tooth necklace
+            if (SoulConfig.Instance.calamityToggles.ReaperToothNecklace)
+            {
+                calamity.GetItem("ReaperToothNecklace").UpdateAccessory(player, hideVisual);
+            }
+
+            //aquatic emblem
+            calamity.GetItem("AquaticEmblem").UpdateAccessory(player, hideVisual);
+
+            FargoPlayer fargoPlayer = player.GetModPlayer<FargoPlayer>();
             fargoPlayer.OmegaBlueEnchant = true;
-            fargoPlayer.AddPet("Siren Pet", hideVisual, calamity.BuffType("StrangeOrb"), calamity.ProjectileType("SirenYoung"));
+            fargoPlayer.AddPet(SoulConfig.Instance.calamityToggles.SirenPet, hideVisual, calamity.BuffType("StrangeOrb"), calamity.ProjectileType("SirenYoung"));
         }
 
         public override void AddRecipes()

@@ -1,9 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
 using ThoriumMod;
-using System;
 using Terraria.Localization;
 
 namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
@@ -22,7 +20,7 @@ namespace FargowiltasSouls.Items.Accessories.Enchantments.Thorium
             DisplayName.SetDefault("Durasteel Enchantment");
             Tooltip.SetDefault(
 @"'Masterfully forged by the Blacksmith'
-90% damage reduction at Full HP
+12% damage reduction at Full HP
 Grants immunity to shambler chain-balls
 Effects of the Incandescent Spark, Spiked Bracers, and Greedy Magnet");
             DisplayName.AddTranslation(GameCulture.Chinese, "耐刚魔石");
@@ -41,26 +39,25 @@ Effects of the Incandescent Spark, Spiked Bracers, and Greedy Magnet");
             ItemID.Sets.ItemNoGravity[item.type] = true;
             item.rare = 3;
             item.value = 80000;
-            item.shieldSlot = 5;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (!Fargowiltas.Instance.ThoriumLoaded) return;
 
-            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>(thorium);
+            ThoriumPlayer thoriumPlayer = player.GetModPlayer<ThoriumPlayer>();
             //durasteel effect
             if (player.statLife == player.statLifeMax2)
             {
-                player.endurance += .9f;
+                player.endurance += .12f;
             }
 
-            if (SoulConfig.Instance.GetValue("Incandescent Spark"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.IncandescentSpark))
             {
                 thorium.GetItem("IncandescentSpark").UpdateAccessory(player, hideVisual);
             }
 
-            if (SoulConfig.Instance.GetValue("Greedy Magnet"))
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.thoriumToggles.GreedyMagnet))
             {
                 thorium.GetItem("GreedyMagnet").HoldItem(player);
             }
